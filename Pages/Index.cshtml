@@ -1,10 +1,104 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (!Model.IsAuthenticated)
+{
+    <section class="hero-section">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+            <span class="hero-badge">Hire. Assign. Deliver.</span>
+            <h1>Build your freelance team and ship work faster.</h1>
+            <p>
+                MyFreelance helps you hire talented people, assign tasks with clear deadlines,
+                and manage roles across your growing team.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <a asp-page="/Account/Register" class="btn btn-gradient btn-lg">Get started free</a>
+                <a asp-page="/Account/Login" class="btn btn-outline-light btn-lg">Sign in</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="feature-grid row g-4 mt-2">
+        <div class="col-md-4">
+            <div class="glass-card feature-card h-100">
+                <div class="feature-icon">👥</div>
+                <h3>Hire people</h3>
+                <p>Onboard freelancers with profiles, job titles, and secure accounts.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card feature-card h-100">
+                <div class="feature-icon">📋</div>
+                <h3>Assign tasks</h3>
+                <p>Create work items, set due dates, and track progress in one dashboard.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card feature-card h-100">
+                <div class="feature-icon">🔐</div>
+                <h3>Manage roles</h3>
+                <p>Control access with Admin, Manager, and Freelancer role permissions.</p>
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <div class="page-header">
+        <span class="page-eyebrow">Dashboard</span>
+        <h1>Welcome back, @Model.UserName</h1>
+        <p>Here's what's happening across your workspace today.</p>
+    </div>
+
+    <div class="row g-4 mb-4">
+        @if (Model.CanManage)
+        {
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <span>Hired people</span>
+                    <strong>@Model.HiredCount</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <span>Active tasks</span>
+                    <strong>@Model.ActiveTasks</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <span>Completed tasks</span>
+                    <strong>@Model.CompletedTasks</strong>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <span>My active tasks</span>
+                    <strong>@Model.MyTasks</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <span>Completed by me</span>
+                    <strong>@Model.CompletedTasks</strong>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="d-flex flex-wrap gap-3">
+        <a asp-page="/Tasks/Index" class="btn btn-gradient">View tasks</a>
+        @if (Model.CanManage)
+        {
+            <a asp-page="/People/Hire" class="btn btn-outline-light">Hire someone</a>
+            <a asp-page="/Tasks/Create" class="btn btn-outline-light">Assign task</a>
+        }
+    </div>
+}

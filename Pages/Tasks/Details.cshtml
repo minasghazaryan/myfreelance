@@ -1,0 +1,65 @@
+@page "{id:int}"
+@model MyFreelance.Pages.Tasks.DetailsModel
+@{
+    ViewData["Title"] = Model.TaskItem?.Title ?? "Task details";
+}
+
+@if (Model.TaskItem is not null)
+{
+    <div class="page-header d-flex flex-wrap justify-content-between align-items-end gap-3">
+        <div>
+            <span class="page-eyebrow">Task details</span>
+            <h1>@Model.TaskItem.Title</h1>
+            <p>Assigned to @Model.TaskItem.AssignedTo.FullName · Created by @Model.TaskItem.CreatedBy.FullName</p>
+        </div>
+        <span class="status-badge status-@Model.TaskItem.Status.ToString().ToLower()">@Model.TaskItem.Status</span>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string message)
+    {
+        <div class="alert alert-success glass-alert">@message</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="glass-card form-card">
+                <h3 class="h5 mb-3">Description</h3>
+                <p class="mb-0">@(string.IsNullOrWhiteSpace(Model.TaskItem.Description) ? "No description provided." : Model.TaskItem.Description)</p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="glass-card form-card">
+                <h3 class="h5 mb-3">Details</h3>
+                <ul class="task-meta-list">
+                    <li><span>Due date</span><strong>@(Model.TaskItem.DueDate?.ToLocalTime().ToString("MMM d, yyyy") ?? "Not set")</strong></li>
+                    <li><span>Created</span><strong>@Model.TaskItem.CreatedAt.ToLocalTime().ToString("MMM d, yyyy")</strong></li>
+                    <li><span>Assignee</span><strong>@Model.TaskItem.AssignedTo.FullName</strong></li>
+                </ul>
+
+                @if (Model.CanManage || Model.IsAssignee)
+                {
+                    <hr class="border-secondary-subtle" />
+                    <h3 class="h6 mb-3">Update status</h3>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var status in Enum.GetValues<WorkTaskStatus>())
+                        {
+                            if (!Model.CanManage && status == WorkTaskStatus.Cancelled)
+                            {
+                                continue;
+                            }
+
+                            <form method="post" asp-page-handler="UpdateStatus" asp-route-id="@Model.TaskItem.Id" class="d-inline">
+                                <input type="hidden" name="status" value="@status" />
+                                <button type="submit" class="btn btn-sm @(Model.TaskItem.Status == status ? "btn-gradient" : "btn-outline-light")">
+                                    @status
+                                </button>
+                            </form>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <a asp-page="Index" class="btn btn-outline-light mt-4">← Back to tasks</a>
+}

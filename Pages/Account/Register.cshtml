@@ -1,0 +1,51 @@
+@page
+@model MyFreelance.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Create account";
+    Layout = "_AuthLayout";
+}
+
+<div class="auth-card">
+    <div class="auth-header">
+        <span class="auth-badge">Join the platform</span>
+        <h1>Create your account</h1>
+        <p>Register as a freelancer and get ready to receive assigned tasks.</p>
+    </div>
+
+    <form method="post" class="auth-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="form-floating mb-3">
+            <input asp-for="Input.FullName" class="form-control" placeholder="Jane Doe" />
+            <label asp-for="Input.FullName"></label>
+            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input asp-for="Input.Email" class="form-control" placeholder="name@company.com" />
+            <label asp-for="Input.Email"></label>
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input asp-for="Input.Password" class="form-control" placeholder="Password" />
+            <label asp-for="Input.Password"></label>
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+        </div>
+
+        <div class="form-floating mb-4">
+            <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Confirm password" />
+            <label asp-for="Input.ConfirmPassword"></label>
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-gradient w-100 mb-3">Create account</button>
+        <p class="text-center mb-0 auth-footer-text">
+            Already have an account? <a asp-page="/Account/Login">Sign in</a>
+        </p>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

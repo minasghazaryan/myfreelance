@@ -1,0 +1,28 @@
+@using Microsoft.AspNetCore.Identity
+@using MyFreelance.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav align-items-lg-center gap-lg-2">
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await UserManager.GetUserAsync(User);
+    <li class="nav-item">
+        <span class="nav-user-pill">@user?.FullName</span>
+    </li>
+    <li class="nav-item">
+        <form asp-page="/Account/Logout" method="post" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+        </form>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link" asp-page="/Account/Login">Sign in</a>
+    </li>
+    <li class="nav-item">
+        <a class="btn btn-sm btn-gradient ms-lg-2" asp-page="/Account/Register">Register</a>
+    </li>
+}
+</ul>

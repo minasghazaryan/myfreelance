@@ -1,0 +1,54 @@
+@page
+@model MyFreelance.Pages.People.HireModel
+@{
+    ViewData["Title"] = "Hire person";
+}
+
+<div class="page-header">
+    <span class="page-eyebrow">Workforce</span>
+    <h1>Hire a person</h1>
+    <p>Create an account and add them to your hired team.</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="glass-card form-card">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.FullName" class="form-control" placeholder="Jane Doe" />
+                    <label asp-for="Input.FullName"></label>
+                    <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Email" class="form-control" placeholder="name@company.com" />
+                    <label asp-for="Input.Email"></label>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.JobTitle" class="form-control" placeholder="UI Designer" />
+                    <label asp-for="Input.JobTitle"></label>
+                    <span asp-validation-for="Input.JobTitle" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-4">
+                    <input asp-for="Input.Password" class="form-control" placeholder="Password" />
+                    <label asp-for="Input.Password"></label>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-gradient">Hire & add to team</button>
+                    <a asp-page="Index" class="btn btn-outline-light">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

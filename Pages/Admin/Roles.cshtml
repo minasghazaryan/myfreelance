@@ -1,0 +1,85 @@
+@page
+@model MyFreelance.Pages.Admin.RolesModel
+@{
+    ViewData["Title"] = "Role management";
+}
+
+<div class="page-header">
+    <span class="page-eyebrow">Administration</span>
+    <h1>Role management</h1>
+    <p>Assign Admin, Manager, or Freelancer roles to platform users.</p>
+</div>
+
+@if (TempData["SuccessMessage"] is string message)
+{
+    <div class="alert alert-success glass-alert">@message</div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="glass-card form-card">
+            <h3 class="h5 mb-3">Update user roles</h3>
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label class="form-label">User</label>
+                    <select asp-for="SelectedUserId" class="form-select">
+                        <option value="">Select user</option>
+                        @foreach (var user in Model.Users)
+                        {
+                            <option value="@user.Id">@user.FullName (@user.Email)</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Roles</label>
+                    @foreach (var role in AppRoles.All)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="SelectedRoles" value="@role" id="role-@role" />
+                            <label class="form-check-label" for="role-@role">@role</label>
+                        </div>
+                    }
+                </div>
+
+                <button type="submit" class="btn btn-gradient">Save roles</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="glass-card table-card">
+            <h3 class="h5 mb-3 px-1">All users</h3>
+            <div class="table-responsive">
+                <table class="table task-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Roles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <td>@user.FullName</td>
+                                <td>@user.Email</td>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach (var role in user.Roles)
+                                        {
+                                            <span class="badge role-badge">@role</span>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

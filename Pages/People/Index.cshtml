@@ -1,0 +1,57 @@
+@page
+@model MyFreelance.Pages.People.IndexModel
+@{
+    ViewData["Title"] = "Team";
+}
+
+<div class="page-header d-flex flex-wrap justify-content-between align-items-end gap-3">
+    <div>
+        <span class="page-eyebrow">Workforce</span>
+        <h1>Hired people</h1>
+        <p>Everyone on your team ready to receive assigned tasks.</p>
+    </div>
+    <a asp-page="Hire" class="btn btn-gradient">+ Hire person</a>
+</div>
+
+@if (TempData["SuccessMessage"] is string message)
+{
+    <div class="alert alert-success glass-alert">@message</div>
+}
+
+@if (Model.People.Count == 0)
+{
+    <div class="empty-state">
+        <h3>No hires yet</h3>
+        <p>Start building your team by hiring your first freelancer.</p>
+        <a asp-page="Hire" class="btn btn-gradient">Hire someone</a>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var person in Model.People)
+        {
+            <div class="col-md-6 col-xl-4">
+                <div class="glass-card person-card h-100">
+                    <div class="person-avatar">@(string.IsNullOrEmpty(person.FullName) ? "?" : person.FullName[..1].ToUpper())</div>
+                    <h3>@person.FullName</h3>
+                    <p class="text-muted mb-1">@person.JobTitle</p>
+                    <p class="small text-muted mb-3">@person.Email</p>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        @foreach (var role in person.Roles)
+                        {
+                            <span class="badge role-badge">@role</span>
+                        }
+                    </div>
+                    <div class="person-meta">
+                        <span>@person.ActiveTasks active tasks</span>
+                        @if (person.HiredAt.HasValue)
+                        {
+                            <span>Hired @person.HiredAt.Value.ToLocalTime().ToString("MMM d, yyyy")</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
