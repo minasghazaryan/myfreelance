@@ -1,0 +1,81 @@
+@page
+@model MyFreelance.Web.Pages.Dashboard.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_DashboardNav" />
+            <div class="col-lg-10 col-md-9 p-4">
+                <h2 class="text-gold mb-4">Portfolio Overview</h2>
+                <div class="disclaimer-banner mb-4">
+                    <i class="bi bi-info-circle me-2"></i>Projected earnings are estimates, not guaranteed returns.
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4 col-lg">
+                        <div class="aurum-card portfolio-stat">
+                            <div class="portfolio-stat-label">Current Balance</div>
+                            <div class="portfolio-stat-value">$@Model.Portfolio.CurrentBalance.ToString("N2")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg">
+                        <div class="aurum-card portfolio-stat">
+                            <div class="portfolio-stat-label">Invested Capital</div>
+                            <div class="portfolio-stat-value">$@Model.Portfolio.InvestedCapital.ToString("N2")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg">
+                        <div class="aurum-card portfolio-stat">
+                            <div class="portfolio-stat-label">Projected Earnings</div>
+                            <div class="portfolio-stat-value">$@Model.Portfolio.ProjectedEarnings.ToString("N2")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg">
+                        <div class="aurum-card portfolio-stat">
+                            <div class="portfolio-stat-label">Referral Earnings</div>
+                            <div class="portfolio-stat-value">$@Model.Portfolio.ReferralEarnings.ToString("N2")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg">
+                        <div class="aurum-card portfolio-stat">
+                            <div class="portfolio-stat-label">Available Balance</div>
+                            <div class="portfolio-stat-value">$@Model.Portfolio.AvailableBalance.ToString("N2")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="aurum-card">
+                            <h5 class="text-gold mb-3">Portfolio Growth</h5>
+                            <canvas id="growthChart" height="200"
+                                    data-labels='@System.Text.Json.JsonSerializer.Serialize(Model.Analytics.Growth.Select(g => g.Label))'
+                                    data-values='@System.Text.Json.JsonSerializer.Serialize(Model.Analytics.Growth.Select(g => g.Value))'></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="aurum-card">
+                            <h5 class="text-gold mb-3">Activity Feed</h5>
+                            @if (Model.Activity.Count == 0)
+                            {
+                                <p class="text-muted-light small">No activity yet.</p>
+                            }
+                            @foreach (var item in Model.Activity)
+                            {
+                                <div class="d-flex justify-content-between border-bottom border-gold-subtle py-2">
+                                    <div>
+                                        <small class="text-gold">@item.Type</small>
+                                        <p class="small mb-0 text-muted-light">@item.Description</p>
+                                    </div>
+                                    <small class="@(item.Amount >= 0 ? "text-success" : "text-danger")">@item.Amount.ToString("N2")</small>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

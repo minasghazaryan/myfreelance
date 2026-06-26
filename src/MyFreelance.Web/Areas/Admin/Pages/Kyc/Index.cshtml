@@ -1,0 +1,31 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.Kyc.IndexModel
+@{ ViewData["Title"] = "KYC Review"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">KYC Management</h2>
+                <table class="table table-aurum">
+                    <thead><tr><th>Name</th><th>Status</th><th>Submitted</th><th>Actions</th></tr></thead>
+                    <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Status</td>
+                            <td>@item.CreatedAt.ToString("g")</td>
+                            <td>
+                                <form method="post" asp-page-handler="Approve" class="d-inline"><input type="hidden" name="id" value="@item.Id" /><button class="btn btn-sm btn-success">Approve</button></form>
+                                <form method="post" asp-page-handler="Reject" class="d-inline ms-1"><input type="hidden" name="id" value="@item.Id" /><input type="hidden" name="reason" value="Documents insufficient" /><button class="btn btn-sm btn-danger">Reject</button></form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

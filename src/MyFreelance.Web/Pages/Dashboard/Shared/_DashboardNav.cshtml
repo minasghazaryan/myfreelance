@@ -1,0 +1,12 @@
+<div class="col-lg-2 col-md-3 dashboard-sidebar">
+    <nav class="nav flex-column">
+        <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "dashboard" ? "active" : "")" asp-page="/Dashboard/Index"><i class="bi bi-speedometer2 me-2"></i>Overview</a>
+        <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "investments" ? "active" : "")" asp-page="/Dashboard/Investments"><i class="bi bi-graph-up me-2"></i>Invest</a>
+        <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "deposits" ? "active" : "")" asp-page="/Dashboard/Deposits"><i class="bi bi-arrow-down-circle me-2"></i>Deposits</a>
+        <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "withdrawals" ? "active" : "")" asp-page="/Dashboard/Withdrawals"><i class="bi bi-arrow-up-circle me-2"></i>Withdrawals</a>
+        <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "referrals" ? "active" : "")" asp-page="/Dashboard/Referrals"><i class="bi bi-people me-2"></i>Referrals</a>
+        <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "kyc" ? "active" : "")" asp-page="/Dashboard/Kyc"><i class="bi bi-person-badge me-2"></i>KYC</a>
+        <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "notifications" ? "active" : "")" asp-page="/Dashboard/Notifications"><i class="bi bi-bell me-2"></i>Notifications</a>
+        <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "phone" ? "active" : "")" asp-page="/Dashboard/VerifyPhone"><i class="bi bi-phone me-2"></i>Verify Phone</a>
+    </nav>
+</div>

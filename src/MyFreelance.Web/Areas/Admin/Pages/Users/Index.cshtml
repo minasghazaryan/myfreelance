@@ -1,0 +1,19 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.Users.IndexModel
+@{ ViewData["Title"] = "User Management"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">User Management</h2>
+                <form method="get" class="mb-4"><input name="search" class="form-control form-control-aurum d-inline-block w-auto" placeholder="Search users..." /><button class="btn btn-aurum ms-2">Search</button></form>
+                <table class="table table-aurum">
+                    <thead><tr><th>Name</th><th>Email</th><th>KYC</th><th>Status</th><th>Joined</th></tr></thead>
+                    <tbody>@foreach (var u in Model.Users) { <tr><td>@u.Name</td><td>@u.Email</td><td>@(u.IsKycApproved ? "Approved" : "Pending")</td><td>@(u.IsSuspended ? "Suspended" : "Active")</td><td>@u.CreatedAt.ToString("d")</td></tr> }</tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

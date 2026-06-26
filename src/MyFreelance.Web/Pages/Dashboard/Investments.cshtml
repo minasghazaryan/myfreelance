@@ -1,0 +1,46 @@
+@page
+@model MyFreelance.Web.Pages.Dashboard.InvestmentsModel
+@{ ViewData["Title"] = "Investments"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_DashboardNav" />
+            <div class="col-lg-10 col-md-9 p-4">
+                <h2 class="text-gold mb-4">Investments</h2>
+                @if (Model.ErrorMessage != null) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+                @if (Model.SuccessMessage != null) { <div class="alert alert-success">@Model.SuccessMessage</div> }
+
+                <div class="row g-4 mb-4">
+                    @foreach (var tier in Model.Tiers)
+                    {
+                        <div class="col-md-4">
+                            <div class="aurum-card">
+                                <h5>@tier.Name</h5>
+                                <p class="tier-yield">@tier.ProjectedYieldPercent% <small class="text-muted-light" style="font-size:0.5em">projected</small></p>
+                                <form method="post" class="mt-3">
+                                    <input type="hidden" name="TierId" value="@tier.Id" />
+                                    <input type="number" name="Amount" class="form-control form-control-aurum mb-2" placeholder="Amount (USDT)" step="0.01" min="@tier.MinInvestment" max="@tier.MaxInvestment" required />
+                                    <button type="submit" class="btn btn-aurum w-100">Invest</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="aurum-card">
+                    <h5 class="text-gold mb-3">Your Investments</h5>
+                    <table class="table table-aurum">
+                        <thead><tr><th>Tier</th><th>Amount</th><th>Projected Yield</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody>
+                        @foreach (var inv in Model.Investments)
+                        {
+                            <tr><td>@inv.TierName</td><td>$@inv.Amount.ToString("N2")</td><td>@inv.ProjectedYieldPercent%</td><td>@inv.Status</td><td>@inv.CreatedAt.ToString("d")</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

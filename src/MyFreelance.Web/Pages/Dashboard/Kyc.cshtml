@@ -1,0 +1,45 @@
+@page
+@model MyFreelance.Web.Pages.Dashboard.KycModel
+@{ ViewData["Title"] = "KYC Verification"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_DashboardNav" />
+            <div class="col-lg-10 col-md-9 p-4">
+                <h2 class="text-gold mb-4">KYC Verification</h2>
+                @if (Model.Profile?.Status == MyFreelance.Domain.Enums.KycStatus.Approved)
+                {
+                    <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>KYC Approved — you can invest.</div>
+                }
+                else if (Model.Profile != null)
+                {
+                    <div class="disclaimer-banner mb-4">Status: <strong>@Model.Profile.Status</strong>. Investment requires KYC approval.</div>
+                }
+                @if (Model.Message != null) { <div class="alert alert-info">@Model.Message</div> }
+
+                <div class="aurum-card">
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="form-label">First Name</label><input asp-for="Input.FirstName" class="form-control form-control-aurum" required /></div>
+                            <div class="col-md-6"><label class="form-label">Last Name</label><input asp-for="Input.LastName" class="form-control form-control-aurum" required /></div>
+                            <div class="col-md-4"><label class="form-label">Date of Birth</label><input asp-for="Input.DateOfBirth" type="date" class="form-control form-control-aurum" required /></div>
+                            <div class="col-md-4"><label class="form-label">Gender</label><select asp-for="Input.Gender" class="form-control form-control-aurum"><option>Male</option><option>Female</option><option>Other</option></select></div>
+                            <div class="col-md-4"><label class="form-label">Nationality</label><input asp-for="Input.Nationality" class="form-control form-control-aurum" required /></div>
+                            <div class="col-md-6"><label class="form-label">Country</label><input asp-for="Input.Country" class="form-control form-control-aurum" required /></div>
+                            <div class="col-md-6"><label class="form-label">City</label><input asp-for="Input.City" class="form-control form-control-aurum" required /></div>
+                            <div class="col-12"><label class="form-label">Address</label><input asp-for="Input.Address" class="form-control form-control-aurum" required /></div>
+                            <div class="col-md-6"><label class="form-label">Postal Code</label><input asp-for="Input.PostalCode" class="form-control form-control-aurum" /></div>
+                            <div class="col-md-6"><label class="form-label">Mobile</label><input asp-for="Input.MobileNumber" class="form-control form-control-aurum" required /></div>
+                            <div class="col-md-6"><label class="form-label">Passport</label><input asp-for="Passport" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" /></div>
+                            <div class="col-md-6"><label class="form-label">National ID</label><input asp-for="NationalId" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" /></div>
+                            <div class="col-md-6"><label class="form-label">Selfie</label><input asp-for="Selfie" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png" /></div>
+                            <div class="col-md-6"><label class="form-label">Proof of Address</label><input asp-for="ProofOfAddress" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" /></div>
+                            <div class="col-12"><button type="submit" class="btn btn-aurum">Submit KYC</button></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

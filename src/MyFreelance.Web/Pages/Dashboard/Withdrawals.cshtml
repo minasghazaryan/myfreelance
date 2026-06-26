@@ -1,0 +1,51 @@
+@page
+@model MyFreelance.Web.Pages.Dashboard.WithdrawalsModel
+@{ ViewData["Title"] = "Withdrawals"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_DashboardNav" />
+            <div class="col-lg-10 col-md-9 p-4">
+                <h2 class="text-gold mb-4">Withdrawals</h2>
+                @if (Model.ErrorMessage != null) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+
+                <div class="aurum-card mb-4">
+                    <h5 class="text-gold">Request Withdrawal</h5>
+                    <form method="post" class="row g-3 mt-2">
+                        <div class="col-md-3">
+                            <label class="form-label">Amount (USDT)</label>
+                            <input name="Amount" type="number" step="0.01" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Wallet Address</label>
+                            <input name="WalletAddress" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Network ID</label>
+                            <input name="DepositNetworkId" class="form-control form-control-aurum" placeholder="Select from deposits page" required />
+                        </div>
+                        <div class="col-12 form-check">
+                            <input name="IsImmediate" type="checkbox" class="form-check-input" id="immediate" />
+                            <label class="form-check-label text-muted-light" for="immediate">Immediate withdrawal (may incur penalty)</label>
+                        </div>
+                        <div class="col-12"><button type="submit" class="btn btn-aurum">Request Withdrawal</button></div>
+                    </form>
+                </div>
+
+                <div class="aurum-card">
+                    <h5 class="text-gold">Withdrawal History</h5>
+                    <table class="table table-aurum mt-3">
+                        <thead><tr><th>Amount</th><th>Fee</th><th>Penalty</th><th>Net</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody>
+                        @foreach (var w in Model.Withdrawals)
+                        {
+                            <tr><td>$@w.Amount.ToString("N2")</td><td>$@w.Fee.ToString("N2")</td><td>$@w.PenaltyAmount.ToString("N2")</td><td>$@w.NetAmount.ToString("N2")</td><td>@w.Status</td><td>@w.CreatedAt.ToString("g")</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

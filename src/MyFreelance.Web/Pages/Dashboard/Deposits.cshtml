@@ -1,0 +1,60 @@
+@page
+@model MyFreelance.Web.Pages.Dashboard.DepositsModel
+@{ ViewData["Title"] = "Deposits"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_DashboardNav" />
+            <div class="col-lg-10 col-md-9 p-4">
+                <h2 class="text-gold mb-4">Deposits</h2>
+                @if (Model.ErrorMessage != null) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+
+                <div class="aurum-card mb-4">
+                    <h5 class="text-gold">New Deposit</h5>
+                    <form method="post" class="row g-3 mt-2">
+                        <div class="col-md-4">
+                            <label class="form-label">Network</label>
+                            <select name="NetworkId" class="form-control form-control-aurum" required>
+                                @foreach (var n in Model.Networks)
+                                {
+                                    <option value="@n.Id">@n.Name (Min: $@n.MinDeposit)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Amount (USDT)</label>
+                            <input name="Amount" type="number" step="0.01" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Transaction Hash</label>
+                            <input name="TransactionHash" class="form-control form-control-aurum" placeholder="Optional - submit after transfer" />
+                        </div>
+                        <div class="col-12"><button type="submit" class="btn btn-aurum">Submit Deposit</button></div>
+                    </form>
+                </div>
+
+                @foreach (var n in Model.Networks)
+                {
+                    <div class="aurum-card mb-3">
+                        <strong class="text-gold">@n.Name</strong> — Send USDT to:
+                        <code class="d-block mt-2 p-2 bg-dark rounded">@n.WalletAddress</code>
+                    </div>
+                }
+
+                <div class="aurum-card">
+                    <h5 class="text-gold">Deposit History</h5>
+                    <table class="table table-aurum mt-3">
+                        <thead><tr><th>Network</th><th>Amount</th><th>Status</th><th>Hash</th><th>Date</th></tr></thead>
+                        <tbody>
+                        @foreach (var d in Model.Deposits)
+                        {
+                            <tr><td>@d.NetworkName</td><td>$@d.Amount.ToString("N2")</td><td>@d.Status</td><td class="small">@(d.TransactionHash ?? "-")</td><td>@d.CreatedAt.ToString("g")</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

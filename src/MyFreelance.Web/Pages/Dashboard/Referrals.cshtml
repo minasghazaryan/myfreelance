@@ -1,0 +1,29 @@
+@page
+@model MyFreelance.Web.Pages.Dashboard.ReferralsModel
+@{ ViewData["Title"] = "Referrals"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_DashboardNav" />
+            <div class="col-lg-10 col-md-9 p-4">
+                <h2 class="text-gold mb-4">Referral Program</h2>
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Team Size</div><div class="portfolio-stat-value">@Model.Tree.Stats.TeamSize</div></div></div>
+                    <div class="col-md-4"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Total Rewards</div><div class="portfolio-stat-value">$@Model.Tree.Stats.TotalRewards.ToString("N2")</div></div></div>
+                    <div class="col-md-4"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Referral Code</div><div class="portfolio-stat-value" style="font-size:1.2rem">@Model.Tree.ReferralCode</div></div></div>
+                </div>
+                <div class="aurum-card mb-4">
+                    <h5 class="text-gold">Your Referral Link</h5>
+                    <code class="d-block p-3 bg-dark rounded mt-2">@($"{Request.Scheme}://{Request.Host}{Model.Tree.ReferralLink}")</code>
+                </div>
+                <div class="row g-3">
+                    @foreach (var level in Model.Config)
+                    {
+                        <div class="col-md-4"><div class="aurum-card text-center"><p class="text-muted-light">Level @level.Level</p><div class="referral-percent">@level.Percentage%</div></div></div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

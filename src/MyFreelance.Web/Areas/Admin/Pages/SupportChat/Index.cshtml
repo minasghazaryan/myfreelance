@@ -1,0 +1,22 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.SupportChat.IndexModel
+@{ ViewData["Title"] = "Support Chat"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">Tawk.to Support Chat</h2>
+                <form method="post" class="aurum-card">
+                    <div class="form-check mb-3"><input asp-for="Input.IsEnabled" class="form-check-input" /><label class="form-check-label">Enabled</label></div>
+                    <div class="form-check mb-3"><input asp-for="Input.ShowOnLanding" class="form-check-input" /><label class="form-check-label">Show on Landing</label></div>
+                    <div class="form-check mb-3"><input asp-for="Input.ShowOnDashboard" class="form-check-input" /><label class="form-check-label">Show on Dashboard</label></div>
+                    <label class="form-label">Tawk.to Script</label>
+                    <textarea asp-for="Input.ScriptContent" class="form-control form-control-aurum mb-3" rows="8"></textarea>
+                    <button type="submit" class="btn btn-aurum">Save Settings</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

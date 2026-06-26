@@ -1,0 +1,22 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.Referrals.IndexModel
+@{ ViewData["Title"] = "Referral Config"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">Referral Configuration</h2>
+                <form method="post" class="aurum-card mb-4 row g-3">
+                    <div class="col-md-2"><input asp-for="Input.Level" type="number" class="form-control form-control-aurum" placeholder="Level" required /></div>
+                    <div class="col-md-3"><input asp-for="Input.Percentage" type="number" step="0.1" class="form-control form-control-aurum" placeholder="%" required /></div>
+                    <div class="col-md-5"><input asp-for="Input.Description" class="form-control form-control-aurum" placeholder="Description" /></div>
+                    <div class="col-md-2"><button type="submit" class="btn btn-aurum w-100">Save</button></div>
+                </form>
+                <table class="table table-aurum"><thead><tr><th>Level</th><th>Percentage</th><th>Description</th></tr></thead>
+                <tbody>@foreach (var c in Model.Configs) { <tr><td>@c.Level</td><td>@c.Percentage%</td><td>@c.Description</td></tr> }</tbody></table>
+            </div>
+        </div>
+    </div>
+</div>

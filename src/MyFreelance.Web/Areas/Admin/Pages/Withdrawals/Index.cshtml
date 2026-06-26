@@ -1,0 +1,18 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.Withdrawals.IndexModel
+@{ ViewData["Title"] = "Withdrawals"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">Withdrawal Management</h2>
+                <table class="table table-aurum">
+                    <thead><tr><th>User</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                    <tbody>@foreach (var w in Model.Withdrawals) { <tr><td>@w.UserEmail</td><td>$@w.Amount.ToString("N2")</td><td>@w.Status</td><td>@w.CreatedAt.ToString("g")</td><td>@if(w.Status=="Pending"){<form method="post" asp-page-handler="Approve" class="d-inline"><input type="hidden" name="id" value="@w.Id" /><button class="btn btn-sm btn-success">Approve</button></form><form method="post" asp-page-handler="Reject" class="d-inline"><input type="hidden" name="id" value="@w.Id" /><button class="btn btn-sm btn-danger">Reject</button></form>}</td></tr> }</tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

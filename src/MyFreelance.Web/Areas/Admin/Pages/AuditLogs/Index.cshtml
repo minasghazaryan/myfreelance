@@ -1,0 +1,18 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.AuditLogs.IndexModel
+@{ ViewData["Title"] = "Audit Logs"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">Audit Logs</h2>
+                <table class="table table-aurum table-sm">
+                    <thead><tr><th>Action</th><th>Entity</th><th>Description</th><th>IP</th><th>Date</th></tr></thead>
+                    <tbody>@foreach (var l in Model.Logs) { <tr><td>@l.Action</td><td>@l.EntityType</td><td>@l.Description</td><td>@l.IpAddress</td><td>@l.CreatedAt.ToString("g")</td></tr> }</tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

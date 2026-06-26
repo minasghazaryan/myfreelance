@@ -1,0 +1,23 @@
+@page
+@model MyFreelance.Web.Pages.Dashboard.NotificationsModel
+@{ ViewData["Title"] = "Notifications"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_DashboardNav" />
+            <div class="col-lg-10 col-md-9 p-4">
+                <h2 class="text-gold mb-4">Notifications</h2>
+                @foreach (var n in Model.Notifications)
+                {
+                    <div class="aurum-card mb-2 @(n.IsRead ? "" : "border-gold")">
+                        <div class="d-flex justify-content-between">
+                            <div><strong class="text-gold">@n.Title</strong><p class="small mb-0 text-muted-light">@n.Message</p></div>
+                            <small class="text-muted-light">@n.CreatedAt.ToString("g")</small>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

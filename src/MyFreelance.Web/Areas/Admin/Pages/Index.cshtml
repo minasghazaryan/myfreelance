@@ -1,0 +1,22 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.IndexModel
+@{ ViewData["Title"] = "Admin Dashboard"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">Admin Dashboard</h2>
+                <div class="row g-3">
+                    <div class="col-md-4"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Investors</div><div class="portfolio-stat-value">@Model.Stats.TotalInvestors</div></div></div>
+                    <div class="col-md-4"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Total Deposits</div><div class="portfolio-stat-value">$@Model.Stats.TotalDeposits.ToString("N0")</div></div></div>
+                    <div class="col-md-4"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Total Withdrawals</div><div class="portfolio-stat-value">$@Model.Stats.TotalWithdrawals.ToString("N0")</div></div></div>
+                    <div class="col-md-4"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Pending KYC</div><div class="portfolio-stat-value">@Model.Stats.PendingKyc</div></div></div>
+                    <div class="col-md-4"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Pending Deposits</div><div class="portfolio-stat-value">@Model.Stats.PendingDeposits</div></div></div>
+                    <div class="col-md-4"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Revenue (Est.)</div><div class="portfolio-stat-value">$@Model.Stats.Revenue.ToString("N2")</div></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,22 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.SmartContracts.IndexModel
+@{ ViewData["Title"] = "Smart Contracts"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">Smart Contract Registry</h2>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Total Allocated</div><div class="portfolio-stat-value">$@Model.Data.TotalAllocatedCapital.ToString("N0")</div></div></div>
+                    <div class="col-md-4"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Active Strategies</div><div class="portfolio-stat-value">@Model.Data.ActiveStrategies</div></div></div>
+                </div>
+                <table class="table table-aurum">
+                    <thead><tr><th>Strategy</th><th>Allocation</th><th>Historical Return</th><th>Risk Score</th></tr></thead>
+                    <tbody>@foreach (var s in Model.Data.StrategyDistribution) { <tr><td>@s.Name</td><td>@s.AllocationPercent%</td><td>@s.HistoricalReturnPercent%</td><td>@s.RiskScore</td></tr> }</tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+@page
+@model MyFreelance.Web.Pages.Dashboard.VerifyPhoneModel
+@{ ViewData["Title"] = "Verify Phone"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_DashboardNav" />
+            <div class="col-lg-10 col-md-9 p-4">
+                <h2 class="text-gold mb-4">Phone Verification</h2>
+                @if (Model.Message != null) { <div class="alert alert-info">@Model.Message</div> }
+                <div class="aurum-card" style="max-width: 400px;">
+                    @if (!Model.ShowOtp)
+                    {
+                        <form method="post" asp-page-handler="Send">
+                            <label class="form-label">Phone Number</label>
+                            <input asp-for="PhoneNumber" class="form-control form-control-aurum mb-3" placeholder="+233..." required />
+                            <button type="submit" class="btn btn-aurum">Send OTP</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post" asp-page-handler="Verify">
+                            <label class="form-label">Enter OTP Code</label>
+                            <input asp-for="OtpCode" class="form-control form-control-aurum mb-3" required />
+                            <button type="submit" class="btn btn-aurum">Verify</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

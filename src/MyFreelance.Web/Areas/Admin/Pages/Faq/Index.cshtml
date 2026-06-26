@@ -1,0 +1,20 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.Faq.IndexModel
+@{ ViewData["Title"] = "FAQ Management"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">FAQ Management</h2>
+                <form method="post" class="aurum-card mb-4">
+                    <input asp-for="Input.Question" class="form-control form-control-aurum mb-2" placeholder="Question" required />
+                    <textarea asp-for="Input.Answer" class="form-control form-control-aurum mb-2" rows="3" placeholder="Answer" required></textarea>
+                    <button type="submit" class="btn btn-aurum">Add FAQ</button>
+                </form>
+                @foreach (var f in Model.Items) { <div class="aurum-card mb-2"><strong>@f.Question</strong><p class="small text-muted-light mb-0">@f.Answer</p></div> }
+            </div>
+        </div>
+    </div>
+</div>
