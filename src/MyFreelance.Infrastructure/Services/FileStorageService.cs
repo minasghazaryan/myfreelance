@@ -6,7 +6,18 @@ namespace MyFreelance.Infrastructure.Services;
 
 public class FileStorageService(IConfiguration configuration, ILogger<FileStorageService> logger) : IFileStorageService
 {
-    private readonly string _basePath = configuration["FileStorage:Path"] ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+    private readonly string _basePath = ResolveBasePath(configuration["FileStorage:Path"]);
+
+    private static string ResolveBasePath(string? configuredPath)
+    {
+        var path = string.IsNullOrWhiteSpace(configuredPath)
+            ? Path.Combine(Directory.GetCurrentDirectory(), "uploads")
+            : configuredPath;
+
+        return Path.IsPathRooted(path)
+            ? Path.GetFullPath(path)
+            : Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), path));
+    }
 
     public async Task<string> SaveFileAsync(Stream fileStream, string fileName, string folder, CancellationToken cancellationToken = default)
     {
@@ -25,7 +36,7 @@ public class FileStorageService(IConfiguration configuration, ILogger<FileStorag
 
     public Task DeleteFileAsync(string storedPath, CancellationToken cancellationToken = default)
     {
-        var fullPath = Path.Combine(_basePath, storedPath);
+        var fullPath = GetAbsolutePath(storedPath);
         if (File.Exists(fullPath)) File.Delete(fullPath);
         return Task.CompletedTask;
     }
@@ -36,4 +47,10 @@ public class FileStorageService(IConfiguration configuration, ILogger<FileStorag
         logger.LogDebug("Virus scan hook invoked for {Path}", storedPath);
         return Task.FromResult(true);
     }
+
+    public string GetAbsolutePath(string storedPath)
+        => Path.Combine(_basePath, storedPath.Replace('/', Path.DirectorySeparatorChar));
+
+    public bool FileExists(string storedPath)
+        => File.Exists(GetAbsolutePath(storedPath));
 }

@@ -11,12 +11,12 @@ public class IndexModel(IKycService kycService, UserManager<ApplicationUser> use
 {
     public IList<KycItem> Items { get; set; } = [];
 
-    public record KycItem(Guid Id, string UserId, string Name, string Status, DateTime CreatedAt);
+    public record KycItem(Guid Id, string UserId, string Name, string Status, int DocumentCount, DateTime CreatedAt);
 
     public async Task OnGetAsync()
     {
         var pending = await kycService.GetPendingReviewsAsync();
-        Items = pending.Select(k => new KycItem(k.Id, k.UserId, k.FullName, k.Status, k.CreatedAt)).ToList();
+        Items = pending.Select(k => new KycItem(k.Id, k.UserId, k.FullName, k.Status, k.DocumentCount, k.CreatedAt)).ToList();
     }
 
     public async Task<IActionResult> OnPostApproveAsync(Guid id)

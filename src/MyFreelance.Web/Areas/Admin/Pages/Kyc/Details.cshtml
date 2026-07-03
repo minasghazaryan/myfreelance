@@ -1,0 +1,133 @@
+@page "{id:guid}"
+@model MyFreelance.Web.Areas.Admin.Pages.Kyc.DetailsModel
+@{
+    ViewData["Title"] = "KYC Details";
+    var detail = Model.Detail!;
+}
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                    <div>
+                        <a asp-page="./Index" class="small text-muted-light text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to KYC list</a>
+                        <h2 class="text-gold mb-0 mt-2">@detail.FirstName @detail.LastName</h2>
+                        <p class="text-muted-light small mb-0">Submitted @detail.CreatedAt.ToString("f") · Status: <strong>@detail.Status</strong></p>
+                    </div>
+                    @if (detail.Status is "Pending" or "UnderReview")
+                    {
+                        <div class="d-flex gap-2">
+                            <form method="post" asp-page-handler="Approve">
+                                <input type="hidden" name="id" value="@detail.Id" />
+                                <button type="submit" class="btn btn-success" onclick="return confirm('Approve this KYC submission?');">
+                                    <i class="bi bi-check-circle me-1"></i>Approve
+                                </button>
+                            </form>
+                        </div>
+                    }
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="aurum-card h-100">
+                            <h5 class="text-gold mb-4">Personal Details</h5>
+                            <dl class="kyc-detail-list">
+                                <div><dt>Full Name</dt><dd>@detail.FirstName @detail.LastName</dd></div>
+                                <div><dt>Date of Birth</dt><dd>@detail.DateOfBirth.ToString("d")</dd></div>
+                                <div><dt>Gender</dt><dd>@detail.Gender</dd></div>
+                                <div><dt>Nationality</dt><dd>@detail.Nationality</dd></div>
+                                <div><dt>Country</dt><dd>@detail.Country</dd></div>
+                                <div><dt>City</dt><dd>@detail.City</dd></div>
+                                <div><dt>Address</dt><dd>@detail.Address</dd></div>
+                                <div><dt>Postal Code</dt><dd>@(string.IsNullOrWhiteSpace(detail.PostalCode) ? "—" : detail.PostalCode)</dd></div>
+                                <div><dt>Email</dt><dd>@detail.Email</dd></div>
+                                <div><dt>Mobile</dt><dd>@detail.MobileNumber</dd></div>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="aurum-card h-100">
+                            <h5 class="text-gold mb-4">Uploaded Documents</h5>
+                            @if (detail.Documents.Count == 0)
+                            {
+                                <div class="disclaimer-banner">
+                                    <i class="bi bi-exclamation-circle me-2"></i>No documents were uploaded for this submission.
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row g-3">
+                                    @foreach (var doc in detail.Documents)
+                                    {
+                                        var isImage = doc.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase);
+                                        <div class="col-md-6">
+                                            <div class="kyc-doc-card">
+                                                <p class="kyc-doc-type mb-2">@FormatDocumentType(doc.DocumentType)</p>
+                                                @if (isImage)
+                                                {
+                                                    <a asp-page="./Document" asp-route-id="@doc.Id" target="_blank" class="kyc-doc-preview-link">
+                                                        <img src="@Url.Page("./Document", new { id = doc.Id })" alt="@doc.FileName" class="kyc-doc-preview" />
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <div class="kyc-doc-file-icon"><i class="bi bi-file-earmark-pdf"></i></div>
+                                                }
+                                                <p class="small text-muted-light mb-2 text-truncate" title="@doc.FileName">@doc.FileName</p>
+                                                <p class="small text-muted-light mb-3">@FormatFileSize(doc.FileSizeBytes)</p>
+                                                <a asp-page="./Document" asp-route-id="@doc.Id" target="_blank" class="btn btn-aurum-outline btn-sm">
+                                                    <i class="bi bi-box-arrow-up-right me-1"></i>View / Download
+                                                </a>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                @if (detail.Status is "Pending" or "UnderReview")
+                {
+                    <div class="aurum-card mt-4">
+                        <h5 class="text-gold mb-3">Reject Submission</h5>
+                        <form method="post" asp-page-handler="Reject">
+                            <input type="hidden" name="id" value="@detail.Id" />
+                            <label asp-for="RejectionReason" class="form-label">Reason for rejection</label>
+                            <textarea asp-for="RejectionReason" rows="3" class="form-control form-control-aurum mb-2" placeholder="Explain what is missing or invalid..."></textarea>
+                            <span asp-validation-for="RejectionReason" class="field-validation-error"></span>
+                            <button type="submit" class="btn btn-danger mt-2" onclick="return confirm('Reject this KYC submission?');">
+                                <i class="bi bi-x-circle me-1"></i>Reject
+                            </button>
+                        </form>
+                    </div>
+                }
+                else if (!string.IsNullOrWhiteSpace(detail.RejectionReason))
+                {
+                    <div class="disclaimer-banner mt-4">
+                        <strong>Previous rejection reason:</strong> @detail.RejectionReason
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    static string FormatDocumentType(string type) => type switch
+    {
+        "NationalId" => "National ID",
+        "ProofOfAddress" => "Proof of Address",
+        _ => type
+    };
+
+    static string FormatFileSize(long bytes)
+    {
+        if (bytes < 1024) return $"{bytes} B";
+        if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+        return $"{bytes / (1024.0 * 1024.0):F1} MB";
+    }
+}

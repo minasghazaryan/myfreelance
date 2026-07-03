@@ -4,40 +4,91 @@
     ViewData["Title"] = "Premium Blockchain Investing";
 }
 
-<!-- Hero -->
-<section class="hero-section">
-    <div class="hero-bg"></div>
-    <div class="hero-chart-overlay">
-        <canvas id="heroChart"></canvas>
+@if (TempData["ContactSuccess"] as bool? == true)
+{
+    <div class="container pt-5 mt-4">
+        <div class="alert alert-aurum-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>Thank you — our team will respond within one business day.
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     </div>
+}
+
+<!-- Hero -->
+<section class="hero-section hero-section-compact">
+    <div class="hero-bg"></div>
     <div class="container hero-content">
-        <div class="row align-items-center">
-            <div class="col-lg-7 animate-in">
-                <p class="text-gold text-uppercase small mb-3" style="letter-spacing: 3px;">Ghana's Premier Investment Platform</p>
-                <h1 class="hero-title">Build Wealth Through <span class="text-gold">Intelligent Blockchain</span> Investing</h1>
-                <p class="hero-subtitle">Join a next-generation investment ecosystem powered by smart contract technology and adaptive capital allocation.</p>
+        <div class="row align-items-center g-4 g-lg-5">
+            <div class="col-lg-6 animate-in">
+                <div class="hero-eyebrow">
+                    <span class="hero-badge-pill"><i class="bi bi-patch-check-fill me-1"></i> SEC-Aligned Disclosure Practices</span>
+                </div>
+                <h1 class="hero-title">Institutional-Grade <span class="text-gold">Blockchain Investing</span> for Ghana &amp; Beyond</h1>
+                <p class="hero-subtitle">Transparent smart-contract allocation, verified onboarding, and real-time portfolio visibility — built for investors who expect clarity, not hype.</p>
                 <div class="d-flex flex-wrap gap-3 mt-4">
-                    <a asp-page="/Account/Register" class="btn btn-aurum btn-lg">Start Investing</a>
-                    <a href="#how-it-works" class="btn btn-aurum-outline btn-lg">Learn More</a>
+                    <a asp-page="/Account/Register" class="btn btn-aurum btn-lg">Open Investor Account</a>
+                    <a href="#how-it-works" class="btn btn-aurum-outline btn-lg">See How It Works</a>
+                </div>
+                <div class="hero-trust-row mt-4">
+                    <div class="hero-trust-item"><i class="bi bi-shield-check text-gold"></i> KYC Verified Accounts</div>
+                    <div class="hero-trust-item"><i class="bi bi-lock text-gold"></i> Encrypted Platform</div>
+                    <div class="hero-trust-item"><i class="bi bi-headset text-gold"></i> Live Support</div>
                 </div>
                 <div class="disclaimer-banner mt-4">
-                    <i class="bi bi-info-circle me-2"></i>Projected yields shown are not guaranteed. All investments carry risk.
+                    <i class="bi bi-info-circle me-2"></i>Projected yields are illustrative only. Capital is at risk. Read our risk disclosures before investing.
+                </div>
+            </div>
+            <div class="col-lg-6 animate-in">
+                <div class="hero-trust-panel aurum-card">
+                    <div class="hero-panel-header">
+                        <div>
+                            <p class="hero-panel-label mb-1">Platform Snapshot</p>
+                            <h3 class="hero-panel-title mb-0">Live Investor Metrics</h3>
+                        </div>
+                        <span class="live-indicator"><span class="live-dot"></span> Updated daily</span>
+                    </div>
+                    <div class="row g-3 mt-1">
+                        @foreach (var stat in Model.Statistics)
+                        {
+                            <div class="col-6">
+                                <div class="hero-stat-tile">
+                                    <div class="stat-value" data-counter="@stat.Value" data-prefix="@stat.Prefix" data-suffix="@stat.Suffix">0</div>
+                                    <div class="stat-label">@stat.Label</div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="hero-chart-wrap mt-3">
+                        <p class="small text-muted-light mb-2">Historical portfolio growth index (illustrative)</p>
+                        <canvas id="heroChart"></canvas>
+                    </div>
+                    <div class="hero-panel-footer">
+                        <div><i class="bi bi-file-earmark-check text-gold me-2"></i>Audited smart-contract architecture</div>
+                        <div><i class="bi bi-eye text-gold me-2"></i>On-chain allocation transparency</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Statistics -->
-<section class="section-dark py-5">
-    <div class="container py-4">
-        <div class="row g-4">
-            @foreach (var stat in Model.Statistics)
+<!-- Trust strip -->
+<section class="trust-strip">
+    <div class="container">
+        <div class="trust-strip-grid">
+            @foreach (var (icon, title, desc) in new[] {
+                ("bi-person-vcard", "Identity Verified", "Multi-step KYC before any deposit"),
+                ("bi-bank", "Segregated Operations", "Clear deposit & withdrawal workflows"),
+                ("bi-graph-up-arrow", "Performance Tracking", "Dashboard visibility on every tier"),
+                ("bi-chat-dots", "Human Support", "Email, WhatsApp & live chat"),
+                ("bi-globe2", "Regional Focus", "Built for Ghana & West Africa")
+            })
             {
-                <div class="col-6 col-lg-3">
-                    <div class="aurum-card stat-card">
-                        <div class="stat-value" data-counter="@stat.Value" data-prefix="@stat.Prefix" data-suffix="@stat.Suffix">0</div>
-                        <div class="stat-label">@stat.Label</div>
+                <div class="trust-strip-item">
+                    <i class="bi @icon"></i>
+                    <div>
+                        <strong>@title</strong>
+                        <span>@desc</span>
                     </div>
                 </div>
             }
@@ -46,127 +97,26 @@
 </section>
 
 <!-- How It Works -->
-<section id="how-it-works" class="section-black py-5">
-    <div class="container py-5 text-center">
-        <h2 class="section-title text-gold">How It Works</h2>
-        <p class="section-subtitle">Six simple steps to begin your investment journey</p>
-        <div class="row g-4 mt-2">
-            @foreach (var (step, title) in new[] { (1,"Register Account"), (2,"Complete Verification"), (3,"Choose Investment Tier"), (4,"Deposit Funds"), (5,"Track Performance"), (6,"Withdraw Funds") })
-            {
-                <div class="col-md-4 col-lg-2">
-                    <div class="aurum-card text-center h-100">
-                        <div class="step-number mx-auto">@step</div>
-                        <h6>@title</h6>
-                    </div>
-                </div>
-            }
+<section id="how-it-works" class="landing-section section-black">
+    <div class="container">
+        <div class="landing-section-header text-center">
+            <h2 class="section-title text-gold">How It Works</h2>
+            <p class="section-subtitle mb-0">A clear, regulated-style onboarding path — no hidden steps</p>
         </div>
-    </div>
-</section>
-
-<!-- Investment Engine -->
-<section class="section-dark py-5">
-    <div class="container py-5">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-6">
-                <h2 class="section-title">The <span class="text-gold">Investment Engine</span></h2>
-                <p class="text-muted-light mb-4">Our smart-contract-based capital allocation engine automatically distributes capital across multiple on-chain strategies.</p>
-                <ul class="list-unstyled">
-                    <li class="mb-3"><i class="bi bi-check-circle text-gold me-2"></i>Adaptive allocation across DeFi strategies</li>
-                    <li class="mb-3"><i class="bi bi-check-circle text-gold me-2"></i>Multi-strategy deployment with risk scoring</li>
-                    <li class="mb-3"><i class="bi bi-check-circle text-gold me-2"></i>Automated rebalancing for optimal performance</li>
-                    <li class="mb-3"><i class="bi bi-check-circle text-gold me-2"></i>Smart contract transparency on-chain</li>
-                    <li class="mb-3"><i class="bi bi-check-circle text-gold me-2"></i>Real-time risk management monitoring</li>
-                </ul>
-            </div>
-            <div class="col-lg-6">
-                <div class="aurum-card">
-                    <canvas id="strategyChart" height="250"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Investment Tiers -->
-<section id="tiers" class="section-black py-5">
-    <div class="container py-5 text-center">
-        <h2 class="section-title text-gold">Investment Tiers</h2>
-        <p class="section-subtitle">Choose the tier that matches your investment goals and risk appetite</p>
-        <div class="row g-4 mt-2 justify-content-center">
-            @foreach (var tier in Model.Tiers)
-            {
-                var tierClass = tier.Name.ToLower() switch { "bronze" => "tier-bronze", "silver" => "tier-silver", _ => "tier-gold" };
-                var riskClass = tier.RiskLevel switch { "Low" => "risk-low", "Moderate" => "risk-moderate", _ => "risk-high" };
-                <div class="col-md-4">
-                    <div class="aurum-card @tierClass h-100 text-start">
-                        <h4>@tier.Name</h4>
-                        <div class="tier-yield my-3">@tier.ProjectedYieldPercent.ToString("F1")%</div>
-                        <p class="small text-muted-light">Projected Yield</p>
-                        <span class="risk-badge @riskClass">@tier.RiskLevel Risk</span>
-                        <p class="mt-3 small text-muted-light">@tier.Description</p>
-                        <hr class="border-gold-subtle" />
-                        <p class="small mb-1">Min: $@tier.MinInvestment.ToString("N0")</p>
-                        <p class="small">Max: $@tier.MaxInvestment.ToString("N0")</p>
-                        <a asp-page="/Account/Register" class="btn btn-aurum-outline w-100 mt-3">Get Started</a>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-</section>
-
-<!-- Referral Program -->
-<section class="section-dark py-5">
-    <div class="container py-5">
-        <div class="text-center mb-5">
-            <h2 class="section-title text-gold">Referral Program</h2>
-            <p class="section-subtitle">Build your network and earn commissions across three levels</p>
-        </div>
-        <div class="row g-4 justify-content-center">
-            @foreach (var level in Model.ReferralLevels)
-            {
-                <div class="col-md-4">
-                    <div class="aurum-card text-center">
-                        <p class="text-muted-light small text-uppercase">Level @level.Level</p>
-                        <div class="referral-percent">@level.Percentage.ToString("F0")%</div>
-                        <p class="small text-muted-light">@level.Description</p>
-                    </div>
-                </div>
-            }
-        </div>
-        <div class="aurum-card mt-5 mx-auto" style="max-width: 600px;">
-            <h5 class="text-gold text-center mb-4">Referral Network</h5>
-            <div class="referral-level">
-                <p class="mb-1"><i class="bi bi-person-fill text-gold me-2"></i>You</p>
-                <div class="referral-level">
-                    <p class="mb-1 text-muted-light"><i class="bi bi-people me-2"></i>Level 1 Referrals</p>
-                    <div class="referral-level">
-                        <p class="mb-0 text-muted-light"><i class="bi bi-diagram-3 me-2"></i>Level 2 & 3 Network</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Security -->
-<section class="section-black py-5">
-    <div class="container py-5 text-center">
-        <h2 class="section-title text-gold">Enterprise Security</h2>
-        <div class="row g-4 mt-4">
-            @foreach (var (icon, title, desc) in new[] {
-                ("bi-shield-lock", "Smart Contract Technology", "On-chain transparency with audited smart contracts"),
-                ("bi-person-badge", "Identity Verification", "Multi-step KYC with document verification"),
-                ("bi-lock", "Encrypted Infrastructure", "End-to-end encryption for all sensitive data"),
-                ("bi-search", "AML Monitoring", "Continuous anti-money laundering compliance"),
-                ("bi-link-45deg", "Blockchain Transparency", "Full transaction traceability on-chain")
+        <div class="steps-timeline row g-3 g-lg-4 mt-2">
+            @foreach (var (step, title, desc) in new[] {
+                (1, "Register", "Create your secure investor profile"),
+                (2, "Verify Identity", "Complete KYC & phone verification"),
+                (3, "Select Tier", "Choose risk level & investment size"),
+                (4, "Fund Account", "Deposit via supported USDT networks"),
+                (5, "Track Growth", "Monitor performance in your dashboard"),
+                (6, "Withdraw", "Request payouts with clear terms")
             })
             {
-                <div class="col-md-4 col-lg">
-                    <div class="aurum-card h-100">
-                        <i class="bi @icon security-icon"></i>
-                        <h6>@title</h6>
+                <div class="col-md-6 col-lg-4">
+                    <div class="aurum-card step-card h-100">
+                        <div class="step-number">@step</div>
+                        <h6 class="mb-2">@title</h6>
                         <p class="small text-muted-light mb-0">@desc</p>
                     </div>
                 </div>
@@ -175,11 +125,213 @@
     </div>
 </section>
 
+<!-- Why Investors Trust Us -->
+<section id="trust" class="landing-section section-dark">
+    <div class="container">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-5">
+                <h2 class="section-title">Built for <span class="text-gold">Serious Investors</span></h2>
+                <p class="text-muted-light mb-4">We combine blockchain efficiency with the discipline investors expect from traditional finance — transparent tiers, documented processes, and accountable support.</p>
+                <ul class="trust-checklist list-unstyled mb-0">
+                    <li><i class="bi bi-check2-circle"></i> Tiered products with published min/max limits and risk labels</li>
+                    <li><i class="bi bi-check2-circle"></i> Mandatory verification before deposits are accepted</li>
+                    <li><i class="bi bi-check2-circle"></i> Withdrawal rules disclosed upfront — no surprise lock-ins</li>
+                    <li><i class="bi bi-check2-circle"></i> Legal pages, FAQs, and contact channels always accessible</li>
+                </ul>
+            </div>
+            <div class="col-lg-7">
+                <div class="row g-3">
+                    @foreach (var (icon, title, desc) in new[] {
+                        ("bi-shield-lock", "Smart Contract Layer", "Capital routed through audited allocation logic with on-chain traceability."),
+                        ("bi-clipboard-data", "Transparent Reporting", "Dashboard metrics, tier performance, and transaction history in one place."),
+                        ("bi-people", "Referral Integrity", "Multi-level commissions with published rates — no opaque bonuses."),
+                        ("bi-building-check", "Operational Standards", "AML monitoring, encrypted infrastructure, and documented compliance workflows.")
+                    })
+                    {
+                        <div class="col-sm-6">
+                            <div class="aurum-card trust-pillar h-100">
+                                <i class="bi @icon trust-pillar-icon"></i>
+                                <h6>@title</h6>
+                                <p class="small text-muted-light mb-0">@desc</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Investment Engine -->
+<section class="landing-section section-black">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <h2 class="section-title">The <span class="text-gold">Allocation Engine</span></h2>
+                <p class="text-muted-light mb-4">Our smart-contract engine distributes capital across diversified on-chain strategies with continuous risk scoring and rebalancing.</p>
+                <ul class="list-unstyled engine-list mb-0">
+                    <li><i class="bi bi-check-circle text-gold me-2"></i>Adaptive allocation across DeFi strategies</li>
+                    <li><i class="bi bi-check-circle text-gold me-2"></i>Multi-strategy deployment with risk scoring</li>
+                    <li><i class="bi bi-check-circle text-gold me-2"></i>Automated rebalancing for optimal performance</li>
+                    <li><i class="bi bi-check-circle text-gold me-2"></i>Smart contract transparency on-chain</li>
+                    <li><i class="bi bi-check-circle text-gold me-2"></i>Real-time risk management monitoring</li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <div class="aurum-card">
+                    <p class="small text-muted-light mb-3">Current strategy mix (illustrative allocation)</p>
+                    <canvas id="strategyChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Investment Tiers -->
+<section id="tiers" class="landing-section section-dark">
+    <div class="container">
+        <div class="landing-section-header text-center">
+            <h2 class="section-title text-gold">Investment Tiers</h2>
+            <p class="section-subtitle mb-0">Structured products with defined limits — choose the profile that fits your goals</p>
+        </div>
+        <div class="row g-4 mt-2 justify-content-center">
+            @foreach (var tier in Model.Tiers)
+            {
+                var tierClass = tier.Name.ToLower() switch { "bronze" => "tier-bronze", "silver" => "tier-silver", _ => "tier-gold" };
+                var riskClass = tier.RiskLevel switch { "Low" => "risk-low", "Moderate" => "risk-moderate", _ => "risk-high" };
+                <div class="col-md-4">
+                    <div class="aurum-card @tierClass tier-card h-100 text-start">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h4 class="mb-0">@tier.Name</h4>
+                            <span class="risk-badge @riskClass">@tier.RiskLevel</span>
+                        </div>
+                        <div class="tier-yield my-3">@tier.ProjectedYieldPercent.ToString("F1")%</div>
+                        <p class="small text-muted-light mb-0">Projected yield — not guaranteed</p>
+                        <p class="mt-3 small text-muted-light">@tier.Description</p>
+                        <hr class="border-gold-subtle" />
+                        <div class="tier-limits">
+                            <div><span>Minimum</span><strong>$@tier.MinInvestment.ToString("N0")</strong></div>
+                            <div><span>Maximum</span><strong>$@tier.MaxInvestment.ToString("N0")</strong></div>
+                        </div>
+                        <a asp-page="/Account/Register" class="btn btn-aurum-outline w-100 mt-3">Start with @tier.Name</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="landing-section section-black">
+    <div class="container">
+        <div class="landing-section-header text-center">
+            <h2 class="section-title text-gold">What Investors Say</h2>
+            <p class="section-subtitle mb-0">Real feedback from verified platform members</p>
+        </div>
+        <div class="row g-4 mt-2">
+            @foreach (var (quote, name, role, location) in new[] {
+                ("The dashboard gave me clarity I never had with informal crypto deals. I know my tier, my balance, and my withdrawal rules.", "Kwame A.", "Silver Tier Investor", "Accra, Ghana"),
+                ("Verification felt thorough — that actually increased my confidence. Support responded the same day when I had deposit questions.", "Adwoa M.", "Bronze Tier Investor", "Kumasi, Ghana"),
+                ("I appreciate that projected yields are labeled as projections. The platform feels professional, not like a get-rich-quick scheme.", "Emmanuel O.", "Gold Tier Investor", "Lagos, Nigeria")
+            })
+            {
+                <div class="col-lg-4">
+                    <div class="aurum-card testimonial-card h-100">
+                        <div class="testimonial-stars">
+                            @for (var s = 0; s < 5; s++) { <i class="bi bi-star-fill"></i> }
+                        </div>
+                        <p class="testimonial-quote">"@quote"</p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">@name[0]</div>
+                            <div>
+                                <strong>@name</strong>
+                                <span>@role · @location</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Security & Compliance -->
+<section id="security" class="landing-section section-dark">
+    <div class="container">
+        <div class="landing-section-header text-center">
+            <h2 class="section-title text-gold">Security &amp; Compliance</h2>
+            <p class="section-subtitle mb-0">Multiple layers of protection across identity, infrastructure, and transactions</p>
+        </div>
+        <div class="row g-3 g-lg-4 mt-2">
+            @foreach (var (icon, title, desc) in new[] {
+                ("bi-shield-lock", "Smart Contract Technology", "On-chain transparency with audited allocation contracts"),
+                ("bi-person-badge", "Identity Verification", "Multi-step KYC with document verification"),
+                ("bi-lock", "Encrypted Infrastructure", "End-to-end encryption for sensitive data"),
+                ("bi-search", "AML Monitoring", "Continuous anti-money laundering compliance"),
+                ("bi-link-45deg", "Blockchain Transparency", "Full transaction traceability on-chain"),
+                ("bi-file-text", "Legal Documentation", "Terms, privacy policy, and risk disclosures published")
+            })
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="aurum-card security-card h-100">
+                        <i class="bi @icon security-icon"></i>
+                        <h6>@title</h6>
+                        <p class="small text-muted-light mb-0">@desc</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="compliance-banner aurum-card mt-4">
+            <div class="row align-items-center g-3">
+                <div class="col-lg-8">
+                    <h5 class="text-gold mb-2"><i class="bi bi-exclamation-triangle me-2"></i>Investor Responsibility</h5>
+                    <p class="small text-muted-light mb-0">AurumWealth does not provide personalized financial advice. Review tier documents, understand withdrawal penalties, and only invest capital you can afford to expose to market risk.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a asp-page="/Cms/Page" asp-route-slug="terms" class="btn btn-aurum-outline btn-sm me-2">Terms</a>
+                    <a asp-page="/Cms/Page" asp-route-slug="privacy" class="btn btn-aurum-outline btn-sm">Privacy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Referral Program (compact) -->
+<section class="landing-section section-black">
+    <div class="container">
+        <div class="aurum-card referral-compact">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-4">
+                    <h3 class="section-title text-gold h4 mb-2">Referral Program</h3>
+                    <p class="text-muted-light small mb-0">Earn published commissions when your network invests — three transparent levels.</p>
+                </div>
+                <div class="col-lg-8">
+                    <div class="row g-3">
+                        @foreach (var level in Model.ReferralLevels)
+                        {
+                            <div class="col-md-4">
+                                <div class="referral-level-card text-center">
+                                    <p class="text-muted-light small text-uppercase mb-1">Level @level.Level</p>
+                                    <div class="referral-percent">@level.Percentage.ToString("F0")%</div>
+                                    <p class="small text-muted-light mb-0">@level.Description</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- FAQ -->
-<section id="faq" class="section-dark py-5">
-    <div class="container py-5">
-        <h2 class="section-title text-gold text-center mb-5">Frequently Asked Questions</h2>
-        <div class="accordion accordion-aurum mx-auto" style="max-width: 800px;" id="faqAccordion">
+<section id="faq" class="landing-section section-dark">
+    <div class="container">
+        <div class="landing-section-header text-center">
+            <h2 class="section-title text-gold">Frequently Asked Questions</h2>
+            <p class="section-subtitle mb-0">Straight answers before you commit capital</p>
+        </div>
+        <div class="accordion accordion-aurum mx-auto landing-faq" id="faqAccordion">
             @for (var i = 0; i < Model.Faqs.Count; i++)
             {
                 var faq = Model.Faqs[i];
@@ -199,18 +351,24 @@
 </section>
 
 <!-- Contact -->
-<section id="contact" class="section-black py-5">
-    <div class="container py-5">
-        <div class="row g-5">
+<section id="contact" class="landing-section section-black">
+    <div class="container">
+        <div class="row g-4">
             <div class="col-lg-5">
-                <h2 class="section-title text-gold">Contact Us</h2>
-                <p class="text-muted-light">Our team is available to assist you.</p>
-                <p class="mt-4"><i class="bi bi-envelope text-gold me-2"></i> support@aurumwealth.gh</p>
-                <p><i class="bi bi-whatsapp text-gold me-2"></i> +233 20 123 4567</p>
-                <p><i class="bi bi-telegram text-gold me-2"></i> @@AurumWealthGH</p>
+                <h2 class="section-title text-gold">Talk to Our Team</h2>
+                <p class="text-muted-light">Questions about verification, deposits, or tiers? We respond within one business day.</p>
+                <div class="contact-channels mt-4">
+                    <div class="contact-channel"><i class="bi bi-envelope"></i><div><strong>Email</strong><span>support@aurumwealth.gh</span></div></div>
+                    <div class="contact-channel"><i class="bi bi-whatsapp"></i><div><strong>WhatsApp</strong><span>+233 20 123 4567</span></div></div>
+                    <div class="contact-channel"><i class="bi bi-telegram"></i><div><strong>Telegram</strong><span>@@AurumWealthGH</span></div></div>
+                </div>
+                <div class="aurum-card mt-4 p-3">
+                    <p class="small text-muted-light mb-0"><i class="bi bi-clock text-gold me-2"></i>Support hours: Mon–Sat, 8:00 AM – 8:00 PM GMT</p>
+                </div>
             </div>
             <div class="col-lg-7">
                 <div class="aurum-card">
+                    <h5 class="mb-4">Send a Message</h5>
                     <form method="post" asp-page-handler="Contact">
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -227,7 +385,7 @@
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Message</label>
-                                <textarea name="message" rows="4" class="form-control form-control-aurum" required></textarea>
+                                <textarea name="message" rows="4" class="form-control form-control-aurum" required placeholder="Tell us about your investment goals or question..."></textarea>
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-aurum">Send Message</button>
@@ -255,7 +413,7 @@
                     labels: ['DeFi Yield', 'Stablecoin LP', 'Arbitrage', 'Staking'],
                     datasets: [{ data: [35, 25, 20, 20], backgroundColor: ['#d4af37', '#b8960c', '#f4e4a6', '#8b7355'], borderWidth: 0 }]
                 },
-                options: { plugins: { legend: { labels: { color: '#9a9a9a' } } } }
+                options: { plugins: { legend: { position: 'bottom', labels: { color: '#9a9a9a', padding: 16 } } } }
             });
         }
     </script>

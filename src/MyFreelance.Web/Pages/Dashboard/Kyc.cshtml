@@ -16,26 +16,103 @@
                 {
                     <div class="disclaimer-banner mb-4">Status: <strong>@Model.Profile.Status</strong>. Investment requires KYC approval.</div>
                 }
-                @if (Model.Message != null) { <div class="alert alert-info">@Model.Message</div> }
+
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>@Model.SuccessMessage</div>
+                }
+
+                <div asp-validation-summary="All" class="validation-summary-errors mb-4"></div>
 
                 <div class="aurum-card">
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post" enctype="multipart/form-data" novalidate>
                         <div class="row g-3">
-                            <div class="col-md-6"><label class="form-label">First Name</label><input asp-for="Input.FirstName" class="form-control form-control-aurum" required /></div>
-                            <div class="col-md-6"><label class="form-label">Last Name</label><input asp-for="Input.LastName" class="form-control form-control-aurum" required /></div>
-                            <div class="col-md-4"><label class="form-label">Date of Birth</label><input asp-for="Input.DateOfBirth" type="date" class="form-control form-control-aurum" required /></div>
-                            <div class="col-md-4"><label class="form-label">Gender</label><select asp-for="Input.Gender" class="form-control form-control-aurum"><option>Male</option><option>Female</option><option>Other</option></select></div>
-                            <div class="col-md-4"><label class="form-label">Nationality</label><input asp-for="Input.Nationality" class="form-control form-control-aurum" required /></div>
-                            <div class="col-md-6"><label class="form-label">Country</label><input asp-for="Input.Country" class="form-control form-control-aurum" required /></div>
-                            <div class="col-md-6"><label class="form-label">City</label><input asp-for="Input.City" class="form-control form-control-aurum" required /></div>
-                            <div class="col-12"><label class="form-label">Address</label><input asp-for="Input.Address" class="form-control form-control-aurum" required /></div>
-                            <div class="col-md-6"><label class="form-label">Postal Code</label><input asp-for="Input.PostalCode" class="form-control form-control-aurum" /></div>
-                            <div class="col-md-6"><label class="form-label">Mobile</label><input asp-for="Input.MobileNumber" class="form-control form-control-aurum" required /></div>
-                            <div class="col-md-6"><label class="form-label">Passport</label><input asp-for="Passport" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" /></div>
-                            <div class="col-md-6"><label class="form-label">National ID</label><input asp-for="NationalId" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" /></div>
-                            <div class="col-md-6"><label class="form-label">Selfie</label><input asp-for="Selfie" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png" /></div>
-                            <div class="col-md-6"><label class="form-label">Proof of Address</label><input asp-for="ProofOfAddress" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" /></div>
-                            <div class="col-12"><button type="submit" class="btn btn-aurum">Submit KYC</button></div>
+                            <div class="col-md-6">
+                                <label asp-for="Input.FirstName" class="form-label">First Name <span class="text-gold">*</span></label>
+                                <input asp-for="Input.FirstName" class="form-control form-control-aurum" />
+                                <span asp-validation-for="Input.FirstName" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Input.LastName" class="form-label">Last Name <span class="text-gold">*</span></label>
+                                <input asp-for="Input.LastName" class="form-control form-control-aurum" />
+                                <span asp-validation-for="Input.LastName" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Input.Email" class="form-label">Email <span class="text-gold">*</span></label>
+                                <input asp-for="Input.Email" class="form-control form-control-aurum" readonly />
+                                <span asp-validation-for="Input.Email" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Input.MobileNumber" class="form-label">Mobile <span class="text-gold">*</span></label>
+                                <input asp-for="Input.MobileNumber" class="form-control form-control-aurum" />
+                                <span asp-validation-for="Input.MobileNumber" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Input.DateOfBirth" class="form-label">Date of Birth <span class="text-gold">*</span></label>
+                                <input asp-for="Input.DateOfBirth" type="date" class="form-control form-control-aurum" />
+                                <span asp-validation-for="Input.DateOfBirth" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Input.Gender" class="form-label">Gender <span class="text-gold">*</span></label>
+                                <select asp-for="Input.Gender" class="form-control form-control-aurum">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                    <option value="PreferNotToSay">Prefer not to say</option>
+                                </select>
+                                <span asp-validation-for="Input.Gender" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Input.Nationality" class="form-label">Nationality <span class="text-gold">*</span></label>
+                                <input asp-for="Input.Nationality" class="form-control form-control-aurum" />
+                                <span asp-validation-for="Input.Nationality" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Input.Country" class="form-label">Country <span class="text-gold">*</span></label>
+                                <input asp-for="Input.Country" class="form-control form-control-aurum" />
+                                <span asp-validation-for="Input.Country" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Input.City" class="form-label">City <span class="text-gold">*</span></label>
+                                <input asp-for="Input.City" class="form-control form-control-aurum" />
+                                <span asp-validation-for="Input.City" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Input.Address" class="form-label">Address <span class="text-gold">*</span></label>
+                                <input asp-for="Input.Address" class="form-control form-control-aurum" />
+                                <span asp-validation-for="Input.Address" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Input.PostalCode" class="form-label">Postal Code</label>
+                                <input asp-for="Input.PostalCode" class="form-control form-control-aurum" />
+                                <span asp-validation-for="Input.PostalCode" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-12">
+                                <p class="small text-muted-light mb-2">Upload clear photos or PDFs (max 10 MB each). Fields marked with * are required.</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Passport" class="form-label">Passport <span class="text-gold">*</span></label>
+                                <input asp-for="Passport" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" />
+                                <span asp-validation-for="Passport" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="NationalId" class="form-label">National ID <span class="text-gold">*</span></label>
+                                <input asp-for="NationalId" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" />
+                                <span asp-validation-for="NationalId" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Selfie" class="form-label">Selfie <span class="text-gold">*</span></label>
+                                <input asp-for="Selfie" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png" />
+                                <span asp-validation-for="Selfie" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ProofOfAddress" class="form-label">Proof of Address <span class="text-gold">*</span></label>
+                                <input asp-for="ProofOfAddress" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" />
+                                <span asp-validation-for="ProofOfAddress" class="field-validation-error"></span>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-aurum">Submit KYC</button>
+                            </div>
                         </div>
                     </form>
                 </div>

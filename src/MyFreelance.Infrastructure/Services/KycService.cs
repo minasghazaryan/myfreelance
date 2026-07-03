@@ -17,6 +17,68 @@ public class KycService(
     public async Task<KycProfile?> GetProfileAsync(string userId, CancellationToken cancellationToken = default)
         => await db.KycProfiles.Include(k => k.Documents).FirstOrDefaultAsync(k => k.UserId == userId, cancellationToken);
 
+    public async Task<KycDetailDto?> GetProfileByIdAsync(Guid kycId, CancellationToken cancellationToken = default)
+    {
+        var profile = await db.KycProfiles
+            .Include(k => k.Documents)
+            .FirstOrDefaultAsync(k => k.Id == kycId, cancellationToken);
+
+        if (profile is null) return null;
+
+        return new KycDetailDto(
+            profile.Id,
+            profile.UserId,
+            profile.FirstName,
+            profile.LastName,
+            profile.DateOfBirth,
+            profile.Gender.ToString(),
+            profile.Country,
+            profile.Nationality,
+            profile.Address,
+            profile.City,
+            profile.PostalCode,
+            profile.Email,
+            profile.MobileNumber,
+            profile.Status.ToString(),
+            profile.RejectionReason,
+            profile.CreatedAt,
+            profile.UpdatedAt,
+            profile.Documents
+                .OrderBy(d => d.DocumentType)
+                .Select(d => new KycDocumentDto(d.Id, d.DocumentType.ToString(), d.FileName, d.ContentType, d.FileSizeBytes, d.CreatedAt))
+                .ToList());
+    }
+
+    public async Task SaveDocumentAsync(Guid kycProfileId, DocumentType type, string fileName, string fileContentBase64, string contentType, long fileSizeBytes, CancellationToken cancellationToken = default)
+    {
+        var existing = await db.KycDocuments
+            .FirstOrDefaultAsync(d => d.KycProfileId == kycProfileId && d.DocumentType == type, cancellationToken);
+
+        if (existing is not null)
+        {
+            existing.FileName = fileName;
+            existing.FileContentBase64 = fileContentBase64;
+            existing.ContentType = contentType;
+            existing.FileSizeBytes = fileSizeBytes;
+            existing.UpdatedAt = DateTime.UtcNow;
+            unitOfWork.Repository<KycDocument>().Update(existing);
+        }
+        else
+        {
+            await unitOfWork.Repository<KycDocument>().AddAsync(new KycDocument
+            {
+                KycProfileId = kycProfileId,
+                DocumentType = type,
+                FileName = fileName,
+                FileContentBase64 = fileContentBase64,
+                ContentType = contentType,
+                FileSizeBytes = fileSizeBytes
+            }, cancellationToken);
+        }
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<KycProfile> SubmitKycAsync(string userId, SubmitKycDto dto, CancellationToken cancellationToken = default)
     {
         var existing = await db.KycProfiles.FirstOrDefaultAsync(k => k.UserId == userId, cancellationToken);
@@ -76,7 +138,7 @@ public class KycService(
         return await db.KycProfiles
             .Where(k => k.Status == KycStatus.Pending || k.Status == KycStatus.UnderReview)
             .OrderBy(k => k.CreatedAt)
-            .Select(k => new KycProfileDto(k.Id, k.UserId, k.FirstName + " " + k.LastName, k.Status.ToString(), k.CreatedAt, k.RejectionReason))
+            .Select(k => new KycProfileDto(k.Id, k.UserId, k.FirstName + " " + k.LastName, k.Status.ToString(), k.CreatedAt, k.RejectionReason, k.Documents.Count))
             .ToListAsync(cancellationToken);
     }
 }
