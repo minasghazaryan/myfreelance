@@ -27,8 +27,7 @@
                     <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
-                            <li class="nav-item"><a class="nav-link" asp-page="/Dashboard/Index">Dashboard</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Dashboard/Investments">Invest</a></li>
+                            @await Component.InvokeAsync("UserNav")
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item"><a class="nav-link text-gold" asp-area="Admin" asp-page="/Index">Admin</a></li>
@@ -41,9 +40,9 @@
                         }
                         else
                         {
+                            <li class="nav-item"><a class="nav-link" href="#tiers">Tiers</a></li>
                             <li class="nav-item"><a class="nav-link" href="#how-it-works">How It Works</a></li>
                             <li class="nav-item"><a class="nav-link" href="#trust">Why Us</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#tiers">Tiers</a></li>
                             <li class="nav-item"><a class="nav-link" href="#security">Security</a></li>
                             <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
                             <li class="nav-item"><a class="nav-link" asp-page="/Account/Login">Sign In</a></li>

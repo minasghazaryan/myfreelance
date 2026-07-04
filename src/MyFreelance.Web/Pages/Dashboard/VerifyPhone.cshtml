@@ -7,26 +7,43 @@
         <div class="row">
             <partial name="Shared/_DashboardNav" />
             <div class="col-lg-10 col-md-9 p-4">
-                <h2 class="text-gold mb-4">Phone Verification</h2>
-                @if (Model.Message != null) { <div class="alert alert-info">@Model.Message</div> }
-                <div class="aurum-card" style="max-width: 400px;">
-                    @if (!Model.ShowOtp)
+                <h2 class="text-gold mb-4">WhatsApp Verification</h2>
+
+                @if (Model.IsAlreadyVerified)
+                {
+                    <div class="aurum-card" style="max-width: 480px;">
+                        <div class="alert alert-success mb-0">
+                            <strong>Verified</strong><br />
+                            Your WhatsApp number <strong>@Model.VerifiedPhoneNumber</strong> is verified.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted-light small mb-4">Enter your WhatsApp number in international format, including the country code (e.g. +233201234567). A one-time verification code will be sent to your WhatsApp.</p>
+                    @if (Model.Message != null)
                     {
-                        <form method="post" asp-page-handler="Send">
-                            <label class="form-label">Phone Number</label>
-                            <input asp-for="PhoneNumber" class="form-control form-control-aurum mb-3" placeholder="+233..." required />
-                            <button type="submit" class="btn btn-aurum">Send OTP</button>
-                        </form>
+                        <div class="alert @(Model.IsError ? "alert-danger" : "alert-success")">@Model.Message</div>
                     }
-                    else
-                    {
-                        <form method="post" asp-page-handler="Verify">
-                            <label class="form-label">Enter OTP Code</label>
-                            <input asp-for="OtpCode" class="form-control form-control-aurum mb-3" required />
-                            <button type="submit" class="btn btn-aurum">Verify</button>
-                        </form>
-                    }
-                </div>
+                    <div class="aurum-card" style="max-width: 400px;">
+                        @if (!Model.ShowOtp)
+                        {
+                            <form method="post" asp-page-handler="Send">
+                                <label class="form-label">WhatsApp Number</label>
+                                <input asp-for="PhoneNumber" class="form-control form-control-aurum mb-3" placeholder="+233201234567" required />
+                                <button type="submit" class="btn btn-aurum">Send OTP via WhatsApp</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form method="post" asp-page-handler="Verify">
+                                <label class="form-label">Enter OTP Code</label>
+                                <input asp-for="OtpCode" class="form-control form-control-aurum mb-3" required />
+                                <button type="submit" class="btn btn-aurum">Verify</button>
+                            </form>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>

@@ -32,6 +32,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<PhoneVerification> PhoneVerifications => Set<PhoneVerification>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
+    public DbSet<ApplicationLog> ApplicationLogs => Set<ApplicationLog>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -148,6 +149,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         builder.Entity<SiteSettings>(entity =>
         {
             entity.HasIndex(s => s.Key).IsUnique();
+        });
+
+        builder.Entity<ApplicationLog>(entity =>
+        {
+            entity.HasKey(l => l.Id);
+            entity.Property(l => l.Type).HasMaxLength(20);
+            entity.Property(l => l.FunctionName).HasMaxLength(500);
+            entity.HasIndex(l => l.CreatedAt);
+            entity.HasIndex(l => l.Type);
         });
     }
 }

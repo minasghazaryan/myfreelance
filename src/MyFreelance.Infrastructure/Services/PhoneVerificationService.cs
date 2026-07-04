@@ -9,18 +9,25 @@ namespace MyFreelance.Infrastructure.Services;
 
 public class PhoneVerificationService(
     ApplicationDbContext db,
+    ISmsService smsService,
     IConfiguration configuration,
     ILogger<PhoneVerificationService> logger) : IPhoneVerificationService
 {
     public async Task SendOtpAsync(string userId, string phoneNumber, CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrWhiteSpace(phoneNumber))
+            throw new InvalidOperationException("Phone number is required.");
+
         var otp = Random.Shared.Next(100000, 999999).ToString();
         var provider = configuration["Sms:Provider"] ?? "Twilio";
+        var message = $"Your AurumWealth verification code is {otp}. It expires in 10 minutes.";
+
+        await smsService.SendAsync(phoneNumber, message, cancellationToken);
 
         var verification = new PhoneVerification
         {
             UserId = userId,
-            PhoneNumber = phoneNumber,
+            PhoneNumber = TwilioSmsService.NormalizePhoneNumber(phoneNumber),
             OtpCode = otp,
             Provider = provider,
             ExpiresAt = DateTime.UtcNow.AddMinutes(10)
@@ -29,8 +36,7 @@ public class PhoneVerificationService(
         await db.PhoneVerifications.AddAsync(verification, cancellationToken);
         await db.SaveChangesAsync(cancellationToken);
 
-        // Integration hook for Twilio/Vonage
-        logger.LogInformation("OTP {Otp} sent to {Phone} via {Provider} (configure API keys in appsettings)", otp, phoneNumber, provider);
+        logger.LogInformation("OTP queued for user {UserId} via {Provider}", userId, provider);
     }
 
     public async Task<bool> VerifyOtpAsync(string userId, string code, CancellationToken cancellationToken = default)

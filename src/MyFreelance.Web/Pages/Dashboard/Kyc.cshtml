@@ -22,7 +22,10 @@
                     <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>@Model.SuccessMessage</div>
                 }
 
-                <div asp-validation-summary="All" class="validation-summary-errors mb-4"></div>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="All" class="validation-summary-errors mb-4"></div>
+                }
 
                 <div class="aurum-card">
                     <form method="post" enctype="multipart/form-data" novalidate>

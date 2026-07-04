@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MyFreelance.Application;
 using MyFreelance.Application.Interfaces;
 using MyFreelance.Domain.Interfaces;
+using MyFreelance.Infrastructure.Options;
 using MyFreelance.Infrastructure.Persistence;
 using MyFreelance.Infrastructure.Repositories;
 using MyFreelance.Infrastructure.Services;
@@ -16,6 +17,9 @@ public static class DependencyInjection
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        services.Configure<SmsOptions>(configuration.GetSection(SmsOptions.SectionName));
+        services.AddScoped<ISmsService, TwilioSmsService>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

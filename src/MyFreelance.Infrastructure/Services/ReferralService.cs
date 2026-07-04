@@ -80,13 +80,24 @@ public class ReferralService(ApplicationDbContext db, INotificationService notif
     {
         var code = await GenerateReferralCodeAsync(userId, cancellationToken);
         var stats = await GetReferralStatsAsync(userId, cancellationToken);
-        var directReferrals = await db.Users.Where(u => u.ReferredByUserId == userId).ToListAsync(cancellationToken);
+        var directReferrals = await db.Users
+            .Where(u => u.ReferredByUserId == userId)
+            .OrderByDescending(u => u.CreatedAt)
+            .ToListAsync(cancellationToken);
 
         var tree = new List<ReferralTreeNodeDto>();
         foreach (var referral in directReferrals)
         {
             var childStats = await GetReferralStatsAsync(referral.Id, cancellationToken);
-            tree.Add(new ReferralTreeNodeDto(referral.Id, referral.FullName, 1, childStats.Level1Count, childStats.TotalRewards, []));
+            tree.Add(new ReferralTreeNodeDto(
+                referral.Id,
+                referral.FullName,
+                referral.UserName ?? referral.Email ?? "—",
+                1,
+                childStats.Level1Count,
+                childStats.TotalRewards,
+                referral.CreatedAt,
+                []));
         }
 
         return new ReferralTreeDto(code, $"/Account/Register?ref={code}", stats, tree);

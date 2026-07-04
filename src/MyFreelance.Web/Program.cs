@@ -6,17 +6,36 @@ using Microsoft.IdentityModel.Tokens;
 using MyFreelance.Domain.Constants;
 using MyFreelance.Domain.Entities;
 using MyFreelance.Infrastructure;
+using MyFreelance.Infrastructure.Logging;
 using MyFreelance.Infrastructure.Persistence;
 using MyFreelance.Web.Hubs;
 using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var databaseLogging = builder.Configuration.GetSection("DatabaseLogging");
+var databaseLoggingEnabled = databaseLogging.GetValue("Enabled", true);
+var databaseMinimumLevel = Enum.TryParse<LogEventLevel>(
+    databaseLogging["MinimumLevel"],
+    ignoreCase: true,
+    out var parsedLevel)
+    ? parsedLevel
+    : LogEventLevel.Warning;
 
-Log.Logger = new LoggerConfiguration()
+var loggerConfiguration = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .CreateLogger();
+    .WriteTo.Console();
+
+if (databaseLoggingEnabled)
+{
+    loggerConfiguration = loggerConfiguration.WriteTo.Sink(
+        new DatabaseLogSink(connectionString ?? string.Empty),
+        restrictedToMinimumLevel: databaseMinimumLevel);
+}
+
+Log.Logger = loggerConfiguration.CreateLogger();
 
 builder.Host.UseSerilog();
 

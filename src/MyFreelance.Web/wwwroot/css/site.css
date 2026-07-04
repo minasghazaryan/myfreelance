@@ -49,6 +49,74 @@ h1, h2, h3, .aurum-brand {
 
 .aurum-nav .nav-link:hover { color: var(--aurum-gold); }
 
+.nav-balance-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--aurum-border);
+    background: rgba(212, 175, 55, 0.08);
+    color: var(--aurum-text);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.nav-balance-pill.dropdown-toggle::after {
+    margin-left: 0.15rem;
+    vertical-align: middle;
+    border-top-color: var(--aurum-gold);
+}
+
+.nav-balance-pill:hover,
+.nav-balance-pill.show {
+    color: var(--aurum-gold-light);
+    border-color: var(--aurum-gold);
+    background: rgba(212, 175, 55, 0.14);
+}
+
+.nav-balance-pill strong {
+    color: var(--aurum-gold);
+    font-weight: 700;
+}
+
+.nav-balance-menu {
+    min-width: 11rem;
+    padding: 0.5rem;
+    background: var(--aurum-card);
+    border: 1px solid var(--aurum-border);
+    border-radius: 8px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.nav-balance-menu .nav-balance-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.55rem 0.65rem;
+    font-size: 0.82rem;
+    color: var(--aurum-muted);
+    list-style: none;
+}
+
+.nav-balance-menu .nav-balance-row strong {
+    color: var(--aurum-gold);
+    font-weight: 600;
+}
+
+.nav-balance-menu .dropdown-item {
+    font-size: 0.82rem;
+    color: var(--aurum-muted);
+    border-radius: 4px;
+}
+
+.nav-balance-menu .dropdown-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--aurum-gold);
+}
+
 /* Buttons */
 .btn-aurum {
     background: linear-gradient(135deg, var(--aurum-gold), var(--aurum-gold-dark));
@@ -94,9 +162,16 @@ h1, h2, h3, .aurum-brand {
     max-width: 860px;
 }
 
-.alert-aurum-success {
+.alert-aurum-success,
+.alert-success {
     background: rgba(46, 204, 113, 0.12);
     border: 1px solid rgba(46, 204, 113, 0.35);
+    color: var(--aurum-text);
+}
+
+.alert-danger {
+    background: rgba(231, 76, 60, 0.12);
+    border: 1px solid rgba(231, 76, 60, 0.35);
     color: var(--aurum-text);
 }
 
@@ -112,7 +187,16 @@ h1, h2, h3, .aurum-brand {
 
 .hero-section-compact {
     min-height: auto;
-    padding: 6.5rem 0 3.5rem;
+    padding: 5.5rem 0 2.5rem;
+}
+
+.hero-disclaimer {
+    font-size: 0.8rem;
+    color: var(--aurum-muted);
+}
+
+.hero-trust-panel {
+    padding: 1.5rem;
 }
 
 .hero-eyebrow {
@@ -171,6 +255,45 @@ h1, h2, h3, .aurum-brand {
     font-size: 1.5rem;
 }
 
+.hero-highlight-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.hero-highlight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+}
+
+.hero-highlight-icon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--aurum-border);
+    background: rgba(212, 175, 55, 0.08);
+    color: var(--aurum-gold);
+    font-size: 1.1rem;
+}
+
+.hero-highlight-item strong {
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+}
+
+.hero-highlight-item span {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--aurum-muted);
+    line-height: 1.45;
+}
+
 .live-indicator {
     display: inline-flex;
     align-items: center;
@@ -198,12 +321,12 @@ h1, h2, h3, .aurum-brand {
     background: var(--aurum-dark);
     border: 1px solid var(--aurum-border);
     border-radius: 6px;
-    padding: 1rem;
+    padding: 0.85rem 0.75rem;
     text-align: center;
 }
 
 .hero-stat-tile .stat-value {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
 }
 
 .hero-stat-tile .stat-label {
@@ -237,38 +360,30 @@ h1, h2, h3, .aurum-brand {
     background: linear-gradient(90deg, rgba(212, 175, 55, 0.08), rgba(212, 175, 55, 0.03));
     border-top: 1px solid var(--aurum-border);
     border-bottom: 1px solid var(--aurum-border);
-    padding: 1.25rem 0;
+    padding: 1rem 0;
 }
 
 .trust-strip-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
 }
 
 .trust-strip-item {
     display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
 }
 
 .trust-strip-item i {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     color: var(--aurum-gold);
-    margin-top: 0.15rem;
 }
 
 .trust-strip-item strong {
-    display: block;
-    font-size: 0.85rem;
-    margin-bottom: 0.15rem;
-}
-
-.trust-strip-item span {
-    display: block;
-    font-size: 0.75rem;
-    color: var(--aurum-muted);
-    line-height: 1.4;
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
 /* Steps */
@@ -751,6 +866,10 @@ h1, h2, h3, .aurum-brand {
     border-radius: 6px;
     padding: 1rem 1.25rem;
     list-style: none;
+}
+
+.validation-summary-valid {
+    display: none;
 }
 
 .validation-summary-errors ul {

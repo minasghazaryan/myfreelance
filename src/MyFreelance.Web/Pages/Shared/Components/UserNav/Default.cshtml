@@ -1,0 +1,26 @@
+@model MyFreelance.Web.ViewComponents.UserNavViewModel
+
+<li class="nav-item dropdown">
+    <a class="nav-balance-pill dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-wallet2"></i>
+        <span>Balance</span>
+        <strong>$@Model.CurrentBalance.ToString("N2")</strong>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end nav-balance-menu">
+        <li class="nav-balance-row">
+            <span>Available</span>
+            <strong>$@Model.AvailableBalance.ToString("N2")</strong>
+        </li>
+        <li class="nav-balance-row">
+            <span>Invested</span>
+            <strong>$@Model.InvestedBalance.ToString("N2")</strong>
+        </li>
+        <li><hr class="dropdown-divider border-gold-subtle" /></li>
+        <li><a class="dropdown-item" asp-page="/Dashboard/Index">View portfolio</a></li>
+    </ul>
+</li>
+<li class="nav-item">
+    <a class="nav-link" asp-page="/Dashboard/Kyc" title="@Model.FullName">
+        <i class="bi bi-person-circle me-1"></i>Profile
+    </a>
+</li>

@@ -20,51 +20,35 @@
     <div class="container hero-content">
         <div class="row align-items-center g-4 g-lg-5">
             <div class="col-lg-6 animate-in">
-                <div class="hero-eyebrow">
-                    <span class="hero-badge-pill"><i class="bi bi-patch-check-fill me-1"></i> SEC-Aligned Disclosure Practices</span>
-                </div>
                 <h1 class="hero-title">Institutional-Grade <span class="text-gold">Blockchain Investing</span> for Ghana &amp; Beyond</h1>
-                <p class="hero-subtitle">Transparent smart-contract allocation, verified onboarding, and real-time portfolio visibility — built for investors who expect clarity, not hype.</p>
+                <p class="hero-subtitle">Verified onboarding, transparent tiers, and real-time portfolio visibility.</p>
                 <div class="d-flex flex-wrap gap-3 mt-4">
                     <a asp-page="/Account/Register" class="btn btn-aurum btn-lg">Open Investor Account</a>
-                    <a href="#how-it-works" class="btn btn-aurum-outline btn-lg">See How It Works</a>
+                    <a href="#tiers" class="btn btn-aurum-outline btn-lg">View Investment Tiers</a>
                 </div>
-                <div class="hero-trust-row mt-4">
-                    <div class="hero-trust-item"><i class="bi bi-shield-check text-gold"></i> KYC Verified Accounts</div>
-                    <div class="hero-trust-item"><i class="bi bi-lock text-gold"></i> Encrypted Platform</div>
-                    <div class="hero-trust-item"><i class="bi bi-headset text-gold"></i> Live Support</div>
-                </div>
-                <div class="disclaimer-banner mt-4">
-                    <i class="bi bi-info-circle me-2"></i>Projected yields are illustrative only. Capital is at risk. Read our risk disclosures before investing.
-                </div>
+                <p class="hero-disclaimer mt-4 mb-0">
+                    <i class="bi bi-info-circle me-1"></i>Projected yields are illustrative. Capital is at risk.
+                </p>
             </div>
             <div class="col-lg-6 animate-in">
                 <div class="hero-trust-panel aurum-card">
-                    <div class="hero-panel-header">
-                        <div>
-                            <p class="hero-panel-label mb-1">Platform Snapshot</p>
-                            <h3 class="hero-panel-title mb-0">Live Investor Metrics</h3>
-                        </div>
-                        <span class="live-indicator"><span class="live-dot"></span> Updated daily</span>
-                    </div>
-                    <div class="row g-3 mt-1">
-                        @foreach (var stat in Model.Statistics)
+                    <p class="hero-panel-label mb-1">Built for trust</p>
+                    <h3 class="hero-panel-title mb-3">Why investors stay with us</h3>
+                    <div class="hero-highlight-list">
+                        @foreach (var (icon, title, text) in new[] {
+                            ("bi-person-check", "Verified onboarding", "KYC and phone verification before your first deposit."),
+                            ("bi-speedometer2", "Live dashboard", "Track balances, tiers, and performance in one place."),
+                            ("bi-file-earmark-text", "Clear terms", "Published limits, yields, and withdrawal rules upfront.")
+                        })
                         {
-                            <div class="col-6">
-                                <div class="hero-stat-tile">
-                                    <div class="stat-value" data-counter="@stat.Value" data-prefix="@stat.Prefix" data-suffix="@stat.Suffix">0</div>
-                                    <div class="stat-label">@stat.Label</div>
+                            <div class="hero-highlight-item">
+                                <div class="hero-highlight-icon"><i class="bi @icon"></i></div>
+                                <div>
+                                    <strong>@title</strong>
+                                    <span>@text</span>
                                 </div>
                             </div>
                         }
-                    </div>
-                    <div class="hero-chart-wrap mt-3">
-                        <p class="small text-muted-light mb-2">Historical portfolio growth index (illustrative)</p>
-                        <canvas id="heroChart"></canvas>
-                    </div>
-                    <div class="hero-panel-footer">
-                        <div><i class="bi bi-file-earmark-check text-gold me-2"></i>Audited smart-contract architecture</div>
-                        <div><i class="bi bi-eye text-gold me-2"></i>On-chain allocation transparency</div>
                     </div>
                 </div>
             </div>
@@ -76,19 +60,48 @@
 <section class="trust-strip">
     <div class="container">
         <div class="trust-strip-grid">
-            @foreach (var (icon, title, desc) in new[] {
-                ("bi-person-vcard", "Identity Verified", "Multi-step KYC before any deposit"),
-                ("bi-bank", "Segregated Operations", "Clear deposit & withdrawal workflows"),
-                ("bi-graph-up-arrow", "Performance Tracking", "Dashboard visibility on every tier"),
-                ("bi-chat-dots", "Human Support", "Email, WhatsApp & live chat"),
-                ("bi-globe2", "Regional Focus", "Built for Ghana & West Africa")
+            @foreach (var (icon, title) in new[] {
+                ("bi-person-vcard", "KYC Verified"),
+                ("bi-shield-lock", "Encrypted Platform"),
+                ("bi-headset", "Live Support")
             })
             {
                 <div class="trust-strip-item">
                     <i class="bi @icon"></i>
-                    <div>
-                        <strong>@title</strong>
-                        <span>@desc</span>
+                    <strong>@title</strong>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Investment Tiers -->
+<section id="tiers" class="landing-section section-dark">
+    <div class="container">
+        <div class="landing-section-header text-center">
+            <h2 class="section-title text-gold">Investment Tiers</h2>
+            <p class="section-subtitle mb-0">Structured products with defined limits — choose the profile that fits your goals</p>
+        </div>
+        <div class="row g-4 mt-2 justify-content-center">
+            @foreach (var tier in Model.Tiers)
+            {
+                var tierClass = tier.Name.ToLower() switch { "bronze" => "tier-bronze", "silver" => "tier-silver", _ => "tier-gold" };
+                var riskClass = tier.RiskLevel switch { "Low" => "risk-low", "Moderate" => "risk-moderate", _ => "risk-high" };
+                <div class="col-md-4">
+                    <div class="aurum-card @tierClass tier-card h-100 text-start">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h4 class="mb-0">@tier.Name</h4>
+                            <span class="risk-badge @riskClass">@tier.RiskLevel</span>
+                        </div>
+                        <div class="tier-yield my-3">@tier.ProjectedYieldPercent.ToString("F1")%</div>
+                        <p class="small text-muted-light mb-0">Projected yield — not guaranteed</p>
+                        <p class="mt-3 small text-muted-light">@tier.Description</p>
+                        <hr class="border-gold-subtle" />
+                        <div class="tier-limits">
+                            <div><span>Minimum</span><strong>$@tier.MinInvestment.ToString("N0")</strong></div>
+                            <div><span>Maximum</span><strong>$@tier.MaxInvestment.ToString("N0")</strong></div>
+                        </div>
+                        <a asp-page="/Account/Register" class="btn btn-aurum-outline w-100 mt-3">Start with @tier.Name</a>
                     </div>
                 </div>
             }
@@ -183,40 +196,6 @@
                     <canvas id="strategyChart" height="220"></canvas>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
-
-<!-- Investment Tiers -->
-<section id="tiers" class="landing-section section-dark">
-    <div class="container">
-        <div class="landing-section-header text-center">
-            <h2 class="section-title text-gold">Investment Tiers</h2>
-            <p class="section-subtitle mb-0">Structured products with defined limits — choose the profile that fits your goals</p>
-        </div>
-        <div class="row g-4 mt-2 justify-content-center">
-            @foreach (var tier in Model.Tiers)
-            {
-                var tierClass = tier.Name.ToLower() switch { "bronze" => "tier-bronze", "silver" => "tier-silver", _ => "tier-gold" };
-                var riskClass = tier.RiskLevel switch { "Low" => "risk-low", "Moderate" => "risk-moderate", _ => "risk-high" };
-                <div class="col-md-4">
-                    <div class="aurum-card @tierClass tier-card h-100 text-start">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <h4 class="mb-0">@tier.Name</h4>
-                            <span class="risk-badge @riskClass">@tier.RiskLevel</span>
-                        </div>
-                        <div class="tier-yield my-3">@tier.ProjectedYieldPercent.ToString("F1")%</div>
-                        <p class="small text-muted-light mb-0">Projected yield — not guaranteed</p>
-                        <p class="mt-3 small text-muted-light">@tier.Description</p>
-                        <hr class="border-gold-subtle" />
-                        <div class="tier-limits">
-                            <div><span>Minimum</span><strong>$@tier.MinInvestment.ToString("N0")</strong></div>
-                            <div><span>Maximum</span><strong>$@tier.MaxInvestment.ToString("N0")</strong></div>
-                        </div>
-                        <a asp-page="/Account/Register" class="btn btn-aurum-outline w-100 mt-3">Start with @tier.Name</a>
-                    </div>
-                </div>
-            }
         </div>
     </div>
 </section>
