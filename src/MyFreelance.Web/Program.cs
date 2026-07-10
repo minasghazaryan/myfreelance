@@ -57,12 +57,14 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+var cookieSecurePolicy = ResolveCookieSecurePolicy(builder.Configuration, builder.Environment);
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = cookieSecurePolicy;
     options.Cookie.SameSite = SameSiteMode.Strict;
     options.SlidingExpiration = true;
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
@@ -99,7 +101,11 @@ builder.Services.AddRazorPages(options =>
 });
 
 builder.Services.AddSignalR();
-builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN";
+    options.Cookie.SecurePolicy = cookieSecurePolicy;
+});
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -122,6 +128,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 var app = builder.Build();
+var useHttpsRedirection = builder.Configuration.GetValue("App:UseHttpsRedirection", !app.Environment.IsDevelopment());
 
 using (var scope = app.Services.CreateScope())
 {
@@ -132,10 +139,13 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseForwardedHeaders();
     app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    if (useHttpsRedirection)
+        app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+if (useHttpsRedirection)
+    app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseRateLimiter();
@@ -147,3 +157,15 @@ app.MapRazorPages();
 app.MapHub<NotificationHub>("/hubs/notifications");
 
 app.Run();
+
+static CookieSecurePolicy ResolveCookieSecurePolicy(IConfiguration configuration, IWebHostEnvironment environment)
+{
+    var configured = configuration["Auth:CookieSecurePolicy"];
+    if (!string.IsNullOrWhiteSpace(configured)
+        && Enum.TryParse<CookieSecurePolicy>(configured, ignoreCase: true, out var policy))
+    {
+        return policy;
+    }
+
+    return environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+}
