@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MyFreelance.Application.Interfaces;
+using MyFreelance.Domain.Constants;
 using MyFreelance.Domain.Entities;
 using MyFreelance.Domain.Enums;
 
@@ -52,6 +53,18 @@ public class LoginModel(
                 await userManager.UpdateAsync(user);
                 await auditService.LogAsync(user.Id, null, AuditAction.Login, nameof(ApplicationUser), user.Id, "User logged in");
             }
+
+            if (user is not null && await userManager.IsInRoleAsync(user, AppRoles.Admin))
+            {
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
+                    && returnUrl.StartsWith("/Admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    return LocalRedirect(returnUrl);
+                }
+
+                return RedirectToPage("/Index", new { area = "Admin" });
+            }
+
             return LocalRedirect(returnUrl ?? "/Dashboard/Index");
         }
 

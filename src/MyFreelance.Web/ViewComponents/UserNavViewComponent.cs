@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyFreelance.Application.Interfaces;
+using MyFreelance.Domain.Constants;
 using MyFreelance.Domain.Entities;
 
 namespace MyFreelance.Web.ViewComponents;
@@ -13,6 +14,9 @@ public class UserNavViewComponent(
     {
         var user = await userManager.GetUserAsync(HttpContext.User);
         if (user is null)
+            return Content(string.Empty);
+
+        if (await userManager.IsInRoleAsync(user, AppRoles.Admin))
             return Content(string.Empty);
 
         var portfolio = await dashboardService.GetPortfolioOverviewAsync(user.Id);

@@ -48,7 +48,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     options.Password.RequireDigit = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireNonAlphanumeric = false;
     options.User.RequireUniqueEmail = true;
     options.SignIn.RequireConfirmedEmail = false;
     options.Lockout.MaxFailedAccessAttempts = 5;
@@ -89,7 +89,7 @@ builder.Services.AddAuthentication()
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole(AppRoles.Admin));
-    options.AddPolicy("InvestorOnly", policy => policy.RequireRole(AppRoles.Investor, AppRoles.Admin));
+    options.AddPolicy("InvestorOnly", policy => policy.RequireRole(AppRoles.Investor));
     options.AddPolicy("KycApproved", policy => policy.RequireAssertion(ctx =>
         ctx.User.HasClaim("KycApproved", "true") || ctx.User.IsInRole(AppRoles.Admin)));
 });
