@@ -1,0 +1,42 @@
+# Isolated compose project for MyFreelance (does not touch KinoHub containers).
+# Run from repo root: docker compose -f deploy/docker-compose.yml --env-file deploy/.env up -d --build
+#
+# No domain yet: app is reachable at http://<VPS_IP>:8082 (see MYFREELANCE_HOST_PORT in .env).
+# KinoHub stays on port 80 via the existing nginx container.
+
+name: myfreelance
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: myfreelance-web:latest
+    container_name: myfreelance-web
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: "8080"
+    ports:
+      - "${MYFREELANCE_HOST_PORT:-8082}:8080"
+    volumes:
+      - myfreelance_uploads:/app/uploads
+    networks:
+      - myfreelance_internal
+      - kinohub_backend
+
+networks:
+  myfreelance_internal:
+    name: myfreelance_internal
+    driver: bridge
+
+  # Join the existing KinoHub stack network so the app can reach sqlserver by name.
+  kinohub_backend:
+    external: true
+    name: ${KINOHUB_DOCKER_NETWORK}
+
+volumes:
+  myfreelance_uploads:
+    name: myfreelance_uploads

@@ -5,6 +5,10 @@
 
 # dotenv files
 .env
+deploy/.env
+
+# Local preprod secrets (use appsettings.PreProduction.example.json as template)
+src/MyFreelance.Web/appsettings.PreProduction.json
 
 # User-specific files
 *.rsuser
