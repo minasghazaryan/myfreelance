@@ -46,10 +46,13 @@ public class RegisterModel(
         public string? ReferralCode { get; set; }
     }
 
-    public void OnGet(string? refCode)
+    public void OnGet([FromQuery(Name = "ref")] string? referralCode)
     {
-        ReferralCode = refCode;
-        Input.ReferralCode = refCode;
+        if (string.IsNullOrWhiteSpace(referralCode))
+            return;
+
+        ReferralCode = referralCode.Trim();
+        Input.ReferralCode = ReferralCode;
     }
 
     public async Task<IActionResult> OnPostAsync()

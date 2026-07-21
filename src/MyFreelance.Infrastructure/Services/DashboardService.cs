@@ -78,4 +78,12 @@ public class DashboardService(ApplicationDbContext db) : IDashboardService
             await db.Deposits.Where(d => d.Status == DepositStatus.Confirmed).SumAsync(d => d.Amount, cancellationToken) * 0.02m
         );
     }
+
+    public async Task<AdminPendingCountsDto> GetAdminPendingCountsAsync(CancellationToken cancellationToken = default)
+    {
+        return new AdminPendingCountsDto(
+            await db.KycProfiles.CountAsync(k => k.Status == KycStatus.Pending || k.Status == KycStatus.UnderReview, cancellationToken),
+            await db.Deposits.CountAsync(d => d.Status == DepositStatus.Pending, cancellationToken),
+            await db.Withdrawals.CountAsync(w => w.Status == WithdrawalStatus.Pending, cancellationToken));
+    }
 }

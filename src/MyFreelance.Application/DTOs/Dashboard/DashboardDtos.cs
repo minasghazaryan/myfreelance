@@ -5,3 +5,4 @@ public record PortfolioAnalyticsDto(IReadOnlyList<ChartDataPoint> Growth, IReadO
 public record ChartDataPoint(string Label, decimal Value);
 public record ActivityFeedItemDto(string Type, string Description, decimal Amount, DateTime Timestamp, string Status);
 public record AdminDashboardDto(int TotalInvestors, decimal TotalDeposits, decimal TotalWithdrawals, int PendingKyc, int PendingDeposits, int PendingWithdrawals, decimal Revenue);
+public record AdminPendingCountsDto(int PendingKyc, int PendingDeposits, int PendingWithdrawals);

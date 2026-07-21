@@ -17,6 +17,8 @@ public class KycModel(
     UserManager<ApplicationUser> userManager) : PageModel
 {
     public KycProfile? Profile { get; set; }
+    public bool IsKycApproved { get; set; }
+    public bool CanSubmitKyc { get; set; }
 
     [BindProperty] public SubmitKycDto Input { get; set; } = new("", "", DateTime.UtcNow.AddYears(-25), "Male", "Ghana", "Ghanaian", "", "", "", "", "");
     [BindProperty] public IFormFile? Passport { get; set; }
@@ -31,6 +33,7 @@ public class KycModel(
         ViewData["ActiveNav"] = "kyc";
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         Profile = await kycService.GetProfileAsync(userId);
+        await LoadKycStateAsync(userId);
         await PopulateInputAsync(userId);
     }
 
@@ -39,6 +42,15 @@ public class KycModel(
         ViewData["ActiveNav"] = "kyc";
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         Profile = await kycService.GetProfileAsync(userId);
+        await LoadKycStateAsync(userId);
+
+        if (!CanSubmitKyc)
+        {
+            ModelState.AddModelError(string.Empty, IsKycApproved
+                ? "Your KYC is already approved."
+                : "Your KYC is currently under review and cannot be changed.");
+            return Page();
+        }
 
         await EnsureEmailFromAccountAsync();
         await ValidateAsync();
@@ -66,6 +78,7 @@ public class KycModel(
 
             SuccessMessage = "KYC submitted successfully. Awaiting review.";
             Profile = await kycService.GetProfileAsync(userId);
+            await LoadKycStateAsync(userId);
         }
         catch (DbUpdateException ex)
         {
@@ -77,6 +90,14 @@ public class KycModel(
         }
 
         return Page();
+    }
+
+    private async Task LoadKycStateAsync(string userId)
+    {
+        var user = await userManager.FindByIdAsync(userId);
+        IsKycApproved = user?.IsKycApproved == true || Profile?.Status == KycStatus.Approved;
+        CanSubmitKyc = !IsKycApproved
+            && Profile?.Status is not (KycStatus.Pending or KycStatus.UnderReview);
     }
 
     private async Task PopulateInputAsync(string userId)

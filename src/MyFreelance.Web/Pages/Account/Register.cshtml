@@ -34,7 +34,11 @@
                 </div>
                 <div class="col-12">
                     <label asp-for="Input.ReferralCode" class="form-label">Referral Code (Optional)</label>
-                    <input asp-for="Input.ReferralCode" class="form-control form-control-aurum" />
+                    <input asp-for="Input.ReferralCode" class="form-control form-control-aurum" readonly="@(!string.IsNullOrWhiteSpace(Model.Input.ReferralCode))" />
+                    @if (!string.IsNullOrWhiteSpace(Model.Input.ReferralCode))
+                    {
+                        <div class="form-text text-muted-light">Referral code applied from your invite link.</div>
+                    }
                 </div>
                 <div class="col-md-6">
                     <label asp-for="Input.Password" class="form-label"></label>

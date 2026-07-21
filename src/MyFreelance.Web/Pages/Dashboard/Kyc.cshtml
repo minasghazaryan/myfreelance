@@ -8,14 +8,6 @@
             <partial name="Shared/_DashboardNav" />
             <div class="col-lg-10 col-md-9 p-4">
                 <h2 class="text-gold mb-4">KYC Verification</h2>
-                @if (Model.Profile?.Status == MyFreelance.Domain.Enums.KycStatus.Approved)
-                {
-                    <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>KYC Approved — you can invest.</div>
-                }
-                else if (Model.Profile != null)
-                {
-                    <div class="disclaimer-banner mb-4">Status: <strong>@Model.Profile.Status</strong>. Investment requires KYC approval.</div>
-                }
 
                 @if (!string.IsNullOrEmpty(Model.SuccessMessage))
                 {
@@ -27,98 +19,159 @@
                     <div asp-validation-summary="All" class="validation-summary-errors mb-4"></div>
                 }
 
-                <div class="aurum-card">
-                    <form method="post" enctype="multipart/form-data" novalidate>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label asp-for="Input.FirstName" class="form-label">First Name <span class="text-gold">*</span></label>
-                                <input asp-for="Input.FirstName" class="form-control form-control-aurum" />
-                                <span asp-validation-for="Input.FirstName" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Input.LastName" class="form-label">Last Name <span class="text-gold">*</span></label>
-                                <input asp-for="Input.LastName" class="form-control form-control-aurum" />
-                                <span asp-validation-for="Input.LastName" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Input.Email" class="form-label">Email <span class="text-gold">*</span></label>
-                                <input asp-for="Input.Email" class="form-control form-control-aurum" readonly />
-                                <span asp-validation-for="Input.Email" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Input.MobileNumber" class="form-label">Mobile <span class="text-gold">*</span></label>
-                                <input asp-for="Input.MobileNumber" class="form-control form-control-aurum" />
-                                <span asp-validation-for="Input.MobileNumber" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label asp-for="Input.DateOfBirth" class="form-label">Date of Birth <span class="text-gold">*</span></label>
-                                <input asp-for="Input.DateOfBirth" type="date" class="form-control form-control-aurum" />
-                                <span asp-validation-for="Input.DateOfBirth" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label asp-for="Input.Gender" class="form-label">Gender <span class="text-gold">*</span></label>
-                                <select asp-for="Input.Gender" class="form-control form-control-aurum">
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
-                                    <option value="PreferNotToSay">Prefer not to say</option>
-                                </select>
-                                <span asp-validation-for="Input.Gender" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label asp-for="Input.Nationality" class="form-label">Nationality <span class="text-gold">*</span></label>
-                                <input asp-for="Input.Nationality" class="form-control form-control-aurum" />
-                                <span asp-validation-for="Input.Nationality" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Input.Country" class="form-label">Country <span class="text-gold">*</span></label>
-                                <input asp-for="Input.Country" class="form-control form-control-aurum" />
-                                <span asp-validation-for="Input.Country" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Input.City" class="form-label">City <span class="text-gold">*</span></label>
-                                <input asp-for="Input.City" class="form-control form-control-aurum" />
-                                <span asp-validation-for="Input.City" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-12">
-                                <label asp-for="Input.Address" class="form-label">Address <span class="text-gold">*</span></label>
-                                <input asp-for="Input.Address" class="form-control form-control-aurum" />
-                                <span asp-validation-for="Input.Address" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Input.PostalCode" class="form-label">Postal Code</label>
-                                <input asp-for="Input.PostalCode" class="form-control form-control-aurum" />
-                                <span asp-validation-for="Input.PostalCode" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-12">
-                                <p class="small text-muted-light mb-2">Upload clear photos or PDFs (max 10 MB each). Fields marked with * are required.</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Passport" class="form-label">Passport <span class="text-gold">*</span></label>
-                                <input asp-for="Passport" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" />
-                                <span asp-validation-for="Passport" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="NationalId" class="form-label">National ID <span class="text-gold">*</span></label>
-                                <input asp-for="NationalId" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" />
-                                <span asp-validation-for="NationalId" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Selfie" class="form-label">Selfie <span class="text-gold">*</span></label>
-                                <input asp-for="Selfie" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png" />
-                                <span asp-validation-for="Selfie" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="ProofOfAddress" class="form-label">Proof of Address <span class="text-gold">*</span></label>
-                                <input asp-for="ProofOfAddress" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" />
-                                <span asp-validation-for="ProofOfAddress" class="field-validation-error"></span>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-aurum">Submit KYC</button>
-                            </div>
+                @if (Model.IsKycApproved)
+                {
+                    <div class="aurum-card">
+                        <div class="text-center py-4">
+                            <div class="display-4 text-gold mb-3"><i class="bi bi-patch-check-fill"></i></div>
+                            <h3 class="text-gold mb-2">KYC Approved</h3>
+                            <p class="text-muted-light mb-4">Your identity has been verified. You can invest, deposit, and withdraw.</p>
                         </div>
-                    </form>
-                </div>
+                        @if (Model.Profile is not null)
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-aurum mb-0">
+                                    <tbody>
+                                        <tr><th class="text-muted-light">Name</th><td>@Model.Profile.FirstName @Model.Profile.LastName</td></tr>
+                                        <tr><th class="text-muted-light">Email</th><td>@Model.Profile.Email</td></tr>
+                                        <tr><th class="text-muted-light">Mobile</th><td>@Model.Profile.MobileNumber</td></tr>
+                                        <tr><th class="text-muted-light">Country</th><td>@Model.Profile.Country</td></tr>
+                                        <tr><th class="text-muted-light">Status</th><td><span class="text-gold">Approved</span></td></tr>
+                                        @if (Model.Profile.ReviewedAt is not null)
+                                        {
+                                            <tr><th class="text-muted-light">Approved On</th><td>@Model.Profile.ReviewedAt.Value.ToString("f")</td></tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                }
+                else if (Model.Profile?.Status is MyFreelance.Domain.Enums.KycStatus.Pending or MyFreelance.Domain.Enums.KycStatus.UnderReview)
+                {
+                    <div class="aurum-card">
+                        <div class="text-center py-4">
+                            <div class="display-4 text-gold mb-3"><i class="bi bi-hourglass-split"></i></div>
+                            <h3 class="text-gold mb-2">KYC Under Review</h3>
+                            <p class="text-muted-light mb-0">Your documents were submitted and are awaiting compliance review. We'll notify you when the status changes.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-top border-secondary">
+                            <p class="mb-1"><strong class="text-gold">Current status:</strong> @Model.Profile.Status</p>
+                            <p class="mb-0 text-muted-light small">Submitted @(Model.Profile.UpdatedAt?.ToString("f") ?? Model.Profile.CreatedAt.ToString("f"))</p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    if (Model.Profile?.Status == MyFreelance.Domain.Enums.KycStatus.Rejected)
+                    {
+                        <div class="disclaimer-banner mb-4">
+                            <strong>KYC Rejected.</strong>
+                            @if (!string.IsNullOrWhiteSpace(Model.Profile.RejectionReason))
+                            {
+                                <span> Reason: @Model.Profile.RejectionReason</span>
+                            }
+                            <span> Please update your details and resubmit.</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="disclaimer-banner mb-4">Complete KYC verification to unlock investing and withdrawals.</div>
+                    }
+
+                    <div class="aurum-card">
+                        <form method="post" enctype="multipart/form-data" novalidate>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label asp-for="Input.FirstName" class="form-label">First Name <span class="text-gold">*</span></label>
+                                    <input asp-for="Input.FirstName" class="form-control form-control-aurum" />
+                                    <span asp-validation-for="Input.FirstName" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Input.LastName" class="form-label">Last Name <span class="text-gold">*</span></label>
+                                    <input asp-for="Input.LastName" class="form-control form-control-aurum" />
+                                    <span asp-validation-for="Input.LastName" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Input.Email" class="form-label">Email <span class="text-gold">*</span></label>
+                                    <input asp-for="Input.Email" class="form-control form-control-aurum" readonly />
+                                    <span asp-validation-for="Input.Email" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Input.MobileNumber" class="form-label">Mobile <span class="text-gold">*</span></label>
+                                    <input asp-for="Input.MobileNumber" class="form-control form-control-aurum" />
+                                    <span asp-validation-for="Input.MobileNumber" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Input.DateOfBirth" class="form-label">Date of Birth <span class="text-gold">*</span></label>
+                                    <input asp-for="Input.DateOfBirth" type="date" class="form-control form-control-aurum" />
+                                    <span asp-validation-for="Input.DateOfBirth" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Input.Gender" class="form-label">Gender <span class="text-gold">*</span></label>
+                                    <select asp-for="Input.Gender" class="form-control form-control-aurum">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                        <option value="PreferNotToSay">Prefer not to say</option>
+                                    </select>
+                                    <span asp-validation-for="Input.Gender" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Input.Nationality" class="form-label">Nationality <span class="text-gold">*</span></label>
+                                    <input asp-for="Input.Nationality" class="form-control form-control-aurum" />
+                                    <span asp-validation-for="Input.Nationality" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Input.Country" class="form-label">Country <span class="text-gold">*</span></label>
+                                    <input asp-for="Input.Country" class="form-control form-control-aurum" />
+                                    <span asp-validation-for="Input.Country" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Input.City" class="form-label">City <span class="text-gold">*</span></label>
+                                    <input asp-for="Input.City" class="form-control form-control-aurum" />
+                                    <span asp-validation-for="Input.City" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="Input.Address" class="form-label">Address <span class="text-gold">*</span></label>
+                                    <input asp-for="Input.Address" class="form-control form-control-aurum" />
+                                    <span asp-validation-for="Input.Address" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Input.PostalCode" class="form-label">Postal Code</label>
+                                    <input asp-for="Input.PostalCode" class="form-control form-control-aurum" />
+                                    <span asp-validation-for="Input.PostalCode" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-12">
+                                    <p class="small text-muted-light mb-2">Upload clear photos or PDFs (max 10 MB each). Fields marked with * are required.</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Passport" class="form-label">Passport <span class="text-gold">*</span></label>
+                                    <input asp-for="Passport" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" />
+                                    <span asp-validation-for="Passport" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="NationalId" class="form-label">National ID <span class="text-gold">*</span></label>
+                                    <input asp-for="NationalId" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" />
+                                    <span asp-validation-for="NationalId" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Selfie" class="form-label">Selfie <span class="text-gold">*</span></label>
+                                    <input asp-for="Selfie" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png" />
+                                    <span asp-validation-for="Selfie" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="ProofOfAddress" class="form-label">Proof of Address <span class="text-gold">*</span></label>
+                                    <input asp-for="ProofOfAddress" type="file" class="form-control form-control-aurum" accept=".jpg,.jpeg,.png,.pdf" />
+                                    <span asp-validation-for="ProofOfAddress" class="field-validation-error"></span>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-aurum">Submit KYC</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                }
             </div>
         </div>
     </div>

@@ -3,11 +3,20 @@
     <nav class="nav flex-column">
         <a class="nav-link" asp-area="Admin" asp-page="/Index">Dashboard</a>
         <a class="nav-link" asp-area="Admin" asp-page="/Users/Index">Users</a>
-        <a class="nav-link" asp-area="Admin" asp-page="/Kyc/Index">KYC Review</a>
+        <a class="nav-link d-flex align-items-center justify-content-between" asp-area="Admin" asp-page="/Kyc/Index">
+            <span>KYC Review</span>
+            @await Component.InvokeAsync("AdminPendingBadge", new { section = "kyc" })
+        </a>
         <a class="nav-link" asp-area="Admin" asp-page="/Tiers/Index">Investment Tiers</a>
         <a class="nav-link" asp-area="Admin" asp-page="/Referrals/Index">Referral Config</a>
-        <a class="nav-link" asp-area="Admin" asp-page="/Deposits/Index">Deposits</a>
-        <a class="nav-link" asp-area="Admin" asp-page="/Withdrawals/Index">Withdrawals</a>
+        <a class="nav-link d-flex align-items-center justify-content-between" asp-area="Admin" asp-page="/Deposits/Index">
+            <span>Deposits</span>
+            @await Component.InvokeAsync("AdminPendingBadge", new { section = "deposits" })
+        </a>
+        <a class="nav-link d-flex align-items-center justify-content-between" asp-area="Admin" asp-page="/Withdrawals/Index">
+            <span>Withdrawals</span>
+            @await Component.InvokeAsync("AdminPendingBadge", new { section = "withdrawals" })
+        </a>
         <a class="nav-link" asp-area="Admin" asp-page="/Faq/Index">FAQ</a>
         <a class="nav-link" asp-area="Admin" asp-page="/Cms/Index">CMS</a>
         <a class="nav-link" asp-area="Admin" asp-page="/SupportChat/Index">Support Chat</a>

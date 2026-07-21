@@ -10,4 +10,5 @@ public interface IDashboardService
     Task<IReadOnlyList<ActivityFeedItemDto>> GetActivityFeedAsync(string userId, int take = 20, CancellationToken cancellationToken = default);
     Task<SmartContractDashboardDto> GetSmartContractDashboardAsync(CancellationToken cancellationToken = default);
     Task<AdminDashboardDto> GetAdminDashboardAsync(CancellationToken cancellationToken = default);
+    Task<AdminPendingCountsDto> GetAdminPendingCountsAsync(CancellationToken cancellationToken = default);
 }
