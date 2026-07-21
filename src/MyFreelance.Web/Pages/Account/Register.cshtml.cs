@@ -87,7 +87,14 @@ public class RegisterModel(
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
         // Email confirmation would be sent here via INotificationService
 
-        await notificationService.SendEventNotificationAsync(user.Id, NotificationEventType.Registration);
+        await notificationService.SendEventNotificationAsync(
+            user.Id,
+            NotificationEventType.Registration,
+            new Dictionary<string, string>
+            {
+                ["Status"] = "Completed",
+                ["Description"] = "Welcome to AurumWealth. Complete KYC and phone verification to start investing."
+            });
         await signInManager.SignInAsync(user, isPersistent: false);
 
         return RedirectToPage("/Dashboard/Index");

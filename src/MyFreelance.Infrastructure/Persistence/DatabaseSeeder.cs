@@ -133,9 +133,12 @@ public static class DatabaseSeeder
         {
             db.NotificationTemplates.AddRange(
                 new NotificationTemplate { EventType = NotificationEventType.Registration, Channel = NotificationChannel.InApp, Subject = "Welcome to AurumWealth", BodyTemplate = "Your account has been created successfully." },
-                new NotificationTemplate { EventType = NotificationEventType.Deposit, Channel = NotificationChannel.InApp, Subject = "Deposit Received", BodyTemplate = "Your deposit is being processed." },
-                new NotificationTemplate { EventType = NotificationEventType.Withdrawal, Channel = NotificationChannel.InApp, Subject = "Withdrawal Requested", BodyTemplate = "Your withdrawal request has been submitted." },
-                new NotificationTemplate { EventType = NotificationEventType.ReferralReward, Channel = NotificationChannel.InApp, Subject = "Referral Reward", BodyTemplate = "You earned a referral commission!" }
+                new NotificationTemplate { EventType = NotificationEventType.Deposit, Channel = NotificationChannel.InApp, Subject = "Deposit Received", BodyTemplate = "Your deposit of {Amount} is {Status}." },
+                new NotificationTemplate { EventType = NotificationEventType.Withdrawal, Channel = NotificationChannel.InApp, Subject = "Withdrawal Requested", BodyTemplate = "Your withdrawal of {Amount} is {Status}." },
+                new NotificationTemplate { EventType = NotificationEventType.ReferralReward, Channel = NotificationChannel.InApp, Subject = "Referral Reward", BodyTemplate = "You earned {Amount} from {ReferralName} (Level {Level})." },
+                new NotificationTemplate { EventType = NotificationEventType.KycStatusChange, Channel = NotificationChannel.InApp, Subject = "KYC Status Updated", BodyTemplate = "Your KYC status is now {Status}." },
+                new NotificationTemplate { EventType = NotificationEventType.Verification, Channel = NotificationChannel.InApp, Subject = "Verification Update", BodyTemplate = "Verification status: {Status}." },
+                new NotificationTemplate { EventType = NotificationEventType.TierUpgrade, Channel = NotificationChannel.InApp, Subject = "Investment Active", BodyTemplate = "Your {TierName} investment of {Amount} is now active." }
             );
         }
 

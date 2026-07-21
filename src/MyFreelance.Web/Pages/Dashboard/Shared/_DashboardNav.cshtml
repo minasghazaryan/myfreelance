@@ -6,7 +6,10 @@
         <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "withdrawals" ? "active" : "")" asp-page="/Dashboard/Withdrawals"><i class="bi bi-arrow-up-circle me-2"></i>Withdrawals</a>
         <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "referrals" ? "active" : "")" asp-page="/Dashboard/Referrals"><i class="bi bi-people me-2"></i>Referrals</a>
         <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "kyc" ? "active" : "")" asp-page="/Dashboard/Kyc"><i class="bi bi-person-badge me-2"></i>KYC</a>
-        <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "notifications" ? "active" : "")" asp-page="/Dashboard/Notifications"><i class="bi bi-bell me-2"></i>Notifications</a>
+        <a class="nav-link d-flex align-items-center justify-content-between @(ViewData["ActiveNav"]?.ToString() == "notifications" ? "active" : "")" asp-page="/Dashboard/Notifications">
+            <span><i class="bi bi-bell me-2"></i>Notifications</span>
+            @await Component.InvokeAsync("NotificationBadge")
+        </a>
         <a class="nav-link @(ViewData["ActiveNav"]?.ToString() == "phone" ? "active" : "")" asp-page="/Dashboard/VerifyPhone"><i class="bi bi-phone me-2"></i>Verify Phone</a>
     </nav>
 </div>

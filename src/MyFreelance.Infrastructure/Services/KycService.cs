@@ -107,8 +107,16 @@ public class KycService(
         else
             unitOfWork.Repository<KycProfile>().Update(profile);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-        await notificationService.SendEventNotificationAsync(userId, NotificationEventType.Verification, cancellationToken: cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);
+        await notificationService.SendEventNotificationAsync(
+            userId,
+            NotificationEventType.Verification,
+            new Dictionary<string, string>
+            {
+                ["Status"] = "Pending Review",
+                ["Description"] = "Your KYC documents were submitted successfully and are awaiting compliance review."
+            },
+            cancellationToken);
 
         return profile;
     }
@@ -129,7 +137,26 @@ public class KycService(
         }
 
         await db.SaveChangesAsync(cancellationToken);
-        await notificationService.SendEventNotificationAsync(profile.UserId, NotificationEventType.KycStatusChange, cancellationToken: cancellationToken);
+
+        var statusDescription = status switch
+        {
+            KycStatus.Approved => "Your identity verification has been approved. You can now invest and withdraw.",
+            KycStatus.Rejected => "Your KYC application was rejected. Please review the reason and resubmit if needed.",
+            KycStatus.UnderReview => "Your KYC application is currently under review by our compliance team.",
+            KycStatus.Pending => "Your KYC application is pending review.",
+            _ => $"Your KYC status changed to {status}."
+        };
+
+        await notificationService.SendEventNotificationAsync(
+            profile.UserId,
+            NotificationEventType.KycStatusChange,
+            new Dictionary<string, string>
+            {
+                ["Status"] = status.ToString(),
+                ["Description"] = statusDescription,
+                ["RejectionReason"] = rejectionReason ?? "—"
+            },
+            cancellationToken);
         await auditService.LogAsync(profile.UserId, adminId, status == KycStatus.Approved ? Domain.Enums.AuditAction.Approve : Domain.Enums.AuditAction.Reject, nameof(KycProfile), kycId.ToString(), $"KYC status changed to {status}", cancellationToken: cancellationToken);
     }
 

@@ -13,6 +13,7 @@ public class Notification : BaseEntity
     public bool IsRead { get; set; }
     public DateTime? SentAt { get; set; }
     public bool IsSent { get; set; }
+    public string? MetadataJson { get; set; }
 
     public ApplicationUser? User { get; set; }
 }

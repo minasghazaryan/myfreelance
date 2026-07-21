@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MyFreelance.Application.Interfaces;
 using MyFreelance.Domain.Entities;
+using MyFreelance.Domain.Enums;
 using MyFreelance.Infrastructure.Persistence;
 
 namespace MyFreelance.Infrastructure.Services;
@@ -10,6 +11,7 @@ namespace MyFreelance.Infrastructure.Services;
 public class PhoneVerificationService(
     ApplicationDbContext db,
     ISmsService smsService,
+    INotificationService notificationService,
     IConfiguration configuration,
     ILogger<PhoneVerificationService> logger) : IPhoneVerificationService
 {
@@ -64,6 +66,18 @@ public class PhoneVerificationService(
         }
 
         await db.SaveChangesAsync(cancellationToken);
+
+        await notificationService.SendEventNotificationAsync(
+            userId,
+            NotificationEventType.Verification,
+            new Dictionary<string, string>
+            {
+                ["Status"] = "Verified",
+                ["PhoneNumber"] = verification.PhoneNumber,
+                ["Description"] = "Your phone number has been verified successfully via WhatsApp/SMS OTP."
+            },
+            cancellationToken);
+
         return true;
     }
 }

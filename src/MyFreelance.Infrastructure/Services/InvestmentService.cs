@@ -70,7 +70,18 @@ public class InvestmentService(
         }, cancellationToken);
 
         await db.SaveChangesAsync(cancellationToken);
-        await notificationService.SendEventNotificationAsync(userId, NotificationEventType.TierUpgrade, cancellationToken: cancellationToken);
+        await notificationService.SendEventNotificationAsync(
+            userId,
+            NotificationEventType.TierUpgrade,
+            new Dictionary<string, string>
+            {
+                ["TierName"] = tier.Name,
+                ["Amount"] = $"${dto.Amount:N2}",
+                ["ProjectedYield"] = $"{tier.ProjectedYieldPercent:N1}%",
+                ["Status"] = "Active",
+                ["Description"] = $"Your investment in the {tier.Name} tier is now active."
+            },
+            cancellationToken);
         await auditService.LogAsync(userId, null, AuditAction.Create, nameof(Investment), investment.Id.ToString(), $"Investment created in {tier.Name}", cancellationToken: cancellationToken);
 
         return investment;

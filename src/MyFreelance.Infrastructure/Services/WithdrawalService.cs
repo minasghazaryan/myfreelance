@@ -69,7 +69,16 @@ public class WithdrawalService(
         }, cancellationToken);
 
         await db.SaveChangesAsync(cancellationToken);
-        await notificationService.SendEventNotificationAsync(userId, NotificationEventType.Withdrawal, cancellationToken: cancellationToken);
+        await notificationService.SendEventNotificationAsync(
+            userId,
+            NotificationEventType.Withdrawal,
+            new Dictionary<string, string>
+            {
+                ["Amount"] = $"${dto.Amount:N2}",
+                ["Status"] = "Pending",
+                ["Description"] = "Your withdrawal request has been submitted and is awaiting admin approval."
+            },
+            cancellationToken);
 
         return withdrawal;
     }

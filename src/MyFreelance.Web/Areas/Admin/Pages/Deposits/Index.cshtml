@@ -8,10 +8,50 @@
             <partial name="Shared/_AdminNav" />
             <div class="col-lg-10 p-4">
                 <h2 class="text-gold mb-4">Deposit Management</h2>
-                <table class="table table-aurum">
-                    <thead><tr><th>User</th><th>Amount</th><th>Status</th><th>Date</th><th></th></tr></thead>
-                    <tbody>@foreach (var d in Model.Deposits) { <tr><td>@d.UserEmail</td><td>$@d.Amount.ToString("N2")</td><td>@d.Status</td><td>@d.CreatedAt.ToString("g")</td><td>@if(d.Status=="Pending"){<form method="post" asp-page-handler="Approve"><input type="hidden" name="id" value="@d.Id" /><button class="btn btn-sm btn-success">Confirm</button></form>}</td></tr> }</tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-aurum">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Transaction Hash</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var d in Model.Deposits)
+                            {
+                                <tr>
+                                    <td>@d.UserEmail</td>
+                                    <td>$@d.Amount.ToString("N2")</td>
+                                    <td>
+                                        @if (string.IsNullOrWhiteSpace(d.TransactionHash))
+                                        {
+                                            <span class="text-muted-light">—</span>
+                                        }
+                                        else
+                                        {
+                                            <code class="small" title="@d.TransactionHash">@d.TransactionHash</code>
+                                        }
+                                    </td>
+                                    <td>@d.Status</td>
+                                    <td>@d.CreatedAt.ToString("g")</td>
+                                    <td>
+                                        @if (d.Status == "Pending")
+                                        {
+                                            <form method="post" asp-page-handler="Approve">
+                                                <input type="hidden" name="id" value="@d.Id" />
+                                                <button class="btn btn-sm btn-success">Confirm</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

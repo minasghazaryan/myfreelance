@@ -45,7 +45,17 @@ public class DepositService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         await auditService.LogAsync(userId, null, AuditAction.Deposit, nameof(Deposit), deposit.Id.ToString(), $"Deposit initiated: {dto.Amount} {network.Currency}", cancellationToken: cancellationToken);
-        await notificationService.SendEventNotificationAsync(userId, NotificationEventType.Deposit, cancellationToken: cancellationToken);
+        await notificationService.SendEventNotificationAsync(
+            userId,
+            NotificationEventType.Deposit,
+            new Dictionary<string, string>
+            {
+                ["Amount"] = $"${dto.Amount:N2}",
+                ["Status"] = "Pending",
+                ["Description"] = "Your deposit has been submitted and is awaiting admin confirmation.",
+                ["TransactionHash"] = dto.TransactionHash ?? "—"
+            },
+            cancellationToken);
 
         return deposit;
     }

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MyFreelance.Application.DTOs.Referrals;
 using MyFreelance.Application.Interfaces;
 using MyFreelance.Domain.Entities;
+using MyFreelance.Domain.Enums;
 using MyFreelance.Infrastructure.Persistence;
 
 namespace MyFreelance.Infrastructure.Services;
@@ -26,6 +27,7 @@ public class ReferralService(ApplicationDbContext db, INotificationService notif
         var configs = await db.ReferralConfigs.Where(c => c.IsActive).OrderBy(c => c.Level).ToListAsync(cancellationToken);
         if (configs.Count == 0) return;
 
+        var sourceUser = await db.Users.FindAsync([sourceUserId], cancellationToken);
         var currentUserId = sourceUserId;
         foreach (var config in configs)
         {
@@ -54,7 +56,21 @@ public class ReferralService(ApplicationDbContext db, INotificationService notif
                 wallet.AvailableBalance += commissionAmount;
             }
 
-            await notificationService.SendEventNotificationAsync(user.ReferredByUserId, Domain.Enums.NotificationEventType.ReferralReward, cancellationToken: cancellationToken);
+            await notificationService.SendEventNotificationAsync(
+                user.ReferredByUserId,
+                NotificationEventType.ReferralReward,
+                new Dictionary<string, string>
+                {
+                    ["Amount"] = $"${commissionAmount:N2}",
+                    ["ReferralName"] = sourceUser?.FullName ?? "Referral",
+                    ["ReferralEmail"] = sourceUser?.Email ?? "—",
+                    ["Level"] = config.Level.ToString(),
+                    ["Percentage"] = $"{config.Percentage:N1}%",
+                    ["SourceAmount"] = $"${sourceAmount:N2}",
+                    ["Status"] = "Paid",
+                    ["Description"] = $"Level {config.Level} commission from {sourceUser?.FullName ?? "a referral"}'s confirmed deposit."
+                },
+                cancellationToken);
             currentUserId = user.ReferredByUserId;
         }
 
