@@ -97,6 +97,17 @@ public class DepositService(
 
         await referralService.ProcessReferralCommissionsAsync(deposit.UserId, deposit.Amount, transaction.Id, cancellationToken);
         await auditService.LogAsync(deposit.UserId, adminId, AuditAction.Approve, nameof(Deposit), depositId.ToString(), "Deposit confirmed", cancellationToken: cancellationToken);
+        await notificationService.SendEventNotificationAsync(
+            deposit.UserId,
+            NotificationEventType.Deposit,
+            new Dictionary<string, string>
+            {
+                ["Amount"] = $"${deposit.Amount:N2}",
+                ["Status"] = "Confirmed",
+                ["Description"] = "Your deposit has been confirmed and added to your available balance.",
+                ["TransactionHash"] = deposit.TransactionHash ?? "—"
+            },
+            cancellationToken);
     }
 
     public async Task<IReadOnlyList<DepositDto>> GetUserDepositsAsync(string userId, CancellationToken cancellationToken = default)
