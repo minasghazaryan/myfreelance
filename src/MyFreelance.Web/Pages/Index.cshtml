@@ -377,11 +377,6 @@
     </div>
 </section>
 
-@if (Model.ChatSettings?.IsEnabled == true && Model.ChatSettings.ShowOnLanding)
-{
-    @Html.Raw(Model.ChatSettings.ScriptContent)
-}
-
 @section Scripts {
     <script>
         const sc = document.getElementById('strategyChart');

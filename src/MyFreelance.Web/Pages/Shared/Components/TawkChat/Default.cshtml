@@ -1,0 +1,37 @@
+@model MyFreelance.Web.ViewComponents.TawkChatViewModel
+@using System.Text.Json
+
+@if (Model.Visitor is not null)
+{
+    <script>
+        window.Tawk_API = window.Tawk_API || {};
+        window.Tawk_API.visitor = {
+            name: @Html.Raw(JsonSerializer.Serialize(Model.Visitor.Name)),
+            email: @Html.Raw(JsonSerializer.Serialize(Model.Visitor.Email))
+        };
+
+        (function () {
+            var existingOnLoad = window.Tawk_API.onLoad;
+            window.Tawk_API.onLoad = function () {
+                if (typeof existingOnLoad === "function") {
+                    existingOnLoad();
+                }
+
+                var attributes = {
+                    name: @Html.Raw(JsonSerializer.Serialize(Model.Visitor.Name)),
+                    email: @Html.Raw(JsonSerializer.Serialize(Model.Visitor.Email)),
+                    "user-id": @Html.Raw(JsonSerializer.Serialize(Model.Visitor.UserId))
+                };
+
+                @if (!string.IsNullOrWhiteSpace(Model.Visitor.PhoneNumber))
+                {
+                    <text>attributes.phone = @Html.Raw(JsonSerializer.Serialize(Model.Visitor.PhoneNumber));</text>
+                }
+
+                window.Tawk_API.setAttributes(attributes, function () { });
+            };
+        })();
+    </script>
+}
+
+@Html.Raw(Model.ScriptContent)

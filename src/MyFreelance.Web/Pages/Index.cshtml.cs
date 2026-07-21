@@ -19,7 +19,6 @@ public class IndexModel(
     public IReadOnlyList<InvestmentTierDto> Tiers { get; set; } = [];
     public IReadOnlyList<ReferralConfigDto> ReferralLevels { get; set; } = [];
     public IReadOnlyList<FaqItemDto> Faqs { get; set; } = [];
-    public SupportChatSettingsDto? ChatSettings { get; set; }
 
     public async Task OnGetAsync()
     {
@@ -27,7 +26,6 @@ public class IndexModel(
         Tiers = await investmentService.GetActiveTiersAsync();
         ReferralLevels = await referralService.GetReferralConfigAsync();
         Faqs = await cmsService.GetPublishedFaqsAsync();
-        ChatSettings = await cmsService.GetSupportChatSettingsAsync();
     }
 
     public async Task<IActionResult> OnPostContactAsync(string name, string email, string subject, string message)
