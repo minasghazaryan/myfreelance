@@ -11,17 +11,53 @@
                 <div class="aurum-card mb-4">
                     <h5 class="text-gold">Add Tier</h5>
                     <form method="post" class="row g-3 mt-2">
-                        <div class="col-md-3"><input asp-for="Input.Name" class="form-control form-control-aurum" placeholder="Name" required /></div>
-                        <div class="col-md-2"><input asp-for="Input.ProjectedYieldPercent" type="number" step="0.1" class="form-control form-control-aurum" placeholder="Yield %" required /></div>
-                        <div class="col-md-2"><input asp-for="Input.MinInvestment" type="number" class="form-control form-control-aurum" placeholder="Min" required /></div>
-                        <div class="col-md-2"><input asp-for="Input.MaxInvestment" type="number" class="form-control form-control-aurum" placeholder="Max" required /></div>
-                        <div class="col-md-3"><input asp-for="Input.Description" class="form-control form-control-aurum" placeholder="Description" /></div>
+                        <div class="col-md-6 col-lg-2">
+                            <label asp-for="Input.Name" class="form-label small text-muted-light">Name</label>
+                            <input asp-for="Input.Name" class="form-control form-control-aurum" placeholder="e.g. Platinum" required />
+                        </div>
+                        <div class="col-md-6 col-lg-2">
+                            <label asp-for="Input.ProjectedYieldPercent" class="form-label small text-muted-light">Yield %</label>
+                            <input asp-for="Input.ProjectedYieldPercent" type="number" step="0.1" min="0" class="form-control form-control-aurum" placeholder="10" required />
+                        </div>
+                        <div class="col-md-6 col-lg-2">
+                            <label asp-for="Input.MinInvestment" class="form-label small text-muted-light">Min ($)</label>
+                            <input asp-for="Input.MinInvestment" type="number" step="0.01" min="0" class="form-control form-control-aurum" placeholder="100" required />
+                        </div>
+                        <div class="col-md-6 col-lg-2">
+                            <label asp-for="Input.MaxInvestment" class="form-label small text-muted-light">Max ($)</label>
+                            <input asp-for="Input.MaxInvestment" type="number" step="0.01" min="0" class="form-control form-control-aurum" placeholder="5000" required />
+                        </div>
+                        <div class="col-md-6 col-lg-2">
+                            <label asp-for="Input.RiskLevel" class="form-label small text-muted-light">Risk</label>
+                            <select asp-for="Input.RiskLevel" class="form-control form-control-aurum" asp-items="Html.GetEnumSelectList<RiskLevel>()" required></select>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.Description" class="form-label small text-muted-light">Description</label>
+                            <textarea asp-for="Input.Description" class="form-control form-control-aurum" rows="2" placeholder="Short tier description for investors"></textarea>
+                        </div>
                         <div class="col-12"><button type="submit" class="btn btn-aurum">Create Tier</button></div>
                     </form>
                 </div>
                 <table class="table table-aurum">
                     <thead><tr><th>Name</th><th>Yield</th><th>Min</th><th>Max</th><th>Risk</th><th></th></tr></thead>
-                    <tbody>@foreach (var t in Model.Tiers) { <tr><td>@t.Name</td><td>@t.ProjectedYieldPercent.ToString("0.##")%</td><td>$@t.MinInvestment</td><td>$@t.MaxInvestment</td><td>@t.RiskLevel</td><td><form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@t.Id" /><button class="btn btn-sm btn-danger">Delete</button></form></td></tr> }</tbody>
+                    <tbody>
+                    @foreach (var t in Model.Tiers)
+                    {
+                        <tr>
+                            <td>@t.Name</td>
+                            <td>@t.ProjectedYieldPercent.ToString("0.##")%</td>
+                            <td>$@t.MinInvestment.ToString("N0")</td>
+                            <td>$@t.MaxInvestment.ToString("N0")</td>
+                            <td>@(Enum.IsDefined(typeof(RiskLevel), t.RiskLevel) ? t.RiskLevel.ToString() : "Low")</td>
+                            <td>
+                                <form method="post" asp-page-handler="Delete">
+                                    <input type="hidden" name="id" value="@t.Id" />
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
                 </table>
             </div>
         </div>
