@@ -19,6 +19,7 @@ public static class DatabaseSeeder
         var logger = services.GetRequiredService<ILogger<ApplicationDbContext>>();
 
         await db.Database.MigrateAsync();
+        await SyncWalletYieldEarnedAsync(db);
 
         foreach (var role in new[] { AppRoles.Admin, AppRoles.Investor, AppRoles.Compliance, AppRoles.Support })
         {
@@ -154,5 +155,23 @@ public static class DatabaseSeeder
 
         await db.SaveChangesAsync();
         logger.LogInformation("Database seed completed.");
+    }
+
+    private static async Task SyncWalletYieldEarnedAsync(ApplicationDbContext db)
+    {
+        var wallets = await db.UserWallets.ToListAsync();
+        foreach (var wallet in wallets)
+        {
+            var actualYield = await db.Transactions
+                .Where(t => t.UserId == wallet.UserId
+                    && t.Type == TransactionType.YieldCredit
+                    && t.Status == TransactionStatus.Completed)
+                .SumAsync(t => t.Amount);
+
+            if (wallet.ProjectedEarnings != actualYield)
+                wallet.ProjectedEarnings = actualYield;
+        }
+
+        await db.SaveChangesAsync();
     }
 }

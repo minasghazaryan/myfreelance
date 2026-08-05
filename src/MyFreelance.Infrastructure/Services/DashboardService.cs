@@ -15,7 +15,18 @@ public class DashboardService(ApplicationDbContext db) : IDashboardService
         if (wallet is null)
             return new PortfolioOverviewDto(0, 0, 0, 0, 0);
 
-        return new PortfolioOverviewDto(wallet.CurrentBalance, wallet.InvestedCapital, wallet.ProjectedEarnings, wallet.ReferralEarnings, wallet.AvailableBalance);
+        var yieldEarned = await db.Transactions
+            .Where(t => t.UserId == userId
+                && t.Type == TransactionType.YieldCredit
+                && t.Status == TransactionStatus.Completed)
+            .SumAsync(t => t.Amount, cancellationToken);
+
+        return new PortfolioOverviewDto(
+            wallet.CurrentBalance,
+            wallet.InvestedCapital,
+            yieldEarned,
+            wallet.ReferralEarnings,
+            wallet.AvailableBalance);
     }
 
     public async Task<PortfolioAnalyticsDto> GetPortfolioAnalyticsAsync(string userId, CancellationToken cancellationToken = default)
