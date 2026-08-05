@@ -28,6 +28,8 @@ public static class DependencyInjection
         services.AddScoped<IDepositService, DepositService>();
         services.AddScoped<IWithdrawalService, WithdrawalService>();
         services.AddScoped<IInvestmentService, InvestmentService>();
+        services.AddScoped<IYieldAccrualService, YieldAccrualService>();
+        services.AddHostedService<Background.YieldAccrualBackgroundService>();
         services.AddScoped<IKycService, KycService>();
         services.AddScoped<IReferralService, ReferralService>();
         services.AddScoped<INotificationService, NotificationService>();

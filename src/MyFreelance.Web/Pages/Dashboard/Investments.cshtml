@@ -17,7 +17,8 @@
                         <div class="col-md-4">
                             <div class="aurum-card">
                                 <h5>@tier.Name</h5>
-                                <p class="tier-yield">@tier.ProjectedYieldPercent% <small class="text-muted-light" style="font-size:0.5em">projected</small></p>
+                                <p class="tier-yield">@tier.ProjectedYieldPercent% <small class="text-muted-light" style="font-size:0.5em">over 30 days</small></p>
+                                <p class="small text-muted-light mb-0">~@((tier.ProjectedYieldPercent / 30m).ToString("N2"))% daily to available balance</p>
                                 <form method="post" class="mt-3">
                                     <input type="hidden" name="TierId" value="@tier.Id" />
                                     <input type="number" name="Amount" class="form-control form-control-aurum mb-2" placeholder="Amount (USDT)" step="0.01" min="@tier.MinInvestment" max="@tier.MaxInvestment" required />
@@ -31,11 +32,19 @@
                 <div class="aurum-card">
                     <h5 class="text-gold mb-3">Your Investments</h5>
                     <table class="table table-aurum">
-                        <thead><tr><th>Tier</th><th>Amount</th><th>Projected Yield</th><th>Status</th><th>Date</th></tr></thead>
+                        <thead><tr><th>Tier</th><th>Amount</th><th>Yield</th><th>Progress</th><th>Earned</th><th>Status</th><th>Date</th></tr></thead>
                         <tbody>
                         @foreach (var inv in Model.Investments)
                         {
-                            <tr><td>@inv.TierName</td><td>$@inv.Amount.ToString("N2")</td><td>@inv.ProjectedYieldPercent%</td><td>@inv.Status</td><td>@inv.CreatedAt.ToString("d")</td></tr>
+                            <tr>
+                                <td>@inv.TierName</td>
+                                <td>$@inv.Amount.ToString("N2")</td>
+                                <td>@inv.ProjectedYieldPercent%</td>
+                                <td>@inv.AccrualDaysCompleted / 30 days</td>
+                                <td>$@inv.AccruedAmount.ToString("N2")</td>
+                                <td>@inv.Status</td>
+                                <td>@inv.CreatedAt.ToString("d")</td>
+                            </tr>
                         }
                         </tbody>
                     </table>

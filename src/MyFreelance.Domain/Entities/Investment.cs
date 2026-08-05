@@ -9,6 +9,9 @@ public class Investment : BaseEntity
     public Guid InvestmentTierId { get; set; }
     public decimal Amount { get; set; }
     public decimal ProjectedYieldPercent { get; set; }
+    public decimal AccruedAmount { get; set; }
+    public int AccrualDaysCompleted { get; set; }
+    public DateTime? LastAccrualDate { get; set; }
     public InvestmentStatus Status { get; set; } = InvestmentStatus.Active;
     public DateTime? MaturedAt { get; set; }
 

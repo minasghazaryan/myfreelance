@@ -12,7 +12,8 @@ public class InvestmentService(
     ApplicationDbContext db,
     IUnitOfWork unitOfWork,
     INotificationService notificationService,
-    IAuditService auditService) : IInvestmentService
+    IAuditService auditService,
+    IYieldAccrualService yieldAccrualService) : IInvestmentService
 {
     public async Task<IReadOnlyList<InvestmentTierDto>> GetActiveTiersAsync(CancellationToken cancellationToken = default)
     {
@@ -45,7 +46,6 @@ public class InvestmentService(
 
         wallet.AvailableBalance -= dto.Amount;
         wallet.InvestedCapital += dto.Amount;
-        wallet.ProjectedEarnings += dto.Amount * (tier.ProjectedYieldPercent / 100m);
 
         var investment = new Investment
         {
@@ -70,6 +70,10 @@ public class InvestmentService(
         }, cancellationToken);
 
         await db.SaveChangesAsync(cancellationToken);
+        await yieldAccrualService.AccrueInvestmentForDateAsync(
+            investment.Id,
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            cancellationToken);
         await notificationService.SendEventNotificationAsync(
             userId,
             NotificationEventType.TierUpgrade,
@@ -93,7 +97,15 @@ public class InvestmentService(
             .Include(i => i.Tier)
             .Where(i => i.UserId == userId)
             .OrderByDescending(i => i.CreatedAt)
-            .Select(i => new InvestmentDto(i.Id, i.Tier.Name, i.Amount, i.ProjectedYieldPercent, i.Status.ToString(), i.CreatedAt))
+            .Select(i => new InvestmentDto(
+                i.Id,
+                i.Tier.Name,
+                i.Amount,
+                i.ProjectedYieldPercent,
+                i.Status.ToString(),
+                i.CreatedAt,
+                i.AccrualDaysCompleted,
+                i.AccruedAmount))
             .ToListAsync(cancellationToken);
     }
 }

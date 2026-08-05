@@ -69,6 +69,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         {
             entity.Property(i => i.Amount).HasPrecision(18, 8);
             entity.Property(i => i.ProjectedYieldPercent).HasPrecision(8, 4);
+            entity.Property(i => i.AccruedAmount).HasPrecision(18, 8);
         });
 
         builder.Entity<DepositNetwork>(entity =>
