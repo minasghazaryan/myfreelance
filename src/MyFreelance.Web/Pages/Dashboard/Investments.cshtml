@@ -11,6 +11,13 @@
                 @if (Model.ErrorMessage != null) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
                 @if (Model.SuccessMessage != null) { <div class="alert alert-success">@Model.SuccessMessage</div> }
 
+                @if (Model.HasActiveInvestment)
+                {
+                    <div class="disclaimer-banner mb-4">
+                        <i class="bi bi-info-circle me-2"></i>You already have an active investment. Only one plan can run at a time; your current plan continues automatically after each 30-day cycle.
+                    </div>
+                }
+
                 <div class="row g-4 mb-4">
                     @foreach (var tier in Model.Tiers)
                     {
@@ -19,11 +26,18 @@
                                 <h5>@tier.Name</h5>
                                 <p class="tier-yield">@tier.ProjectedYieldPercent% <small class="text-muted-light" style="font-size:0.5em">over 30 days</small></p>
                                 <p class="small text-muted-light mb-0">~@((tier.ProjectedYieldPercent / 30m).ToString("N2"))% daily to available balance</p>
-                                <form method="post" class="mt-3">
-                                    <input type="hidden" name="TierId" value="@tier.Id" />
-                                    <input type="number" name="Amount" class="form-control form-control-aurum mb-2" placeholder="Amount (USDT)" step="0.01" min="@tier.MinInvestment" max="@tier.MaxInvestment" required />
-                                    <button type="submit" class="btn btn-aurum w-100">Invest</button>
-                                </form>
+                                @if (Model.HasActiveInvestment)
+                                {
+                                    <button type="button" class="btn btn-aurum w-100 mt-3" disabled>Invest</button>
+                                }
+                                else
+                                {
+                                    <form method="post" class="mt-3">
+                                        <input type="hidden" name="TierId" value="@tier.Id" />
+                                        <input type="number" name="Amount" class="form-control form-control-aurum mb-2" placeholder="Amount (USDT)" step="0.01" min="@tier.MinInvestment" max="@tier.MaxInvestment" required />
+                                        <button type="submit" class="btn btn-aurum w-100">Invest</button>
+                                    </form>
+                                }
                             </div>
                         </div>
                     }

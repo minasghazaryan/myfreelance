@@ -44,6 +44,13 @@ public class InvestmentService(
         if (wallet.AvailableBalance < dto.Amount)
             throw new InvalidOperationException("Insufficient available balance.");
 
+        var hasActiveInvestment = await db.Investments.AnyAsync(
+            i => i.UserId == userId && i.Status == InvestmentStatus.Active,
+            cancellationToken);
+
+        if (hasActiveInvestment)
+            throw new InvalidOperationException("You already have an active investment. Wait until it completes its 30-day cycle before starting a new one.");
+
         wallet.AvailableBalance -= dto.Amount;
         wallet.InvestedCapital += dto.Amount;
 

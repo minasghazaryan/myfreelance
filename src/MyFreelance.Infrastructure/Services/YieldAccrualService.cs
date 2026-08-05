@@ -31,55 +31,89 @@ public class YieldAccrualService(
 
     public async Task AccrueInvestmentForDateAsync(Guid investmentId, DateOnly accrualDate, CancellationToken cancellationToken = default)
     {
-        var investment = await db.Investments
-            .Include(i => i.User)
-            .Include(i => i.Tier)
-            .FirstOrDefaultAsync(i => i.Id == investmentId, cancellationToken);
-
-        if (investment is null
-            || investment.Status != InvestmentStatus.Active
-            || investment.User.IsSuspended
-            || investment.AccrualDaysCompleted >= InvestmentConstants.PlanDurationDays)
-        {
-            return;
-        }
-
         var accrualDateUtc = accrualDate.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        if (investment.LastAccrualDate.HasValue
-            && DateOnly.FromDateTime(investment.LastAccrualDate.Value) >= accrualDate)
+        var nextDayUtc = accrualDateUtc.AddDays(1);
+
+        await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+        try
         {
-            return;
+            var investment = await db.Investments
+                .Include(i => i.User)
+                .Include(i => i.Tier)
+                .FirstOrDefaultAsync(i => i.Id == investmentId, cancellationToken);
+
+            if (investment is null
+                || investment.Status != InvestmentStatus.Active
+                || investment.User.IsSuspended
+                || investment.AccrualDaysCompleted >= InvestmentConstants.PlanDurationDays)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return;
+            }
+
+            if (investment.LastAccrualDate.HasValue
+                && DateOnly.FromDateTime(investment.LastAccrualDate.Value) >= accrualDate)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return;
+            }
+
+            var alreadyCredited = await db.Transactions.AnyAsync(
+                t => t.Type == TransactionType.YieldCredit
+                    && t.Status == TransactionStatus.Completed
+                    && t.ReferenceId == investmentId.ToString()
+                    && t.CreatedAt >= accrualDateUtc
+                    && t.CreatedAt < nextDayUtc,
+                cancellationToken);
+
+            if (alreadyCredited)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return;
+            }
+
+            var wallet = await db.UserWallets.FirstOrDefaultAsync(w => w.UserId == investment.UserId, cancellationToken);
+            if (wallet is null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return;
+            }
+
+            var dailyYield = InvestmentConstants.CalculateDailyYield(investment.Amount, investment.ProjectedYieldPercent);
+            if (dailyYield <= 0)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return;
+            }
+
+            wallet.AvailableBalance += dailyYield;
+            wallet.ProjectedEarnings += dailyYield;
+            investment.AccruedAmount += dailyYield;
+            investment.AccrualDaysCompleted += 1;
+            investment.LastAccrualDate = accrualDateUtc;
+
+            await db.Transactions.AddAsync(new Transaction
+            {
+                UserId = investment.UserId,
+                Type = TransactionType.YieldCredit,
+                Status = TransactionStatus.Completed,
+                Amount = dailyYield,
+                BalanceAfter = wallet.AvailableBalance,
+                Description = $"Daily yield from {investment.Tier.Name} plan (${investment.Amount:N2}, day {investment.AccrualDaysCompleted}/{InvestmentConstants.PlanDurationDays})",
+                ReferenceId = investment.Id.ToString()
+            }, cancellationToken);
+
+            if (investment.AccrualDaysCompleted >= InvestmentConstants.PlanDurationDays)
+                await AutoReinvestAsync(investment, wallet, cancellationToken);
+
+            await db.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
         }
-
-        var wallet = await db.UserWallets.FirstOrDefaultAsync(w => w.UserId == investment.UserId, cancellationToken);
-        if (wallet is null)
-            return;
-
-        var dailyYield = InvestmentConstants.CalculateDailyYield(investment.Amount, investment.ProjectedYieldPercent);
-        if (dailyYield <= 0)
-            return;
-
-        wallet.AvailableBalance += dailyYield;
-        wallet.ProjectedEarnings += dailyYield;
-        investment.AccruedAmount += dailyYield;
-        investment.AccrualDaysCompleted += 1;
-        investment.LastAccrualDate = accrualDateUtc;
-
-        await db.Transactions.AddAsync(new Transaction
+        catch
         {
-            UserId = investment.UserId,
-            Type = TransactionType.YieldCredit,
-            Status = TransactionStatus.Completed,
-            Amount = dailyYield,
-            BalanceAfter = wallet.AvailableBalance,
-            Description = $"Daily yield from {investment.Tier.Name} plan (day {investment.AccrualDaysCompleted}/{InvestmentConstants.PlanDurationDays})",
-            ReferenceId = investment.Id.ToString()
-        }, cancellationToken);
-
-        if (investment.AccrualDaysCompleted >= InvestmentConstants.PlanDurationDays)
-            await AutoReinvestAsync(investment, wallet, cancellationToken);
-
-        await db.SaveChangesAsync(cancellationToken);
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     private async Task AutoReinvestAsync(Investment investment, UserWallet wallet, CancellationToken cancellationToken)

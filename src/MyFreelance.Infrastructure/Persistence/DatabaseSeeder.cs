@@ -47,11 +47,12 @@ public static class DatabaseSeeder
 
         if (!await db.InvestmentTiers.AnyAsync())
         {
-            db.InvestmentTiers.AddRange(
-                new InvestmentTier { Name = "Bronze", Description = "Entry level tier with conservative allocation and lower projected yield.", RiskLevel = RiskLevel.Low, ProjectedYieldPercent = 8.5m, MinInvestment = 100, MaxInvestment = 5000, SortOrder = 1, AccentColor = "#CD7F32", IconClass = "bi-award" },
-                new InvestmentTier { Name = "Silver", Description = "Balanced portfolio with moderate projected yield and diversified strategies.", RiskLevel = RiskLevel.Moderate, ProjectedYieldPercent = 14.2m, MinInvestment = 5000, MaxInvestment = 50000, SortOrder = 2, AccentColor = "#C0C0C0", IconClass = "bi-gem" },
-                new InvestmentTier { Name = "Gold", Description = "Advanced allocation with higher projected yield and dynamic rebalancing.", RiskLevel = RiskLevel.High, ProjectedYieldPercent = 22.8m, MinInvestment = 50000, MaxInvestment = 500000, SortOrder = 3, AccentColor = "#D4AF37", IconClass = "bi-trophy" }
-            );
+            db.InvestmentTiers.AddRange(CreateDefaultInvestmentTiers());
+        }
+        else if (!await db.SiteSettings.AnyAsync(s => s.Key == "Tiers.Defaults.v2"))
+        {
+            await SyncInvestmentTiersAsync(db);
+            db.SiteSettings.Add(new SiteSettings { Key = "Tiers.Defaults.v2", Value = "true", Category = "System" });
         }
 
         if (!await db.ReferralConfigs.AnyAsync())
@@ -170,6 +171,38 @@ public static class DatabaseSeeder
 
             if (wallet.ProjectedEarnings != actualYield)
                 wallet.ProjectedEarnings = actualYield;
+        }
+
+        await db.SaveChangesAsync();
+    }
+
+    private static InvestmentTier[] CreateDefaultInvestmentTiers() =>
+    [
+        new InvestmentTier { Name = "Bronze", Description = "Entry level tier with conservative allocation and lower projected yield.", RiskLevel = RiskLevel.Low, ProjectedYieldPercent = 10m, MinInvestment = 100, MaxInvestment = 500, SortOrder = 1, AccentColor = "#CD7F32", IconClass = "bi-award" },
+        new InvestmentTier { Name = "Silver", Description = "Balanced portfolio with moderate projected yield and diversified strategies.", RiskLevel = RiskLevel.Moderate, ProjectedYieldPercent = 15m, MinInvestment = 500, MaxInvestment = 5000, SortOrder = 2, AccentColor = "#C0C0C0", IconClass = "bi-gem" },
+        new InvestmentTier { Name = "Gold", Description = "Advanced allocation with higher projected yield and dynamic rebalancing.", RiskLevel = RiskLevel.High, ProjectedYieldPercent = 25m, MinInvestment = 5000, MaxInvestment = 20000, SortOrder = 3, AccentColor = "#D4AF37", IconClass = "bi-trophy" }
+    ];
+
+    private static async Task SyncInvestmentTiersAsync(ApplicationDbContext db)
+    {
+        foreach (var defaults in CreateDefaultInvestmentTiers())
+        {
+            var tier = await db.InvestmentTiers.FirstOrDefaultAsync(t => t.Name == defaults.Name);
+            if (tier is null)
+            {
+                db.InvestmentTiers.Add(defaults);
+                continue;
+            }
+
+            tier.ProjectedYieldPercent = defaults.ProjectedYieldPercent;
+            tier.MinInvestment = defaults.MinInvestment;
+            tier.MaxInvestment = defaults.MaxInvestment;
+            tier.RiskLevel = defaults.RiskLevel;
+            tier.SortOrder = defaults.SortOrder;
+            tier.Description = defaults.Description;
+            tier.AccentColor = defaults.AccentColor;
+            tier.IconClass = defaults.IconClass;
+            tier.IsActive = true;
         }
 
         await db.SaveChangesAsync();
