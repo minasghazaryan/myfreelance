@@ -21,7 +21,7 @@
                 </div>
                 <table class="table table-aurum">
                     <thead><tr><th>Name</th><th>Yield</th><th>Min</th><th>Max</th><th>Risk</th><th></th></tr></thead>
-                    <tbody>@foreach (var t in Model.Tiers) { <tr><td>@t.Name</td><td>@t.ProjectedYieldPercent%</td><td>$@t.MinInvestment</td><td>$@t.MaxInvestment</td><td>@t.RiskLevel</td><td><form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@t.Id" /><button class="btn btn-sm btn-danger">Delete</button></form></td></tr> }</tbody>
+                    <tbody>@foreach (var t in Model.Tiers) { <tr><td>@t.Name</td><td>@t.ProjectedYieldPercent.ToString("0.##")%</td><td>$@t.MinInvestment</td><td>$@t.MaxInvestment</td><td>@t.RiskLevel</td><td><form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@t.Id" /><button class="btn btn-sm btn-danger">Delete</button></form></td></tr> }</tbody>
                 </table>
             </div>
         </div>

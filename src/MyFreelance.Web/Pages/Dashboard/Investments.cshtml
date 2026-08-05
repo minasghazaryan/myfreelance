@@ -24,8 +24,8 @@
                         <div class="col-md-4">
                             <div class="aurum-card">
                                 <h5>@tier.Name</h5>
-                                <p class="tier-yield">@tier.ProjectedYieldPercent% <small class="text-muted-light" style="font-size:0.5em">over 30 days</small></p>
-                                <p class="small text-muted-light mb-0">~@((tier.ProjectedYieldPercent / 30m).ToString("N2"))% daily to available balance</p>
+                                <p class="tier-yield">@tier.ProjectedYieldPercent.ToString("0.##")% <small class="text-muted-light" style="font-size:0.5em">over 30 days</small></p>
+                                <p class="small text-muted-light mb-0">~@((tier.ProjectedYieldPercent / 30m).ToString("0.##"))% daily to available balance</p>
                                 @if (Model.HasActiveInvestment)
                                 {
                                     <button type="button" class="btn btn-aurum w-100 mt-3" disabled>Invest</button>
@@ -53,7 +53,7 @@
                             <tr>
                                 <td>@inv.TierName</td>
                                 <td>$@inv.Amount.ToString("N2")</td>
-                                <td>@inv.ProjectedYieldPercent%</td>
+                                <td>@inv.ProjectedYieldPercent.ToString("0.##")%</td>
                                 <td>@inv.AccrualDaysCompleted / 30 days</td>
                                 <td>$@inv.AccruedAmount.ToString("N2")</td>
                                 <td>@inv.Status</td>
