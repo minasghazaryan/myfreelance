@@ -60,7 +60,7 @@ public class IndexModel(IWalletService walletService, UserManager<Domain.Entitie
             TempData["SuccessMessage"] = $"Bonus of ${Input.Amount:N2} credited to the client's available balance.";
             return RedirectToPage();
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
         {
             TempData["ErrorMessage"] = ex.Message;
             return RedirectToPage();

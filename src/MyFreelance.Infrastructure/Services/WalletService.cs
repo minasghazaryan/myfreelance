@@ -75,18 +75,19 @@ public class WalletService(
     }
 
     public async Task<IReadOnlyList<BonusAwardDto>> GetRecentBonusesAsync(int take = 50, CancellationToken cancellationToken = default)
-        => await db.Transactions
-            .Include(t => t.User)
-            .Where(t => t.Type == TransactionType.Bonus)
-            .OrderByDescending(t => t.CreatedAt)
-            .Take(take)
-            .Select(t => new BonusAwardDto(
+        => await (
+            from t in db.Transactions
+            join u in db.Users on t.UserId equals u.Id
+            where t.Type == TransactionType.Bonus
+            orderby t.CreatedAt descending
+            select new BonusAwardDto(
                 t.Id,
-                t.User.Email!,
-                t.User.FirstName + " " + t.User.LastName,
+                u.Email!,
+                u.FirstName + " " + u.LastName,
                 t.Amount,
                 t.Description,
                 t.CreatedAt))
+            .Take(take)
             .ToListAsync(cancellationToken);
 
     public async Task<IReadOnlyList<InvestorOptionDto>> GetInvestorOptionsAsync(CancellationToken cancellationToken = default)
