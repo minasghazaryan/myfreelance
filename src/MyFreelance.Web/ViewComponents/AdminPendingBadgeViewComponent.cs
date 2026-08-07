@@ -11,7 +11,8 @@ public class AdminPendingBadgeViewComponent(IDashboardService dashboardService) 
 
     public async Task<IViewComponentResult> InvokeAsync(string section)
     {
-        if (HttpContext.User.Identity?.IsAuthenticated != true || !HttpContext.User.IsInRole(AppRoles.Admin))
+        if (HttpContext.User.Identity?.IsAuthenticated != true
+            || (!HttpContext.User.IsInRole(AppRoles.Admin) && !HttpContext.User.IsInRole(AppRoles.AdminReadOnly)))
             return Content(string.Empty);
 
         var counts = await GetCountsAsync();

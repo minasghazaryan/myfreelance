@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using MyFreelance.Domain.Constants;
 using MyFreelance.Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
 using MyFreelance.Infrastructure;
 using MyFreelance.Infrastructure.Logging;
 using MyFreelance.Infrastructure.Persistence;
+using MyFreelance.Web.Filters;
 using MyFreelance.Web.Hubs;
 using Serilog;
 using Serilog.Events;
@@ -88,15 +90,24 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddAuthorization(options =>
 {
+    options.AddPolicy("AdminArea", policy => policy.RequireRole(AppRoles.Admin, AppRoles.AdminReadOnly));
+    options.AddPolicy("AdminWrite", policy => policy.RequireRole(AppRoles.Admin));
     options.AddPolicy("AdminOnly", policy => policy.RequireRole(AppRoles.Admin));
     options.AddPolicy("InvestorOnly", policy => policy.RequireRole(AppRoles.Investor));
     options.AddPolicy("KycApproved", policy => policy.RequireAssertion(ctx =>
-        ctx.User.HasClaim("KycApproved", "true") || ctx.User.IsInRole(AppRoles.Admin)));
+        ctx.User.HasClaim("KycApproved", "true")
+        || ctx.User.IsInRole(AppRoles.Admin)
+        || ctx.User.IsInRole(AppRoles.AdminReadOnly)));
 });
 
+builder.Services.AddScoped<AdminWriteAuthorizationFilter>();
 builder.Services.AddRazorPages(options =>
 {
-    options.Conventions.AuthorizeAreaFolder("Admin", "/", "AdminOnly");
+    options.Conventions.AuthorizeAreaFolder("Admin", "/", "AdminArea");
+    options.Conventions.AddAreaFolderApplicationModelConvention("Admin", "/", model =>
+    {
+        model.Filters.Add(new ServiceFilterAttribute(typeof(AdminWriteAuthorizationFilter)));
+    });
     options.Conventions.AuthorizeFolder("/Dashboard", "InvestorOnly");
 });
 

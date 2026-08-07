@@ -1,0 +1,7 @@
+@using MyFreelance.Domain.Constants
+@if (User.IsInRole(AppRoles.AdminReadOnly) && !User.IsInRole(AppRoles.Admin))
+{
+    <div class="alert alert-warning mx-3 mt-3 mb-0 py-2 small">
+        <i class="bi bi-eye me-1"></i>Read-only admin access. You can view data but cannot approve, edit, or create records.
+    </div>
+}

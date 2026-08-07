@@ -27,7 +27,7 @@
                     <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
-                            @if (User.IsInRole(AppRoles.Admin))
+                            @if (User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.AdminReadOnly))
                             {
                                 <li class="nav-item"><a class="nav-link text-gold" asp-area="Admin" asp-page="/Index"><i class="bi bi-shield-lock me-1"></i>Admin</a></li>
                             }

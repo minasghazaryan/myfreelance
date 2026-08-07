@@ -21,6 +21,7 @@
 
 <div class="col-lg-2 admin-sidebar dashboard-sidebar">
     <span class="admin-badge ms-3 mb-3 d-inline-block">Admin Panel</span>
+    <partial name="_AdminReadOnlyNotice" />
     <nav class="nav flex-column">
         <a class="nav-link @(IsActive("dashboard") ? "active" : "")" asp-area="Admin" asp-page="/Index">Dashboard</a>
         <a class="nav-link @(IsActive("users") ? "active" : "")" asp-area="Admin" asp-page="/Users/Index">Users</a>

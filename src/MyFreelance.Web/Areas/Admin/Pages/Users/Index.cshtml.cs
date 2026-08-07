@@ -22,11 +22,16 @@ public class IndexModel(
     [BindProperty]
     public CreateUserInput CreateInput { get; set; } = new();
 
+    [BindProperty]
+    public CreateAdminFormInput CreateAdminInput { get; set; } = new();
+
     public string? SuccessMessage { get; set; }
     public string? ErrorMessage { get; set; }
     public string? Search { get; set; }
 
-    public record UserItem(string Id, string Name, string Email, bool IsSuspended, bool IsKycApproved, DateTime CreatedAt);
+    public bool CanManageUsers => User.IsInRole(AppRoles.Admin);
+
+    public record UserItem(string Id, string Name, string Email, string Role, bool IsSuspended, bool IsKycApproved, DateTime CreatedAt);
 
     public class CreateUserInput
     {
@@ -55,6 +60,27 @@ public class IndexModel(
         public bool IsPhoneVerified { get; set; }
     }
 
+    public class CreateAdminFormInput
+    {
+        [Required, Display(Name = "First Name")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required, Display(Name = "Last Name")]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required, EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required, StringLength(100, MinimumLength = 8), DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+
+        [Required, Compare(nameof(Password)), DataType(DataType.Password)]
+        public string ConfirmPassword { get; set; } = string.Empty;
+
+        [Required]
+        public string AdminRole { get; set; } = AppRoles.AdminReadOnly;
+    }
+
     public async Task OnGetAsync(string? search)
     {
         SuccessMessage = TempData["SuccessMessage"] as string;
@@ -63,21 +89,70 @@ public class IndexModel(
         await LoadUsersAsync(search);
     }
 
-    public async Task<IActionResult> OnPostCreateAsync()
+    public Task<IActionResult> OnPostCreateAsync() => CreateAccountAsync(
+        CreateInput.FirstName,
+        CreateInput.LastName,
+        CreateInput.Email,
+        CreateInput.Password,
+        CreateInput.ConfirmPassword,
+        phoneNumber: CreateInput.PhoneNumber,
+        referralCode: CreateInput.ReferralCode,
+        isKycApproved: CreateInput.IsKycApproved,
+        isPhoneVerified: CreateInput.IsPhoneVerified,
+        role: AppRoles.Investor,
+        createWallet: true,
+        successMessage: user => $"Investor {user.FullName} ({user.Email}) created successfully.");
+
+    public Task<IActionResult> OnPostCreateAdminAsync() => CreateAccountAsync(
+        CreateAdminInput.FirstName,
+        CreateAdminInput.LastName,
+        CreateAdminInput.Email,
+        CreateAdminInput.Password,
+        CreateAdminInput.ConfirmPassword,
+        phoneNumber: null,
+        referralCode: null,
+        isKycApproved: true,
+        isPhoneVerified: true,
+        role: CreateAdminInput.AdminRole,
+        createWallet: false,
+        successMessage: user => $"Admin {user.FullName} ({user.Email}) created with {FormatAdminRole(CreateAdminInput.AdminRole)} access.");
+
+    private async Task<IActionResult> CreateAccountAsync(
+        string firstName,
+        string lastName,
+        string email,
+        string password,
+        string confirmPassword,
+        string? phoneNumber,
+        string? referralCode,
+        bool isKycApproved,
+        bool isPhoneVerified,
+        string role,
+        bool createWallet,
+        Func<ApplicationUser, string> successMessage)
     {
-        if (!ModelState.IsValid)
+        if (!User.IsInRole(AppRoles.Admin))
         {
-            var errors = string.Join(" ", ModelState.Values
-                .SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage));
-            TempData["ErrorMessage"] = string.IsNullOrWhiteSpace(errors) ? "Please check the form and try again." : errors;
+            TempData["ErrorMessage"] = "Only full admins can create users.";
+            return RedirectToPage();
+        }
+
+        if (!AppRoles.CreatableAdminRoles.Contains(role) && role != AppRoles.Investor)
+        {
+            TempData["ErrorMessage"] = "Invalid role selected.";
+            return RedirectToPage();
+        }
+
+        if (password != confirmPassword)
+        {
+            TempData["ErrorMessage"] = "Passwords do not match.";
             return RedirectToPage();
         }
 
         ApplicationUser? referrer = null;
-        if (!string.IsNullOrWhiteSpace(CreateInput.ReferralCode))
+        if (!string.IsNullOrWhiteSpace(referralCode))
         {
-            referrer = await userManager.Users.FirstOrDefaultAsync(u => u.ReferralCode == CreateInput.ReferralCode.Trim());
+            referrer = await userManager.Users.FirstOrDefaultAsync(u => u.ReferralCode == referralCode.Trim());
             if (referrer is null)
             {
                 TempData["ErrorMessage"] = "Referral code not found.";
@@ -85,8 +160,8 @@ public class IndexModel(
             }
         }
 
-        var existing = await userManager.FindByEmailAsync(CreateInput.Email.Trim());
-        if (existing is not null)
+        var normalizedEmail = email.Trim();
+        if (await userManager.FindByEmailAsync(normalizedEmail) is not null)
         {
             TempData["ErrorMessage"] = "A user with this email already exists.";
             return RedirectToPage();
@@ -94,40 +169,44 @@ public class IndexModel(
 
         var user = new ApplicationUser
         {
-            UserName = CreateInput.Email.Trim(),
-            Email = CreateInput.Email.Trim(),
+            UserName = normalizedEmail,
+            Email = normalizedEmail,
             EmailConfirmed = true,
-            FirstName = CreateInput.FirstName.Trim(),
-            LastName = CreateInput.LastName.Trim(),
-            PhoneNumber = CreateInput.PhoneNumber.Trim(),
+            FirstName = firstName.Trim(),
+            LastName = lastName.Trim(),
+            PhoneNumber = string.IsNullOrWhiteSpace(phoneNumber) ? null : phoneNumber.Trim(),
             ReferredByUserId = referrer?.Id,
             CountryCode = "GH",
-            IsKycApproved = CreateInput.IsKycApproved,
-            IsPhoneVerified = CreateInput.IsPhoneVerified
+            IsKycApproved = isKycApproved,
+            IsPhoneVerified = isPhoneVerified
         };
 
-        var result = await userManager.CreateAsync(user, CreateInput.Password);
+        var result = await userManager.CreateAsync(user, password);
         if (!result.Succeeded)
         {
             TempData["ErrorMessage"] = string.Join(" ", result.Errors.Select(e => e.Description));
             return RedirectToPage();
         }
 
-        await userManager.AddToRoleAsync(user, AppRoles.Investor);
-        await referralService.GenerateReferralCodeAsync(user.Id);
-        await unitOfWork.Repository<UserWallet>().AddAsync(new UserWallet { UserId = user.Id });
-        await unitOfWork.SaveChangesAsync();
+        await userManager.AddToRoleAsync(user, role);
 
-        await notificationService.SendEventNotificationAsync(
-            user.Id,
-            NotificationEventType.Registration,
-            new Dictionary<string, string>
-            {
-                ["Status"] = "Completed",
-                ["Description"] = "Your AurumWealth account was created by an administrator."
-            });
+        if (createWallet)
+        {
+            await referralService.GenerateReferralCodeAsync(user.Id);
+            await unitOfWork.Repository<UserWallet>().AddAsync(new UserWallet { UserId = user.Id });
+            await unitOfWork.SaveChangesAsync();
 
-        TempData["SuccessMessage"] = $"User {user.FullName} ({user.Email}) created successfully.";
+            await notificationService.SendEventNotificationAsync(
+                user.Id,
+                NotificationEventType.Registration,
+                new Dictionary<string, string>
+                {
+                    ["Status"] = "Completed",
+                    ["Description"] = "Your AurumWealth account was created by an administrator."
+                });
+        }
+
+        TempData["SuccessMessage"] = successMessage(user);
         return RedirectToPage();
     }
 
@@ -135,11 +214,35 @@ public class IndexModel(
     {
         var query = userManager.Users.AsQueryable();
         if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(u => u.Email!.Contains(search) || u.FirstName.Contains(search) || u.LastName.Contains(search));
+        {
+            query = query.Where(u =>
+                u.Email!.Contains(search)
+                || u.FirstName.Contains(search)
+                || u.LastName.Contains(search));
+        }
 
-        Users = await query.OrderByDescending(u => u.CreatedAt)
-            .Take(100)
-            .Select(u => new UserItem(u.Id, u.FullName, u.Email!, u.IsSuspended, u.IsKycApproved, u.CreatedAt))
-            .ToListAsync();
+        var users = await query.OrderByDescending(u => u.CreatedAt).Take(100).ToListAsync();
+        Users = [];
+
+        foreach (var user in users)
+        {
+            var roles = await userManager.GetRolesAsync(user);
+            var role = roles.Contains(AppRoles.Admin) ? "Full Admin"
+                : roles.Contains(AppRoles.AdminReadOnly) ? "Read-Only Admin"
+                : roles.Contains(AppRoles.Investor) ? "Investor"
+                : roles.FirstOrDefault() ?? "—";
+
+            Users.Add(new UserItem(
+                user.Id,
+                user.FullName,
+                user.Email!,
+                role,
+                user.IsSuspended,
+                user.IsKycApproved,
+                user.CreatedAt));
+        }
     }
+
+    private static string FormatAdminRole(string role) =>
+        role == AppRoles.Admin ? "full admin" : "read-only admin";
 }

@@ -21,7 +21,7 @@ public static class DatabaseSeeder
         await db.Database.MigrateAsync();
         await SyncWalletYieldEarnedAsync(db);
 
-        foreach (var role in new[] { AppRoles.Admin, AppRoles.Investor, AppRoles.Compliance, AppRoles.Support })
+        foreach (var role in new[] { AppRoles.Admin, AppRoles.AdminReadOnly, AppRoles.Investor, AppRoles.Compliance, AppRoles.Support })
         {
             if (!await roleManager.RoleExistsAsync(role))
                 await roleManager.CreateAsync(new IdentityRole(role));

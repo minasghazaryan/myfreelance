@@ -18,52 +18,97 @@
                     <div class="alert alert-danger"><i class="bi bi-exclamation-circle me-2"></i>@Model.ErrorMessage</div>
                 }
 
-                <div class="aurum-card mb-4">
-                    <h5 class="text-gold">Create User</h5>
-                    <form method="post" asp-page-handler="Create" class="row g-3 mt-2">
-                        <div class="col-md-6 col-lg-3">
-                            <label asp-for="CreateInput.FirstName" class="form-label small text-muted-light">First Name</label>
-                            <input asp-for="CreateInput.FirstName" class="form-control form-control-aurum" required />
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <label asp-for="CreateInput.LastName" class="form-label small text-muted-light">Last Name</label>
-                            <input asp-for="CreateInput.LastName" class="form-control form-control-aurum" required />
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <label asp-for="CreateInput.Email" class="form-label small text-muted-light">Email</label>
-                            <input asp-for="CreateInput.Email" type="email" class="form-control form-control-aurum" required />
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <label asp-for="CreateInput.PhoneNumber" class="form-label small text-muted-light">Phone</label>
-                            <input asp-for="CreateInput.PhoneNumber" class="form-control form-control-aurum" required />
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <label asp-for="CreateInput.Password" class="form-label small text-muted-light">Password</label>
-                            <input asp-for="CreateInput.Password" type="password" class="form-control form-control-aurum" required />
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <label asp-for="CreateInput.ConfirmPassword" class="form-label small text-muted-light">Confirm Password</label>
-                            <input asp-for="CreateInput.ConfirmPassword" type="password" class="form-control form-control-aurum" required />
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <label asp-for="CreateInput.ReferralCode" class="form-label small text-muted-light">Referral Code (optional)</label>
-                            <input asp-for="CreateInput.ReferralCode" class="form-control form-control-aurum" />
-                        </div>
-                        <div class="col-md-6 col-lg-3 d-flex align-items-end gap-3 pb-1">
-                            <div class="form-check">
-                                <input asp-for="CreateInput.IsKycApproved" class="form-check-input" id="createKyc" />
-                                <label class="form-check-label text-muted-light" for="createKyc">KYC Approved</label>
+                @if (Model.CanManageUsers)
+                {
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-6">
+                            <div class="aurum-card h-100">
+                                <h5 class="text-gold">Create Investor</h5>
+                                <form method="post" asp-page-handler="Create" class="row g-3 mt-2">
+                                    <div class="col-md-6">
+                                        <label asp-for="CreateInput.FirstName" class="form-label small text-muted-light">First Name</label>
+                                        <input asp-for="CreateInput.FirstName" class="form-control form-control-aurum" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="CreateInput.LastName" class="form-label small text-muted-light">Last Name</label>
+                                        <input asp-for="CreateInput.LastName" class="form-control form-control-aurum" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="CreateInput.Email" class="form-label small text-muted-light">Email</label>
+                                        <input asp-for="CreateInput.Email" type="email" class="form-control form-control-aurum" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="CreateInput.PhoneNumber" class="form-label small text-muted-light">Phone</label>
+                                        <input asp-for="CreateInput.PhoneNumber" class="form-control form-control-aurum" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="CreateInput.Password" class="form-label small text-muted-light">Password</label>
+                                        <input asp-for="CreateInput.Password" type="password" class="form-control form-control-aurum" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="CreateInput.ConfirmPassword" class="form-label small text-muted-light">Confirm Password</label>
+                                        <input asp-for="CreateInput.ConfirmPassword" type="password" class="form-control form-control-aurum" required />
+                                    </div>
+                                    <div class="col-12">
+                                        <label asp-for="CreateInput.ReferralCode" class="form-label small text-muted-light">Referral Code (optional)</label>
+                                        <input asp-for="CreateInput.ReferralCode" class="form-control form-control-aurum" />
+                                    </div>
+                                    <div class="col-12 d-flex gap-3">
+                                        <div class="form-check">
+                                            <input asp-for="CreateInput.IsKycApproved" class="form-check-input" id="createKyc" />
+                                            <label class="form-check-label text-muted-light" for="createKyc">KYC Approved</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input asp-for="CreateInput.IsPhoneVerified" class="form-check-input" id="createPhone" />
+                                            <label class="form-check-label text-muted-light" for="createPhone">Phone Verified</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-aurum">Create Investor</button>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="form-check">
-                                <input asp-for="CreateInput.IsPhoneVerified" class="form-check-input" id="createPhone" />
-                                <label class="form-check-label text-muted-light" for="createPhone">Phone Verified</label>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="aurum-card h-100">
+                                <h5 class="text-gold">Create Admin</h5>
+                                <p class="small text-muted-light">Admin accounts can only be created from this panel.</p>
+                                <form method="post" asp-page-handler="CreateAdmin" class="row g-3 mt-2">
+                                    <div class="col-md-6">
+                                        <label asp-for="CreateAdminInput.FirstName" class="form-label small text-muted-light">First Name</label>
+                                        <input asp-for="CreateAdminInput.FirstName" class="form-control form-control-aurum" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="CreateAdminInput.LastName" class="form-label small text-muted-light">Last Name</label>
+                                        <input asp-for="CreateAdminInput.LastName" class="form-control form-control-aurum" required />
+                                    </div>
+                                    <div class="col-12">
+                                        <label asp-for="CreateAdminInput.Email" class="form-label small text-muted-light">Email</label>
+                                        <input asp-for="CreateAdminInput.Email" type="email" class="form-control form-control-aurum" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="CreateAdminInput.Password" class="form-label small text-muted-light">Password</label>
+                                        <input asp-for="CreateAdminInput.Password" type="password" class="form-control form-control-aurum" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="CreateAdminInput.ConfirmPassword" class="form-label small text-muted-light">Confirm Password</label>
+                                        <input asp-for="CreateAdminInput.ConfirmPassword" type="password" class="form-control form-control-aurum" required />
+                                    </div>
+                                    <div class="col-12">
+                                        <label asp-for="CreateAdminInput.AdminRole" class="form-label small text-muted-light">Admin Access</label>
+                                        <select asp-for="CreateAdminInput.AdminRole" class="form-control form-control-aurum" required>
+                                            <option value="@AppRoles.Admin">Full Admin (read & write)</option>
+                                            <option value="@AppRoles.AdminReadOnly">Read-Only Admin (view only)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-aurum">Create Admin</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-aurum">Create User</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                }
 
                 <form method="get" class="mb-4">
                     <input name="search" value="@Model.Search" class="form-control form-control-aurum d-inline-block w-auto" placeholder="Search users..." />
@@ -72,13 +117,14 @@
 
                 <div class="aurum-card">
                     <table class="table table-aurum mb-0">
-                        <thead><tr><th>Name</th><th>Email</th><th>KYC</th><th>Status</th><th>Joined</th></tr></thead>
+                        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>KYC</th><th>Status</th><th>Joined</th></tr></thead>
                         <tbody>
                         @foreach (var u in Model.Users)
                         {
                             <tr>
                                 <td>@u.Name</td>
                                 <td>@u.Email</td>
+                                <td>@u.Role</td>
                                 <td>@(u.IsKycApproved ? "Approved" : "Pending")</td>
                                 <td>@(u.IsSuspended ? "Suspended" : "Active")</td>
                                 <td>@u.CreatedAt.ToString("d")</td>

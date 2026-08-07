@@ -39,7 +39,7 @@
                                     <td>@d.Status</td>
                                     <td>@d.CreatedAt.ToString("g")</td>
                                     <td>
-                                        @if (d.Status == "Pending")
+                                        @if (d.Status == "Pending" && User.IsInRole(AppRoles.Admin))
                                         {
                                             <form method="post" asp-page-handler="Approve">
                                                 <input type="hidden" name="id" value="@d.Id" />

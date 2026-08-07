@@ -54,7 +54,8 @@ public class LoginModel(
                 await auditService.LogAsync(user.Id, null, AuditAction.Login, nameof(ApplicationUser), user.Id, "User logged in");
             }
 
-            if (user is not null && await userManager.IsInRoleAsync(user, AppRoles.Admin))
+            if (user is not null && (await userManager.IsInRoleAsync(user, AppRoles.Admin)
+                || await userManager.IsInRoleAsync(user, AppRoles.AdminReadOnly)))
             {
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
                     && returnUrl.StartsWith("/Admin", StringComparison.OrdinalIgnoreCase))

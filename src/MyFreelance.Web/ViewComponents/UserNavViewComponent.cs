@@ -16,7 +16,8 @@ public class UserNavViewComponent(
         if (user is null)
             return Content(string.Empty);
 
-        if (await userManager.IsInRoleAsync(user, AppRoles.Admin))
+        if (await userManager.IsInRoleAsync(user, AppRoles.Admin)
+            || await userManager.IsInRoleAsync(user, AppRoles.AdminReadOnly))
             return Content(string.Empty);
 
         var portfolio = await dashboardService.GetPortfolioOverviewAsync(user.Id);

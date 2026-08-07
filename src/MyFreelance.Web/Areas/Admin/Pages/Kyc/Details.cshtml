@@ -16,7 +16,7 @@
                         <h2 class="text-gold mb-0 mt-2">@detail.FirstName @detail.LastName</h2>
                         <p class="text-muted-light small mb-0">Submitted @detail.CreatedAt.ToString("f") · Status: <strong>@detail.Status</strong></p>
                     </div>
-                    @if (detail.Status is "Pending" or "UnderReview")
+                    @if (detail.Status is "Pending" or "UnderReview" && User.IsInRole(AppRoles.Admin))
                     {
                         <div class="d-flex gap-2">
                             <form method="post" asp-page-handler="Approve">
@@ -90,7 +90,7 @@
                     </div>
                 </div>
 
-                @if (detail.Status is "Pending" or "UnderReview")
+                @if (detail.Status is "Pending" or "UnderReview" && User.IsInRole(AppRoles.Admin))
                 {
                     <div class="aurum-card mt-4">
                         <h5 class="text-gold mb-3">Reject Submission</h5>

@@ -8,6 +8,8 @@
             <partial name="Shared/_AdminNav" />
             <div class="col-lg-10 p-4">
                 <h2 class="text-gold mb-4">Investment Tier Management</h2>
+                @if (User.IsInRole(AppRoles.Admin))
+                {
                 <div class="aurum-card mb-4">
                     <h5 class="text-gold">Add Tier</h5>
                     <form method="post" class="row g-3 mt-2">
@@ -38,8 +40,9 @@
                         <div class="col-12"><button type="submit" class="btn btn-aurum">Create Tier</button></div>
                     </form>
                 </div>
+                }
                 <table class="table table-aurum">
-                    <thead><tr><th>Name</th><th>Yield</th><th>Min</th><th>Max</th><th>Risk</th><th></th></tr></thead>
+                    <thead><tr><th>Name</th><th>Yield</th><th>Min</th><th>Max</th><th>Risk</th>@if (User.IsInRole(AppRoles.Admin)) { <th></th> }</tr></thead>
                     <tbody>
                     @foreach (var t in Model.Tiers)
                     {
@@ -49,12 +52,15 @@
                             <td>$@t.MinInvestment.ToString("N0")</td>
                             <td>$@t.MaxInvestment.ToString("N0")</td>
                             <td>@(Enum.IsDefined(typeof(RiskLevel), t.RiskLevel) ? t.RiskLevel.ToString() : "Low")</td>
+                            @if (User.IsInRole(AppRoles.Admin))
+                            {
                             <td>
                                 <form method="post" asp-page-handler="Delete">
                                     <input type="hidden" name="id" value="@t.Id" />
                                     <button class="btn btn-sm btn-danger">Delete</button>
                                 </form>
                             </td>
+                            }
                         </tr>
                     }
                     </tbody>

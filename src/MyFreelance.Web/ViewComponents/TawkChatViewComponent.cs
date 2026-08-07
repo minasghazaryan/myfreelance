@@ -30,7 +30,8 @@ public class TawkChatViewComponent(
         if (HttpContext.User.Identity?.IsAuthenticated == true)
         {
             var user = await userManager.GetUserAsync(HttpContext.User);
-            if (user is not null && !await userManager.IsInRoleAsync(user, AppRoles.Admin))
+            if (user is not null && !await userManager.IsInRoleAsync(user, AppRoles.Admin)
+                && !await userManager.IsInRoleAsync(user, AppRoles.AdminReadOnly))
             {
                 var name = string.IsNullOrWhiteSpace(user.FullName) ? user.Email ?? "Investor" : user.FullName;
                 visitor = new TawkChatVisitor(user.Id, name, user.Email ?? string.Empty, user.PhoneNumber);
