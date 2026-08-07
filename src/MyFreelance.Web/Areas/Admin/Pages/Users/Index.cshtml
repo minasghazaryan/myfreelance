@@ -8,11 +8,85 @@
             <partial name="Shared/_AdminNav" />
             <div class="col-lg-10 p-4">
                 <h2 class="text-gold mb-4">User Management</h2>
-                <form method="get" class="mb-4"><input name="search" class="form-control form-control-aurum d-inline-block w-auto" placeholder="Search users..." /><button class="btn btn-aurum ms-2">Search</button></form>
-                <table class="table table-aurum">
-                    <thead><tr><th>Name</th><th>Email</th><th>KYC</th><th>Status</th><th>Joined</th></tr></thead>
-                    <tbody>@foreach (var u in Model.Users) { <tr><td>@u.Name</td><td>@u.Email</td><td>@(u.IsKycApproved ? "Approved" : "Pending")</td><td>@(u.IsSuspended ? "Suspended" : "Active")</td><td>@u.CreatedAt.ToString("d")</td></tr> }</tbody>
-                </table>
+
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>@Model.SuccessMessage</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger"><i class="bi bi-exclamation-circle me-2"></i>@Model.ErrorMessage</div>
+                }
+
+                <div class="aurum-card mb-4">
+                    <h5 class="text-gold">Create User</h5>
+                    <form method="post" asp-page-handler="Create" class="row g-3 mt-2">
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="CreateInput.FirstName" class="form-label small text-muted-light">First Name</label>
+                            <input asp-for="CreateInput.FirstName" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="CreateInput.LastName" class="form-label small text-muted-light">Last Name</label>
+                            <input asp-for="CreateInput.LastName" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="CreateInput.Email" class="form-label small text-muted-light">Email</label>
+                            <input asp-for="CreateInput.Email" type="email" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="CreateInput.PhoneNumber" class="form-label small text-muted-light">Phone</label>
+                            <input asp-for="CreateInput.PhoneNumber" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="CreateInput.Password" class="form-label small text-muted-light">Password</label>
+                            <input asp-for="CreateInput.Password" type="password" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="CreateInput.ConfirmPassword" class="form-label small text-muted-light">Confirm Password</label>
+                            <input asp-for="CreateInput.ConfirmPassword" type="password" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="CreateInput.ReferralCode" class="form-label small text-muted-light">Referral Code (optional)</label>
+                            <input asp-for="CreateInput.ReferralCode" class="form-control form-control-aurum" />
+                        </div>
+                        <div class="col-md-6 col-lg-3 d-flex align-items-end gap-3 pb-1">
+                            <div class="form-check">
+                                <input asp-for="CreateInput.IsKycApproved" class="form-check-input" id="createKyc" />
+                                <label class="form-check-label text-muted-light" for="createKyc">KYC Approved</label>
+                            </div>
+                            <div class="form-check">
+                                <input asp-for="CreateInput.IsPhoneVerified" class="form-check-input" id="createPhone" />
+                                <label class="form-check-label text-muted-light" for="createPhone">Phone Verified</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-aurum">Create User</button>
+                        </div>
+                    </form>
+                </div>
+
+                <form method="get" class="mb-4">
+                    <input name="search" value="@Model.Search" class="form-control form-control-aurum d-inline-block w-auto" placeholder="Search users..." />
+                    <button class="btn btn-aurum ms-2">Search</button>
+                </form>
+
+                <div class="aurum-card">
+                    <table class="table table-aurum mb-0">
+                        <thead><tr><th>Name</th><th>Email</th><th>KYC</th><th>Status</th><th>Joined</th></tr></thead>
+                        <tbody>
+                        @foreach (var u in Model.Users)
+                        {
+                            <tr>
+                                <td>@u.Name</td>
+                                <td>@u.Email</td>
+                                <td>@(u.IsKycApproved ? "Approved" : "Pending")</td>
+                                <td>@(u.IsSuspended ? "Suspended" : "Active")</td>
+                                <td>@u.CreatedAt.ToString("d")</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

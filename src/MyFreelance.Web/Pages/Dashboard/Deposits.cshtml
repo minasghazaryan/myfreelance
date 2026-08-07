@@ -8,27 +8,36 @@
             <partial name="Shared/_DashboardNav" />
             <div class="col-lg-10 col-md-9 p-4">
                 <h2 class="text-gold mb-4">Deposits</h2>
-                @if (Model.ErrorMessage != null) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>@Model.SuccessMessage</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger"><i class="bi bi-exclamation-circle me-2"></i>@Model.ErrorMessage</div>
+                }
 
                 <div class="aurum-card mb-4">
                     <h5 class="text-gold">New Deposit</h5>
                     <form method="post" class="row g-3 mt-2">
                         <div class="col-md-4">
-                            <label class="form-label">Network</label>
-                            <select name="NetworkId" class="form-control form-control-aurum" required>
+                            <label asp-for="NetworkId" class="form-label">Network</label>
+                            <select asp-for="NetworkId" class="form-control form-control-aurum" required>
+                                <option value="">Select network</option>
                                 @foreach (var n in Model.Networks)
                                 {
-                                    <option value="@n.Id">@n.Name (Min: $@n.MinDeposit)</option>
+                                    <option value="@n.Id">@n.Name (Min: $@n.MinDeposit.ToString("N0"))</option>
                                 }
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Amount (USDT)</label>
-                            <input name="Amount" type="number" step="0.01" class="form-control form-control-aurum" required />
+                            <label asp-for="Amount" class="form-label">Amount (USDT)</label>
+                            <input asp-for="Amount" type="number" step="0.01" min="0.01" class="form-control form-control-aurum" required />
                         </div>
                         <div class="col-md-5">
-                            <label class="form-label">Transaction Hash</label>
-                            <input name="TransactionHash" class="form-control form-control-aurum" placeholder="Optional - submit after transfer" />
+                            <label asp-for="TransactionHash" class="form-label">Transaction Hash</label>
+                            <input asp-for="TransactionHash" class="form-control form-control-aurum" placeholder="Optional — submit after transfer" />
                         </div>
                         <div class="col-12"><button type="submit" class="btn btn-aurum">Submit Deposit</button></div>
                     </form>

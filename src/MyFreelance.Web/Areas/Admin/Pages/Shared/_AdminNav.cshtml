@@ -1,26 +1,47 @@
+@{
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
+
+    bool IsActive(string section) => section switch
+    {
+        "dashboard" => currentPage is "/Index",
+        "users" => currentPage.StartsWith("/Users", StringComparison.OrdinalIgnoreCase),
+        "kyc" => currentPage.StartsWith("/Kyc", StringComparison.OrdinalIgnoreCase),
+        "tiers" => currentPage.StartsWith("/Tiers", StringComparison.OrdinalIgnoreCase),
+        "referrals" => currentPage.StartsWith("/Referrals", StringComparison.OrdinalIgnoreCase),
+        "deposits" => currentPage.StartsWith("/Deposits", StringComparison.OrdinalIgnoreCase),
+        "withdrawals" => currentPage.StartsWith("/Withdrawals", StringComparison.OrdinalIgnoreCase),
+        "faq" => currentPage.StartsWith("/Faq", StringComparison.OrdinalIgnoreCase),
+        "cms" => currentPage.StartsWith("/Cms", StringComparison.OrdinalIgnoreCase),
+        "support" => currentPage.StartsWith("/SupportChat", StringComparison.OrdinalIgnoreCase),
+        "audit" => currentPage.StartsWith("/AuditLogs", StringComparison.OrdinalIgnoreCase),
+        "contracts" => currentPage.StartsWith("/SmartContracts", StringComparison.OrdinalIgnoreCase),
+        _ => false
+    };
+}
+
 <div class="col-lg-2 admin-sidebar dashboard-sidebar">
     <span class="admin-badge ms-3 mb-3 d-inline-block">Admin Panel</span>
     <nav class="nav flex-column">
-        <a class="nav-link" asp-area="Admin" asp-page="/Index">Dashboard</a>
-        <a class="nav-link" asp-area="Admin" asp-page="/Users/Index">Users</a>
-        <a class="nav-link d-flex align-items-center justify-content-between" asp-area="Admin" asp-page="/Kyc/Index">
+        <a class="nav-link @(IsActive("dashboard") ? "active" : "")" asp-area="Admin" asp-page="/Index">Dashboard</a>
+        <a class="nav-link @(IsActive("users") ? "active" : "")" asp-area="Admin" asp-page="/Users/Index">Users</a>
+        <a class="nav-link d-flex align-items-center justify-content-between @(IsActive("kyc") ? "active" : "")" asp-area="Admin" asp-page="/Kyc/Index">
             <span>KYC Review</span>
             @await Component.InvokeAsync("AdminPendingBadge", new { section = "kyc" })
         </a>
-        <a class="nav-link" asp-area="Admin" asp-page="/Tiers/Index">Investment Tiers</a>
-        <a class="nav-link" asp-area="Admin" asp-page="/Referrals/Index">Referral Config</a>
-        <a class="nav-link d-flex align-items-center justify-content-between" asp-area="Admin" asp-page="/Deposits/Index">
+        <a class="nav-link @(IsActive("tiers") ? "active" : "")" asp-area="Admin" asp-page="/Tiers/Index">Investment Tiers</a>
+        <a class="nav-link @(IsActive("referrals") ? "active" : "")" asp-area="Admin" asp-page="/Referrals/Index">Referral Config</a>
+        <a class="nav-link d-flex align-items-center justify-content-between @(IsActive("deposits") ? "active" : "")" asp-area="Admin" asp-page="/Deposits/Index">
             <span>Deposits</span>
             @await Component.InvokeAsync("AdminPendingBadge", new { section = "deposits" })
         </a>
-        <a class="nav-link d-flex align-items-center justify-content-between" asp-area="Admin" asp-page="/Withdrawals/Index">
+        <a class="nav-link d-flex align-items-center justify-content-between @(IsActive("withdrawals") ? "active" : "")" asp-area="Admin" asp-page="/Withdrawals/Index">
             <span>Withdrawals</span>
             @await Component.InvokeAsync("AdminPendingBadge", new { section = "withdrawals" })
         </a>
-        <a class="nav-link" asp-area="Admin" asp-page="/Faq/Index">FAQ</a>
-        <a class="nav-link" asp-area="Admin" asp-page="/Cms/Index">CMS</a>
-        <a class="nav-link" asp-area="Admin" asp-page="/SupportChat/Index">Support Chat</a>
-        <a class="nav-link" asp-area="Admin" asp-page="/AuditLogs/Index">Audit Logs</a>
-        <a class="nav-link" asp-area="Admin" asp-page="/SmartContracts/Index">Smart Contracts</a>
+        <a class="nav-link @(IsActive("faq") ? "active" : "")" asp-area="Admin" asp-page="/Faq/Index">FAQ</a>
+        <a class="nav-link @(IsActive("cms") ? "active" : "")" asp-area="Admin" asp-page="/Cms/Index">CMS</a>
+        <a class="nav-link @(IsActive("support") ? "active" : "")" asp-area="Admin" asp-page="/SupportChat/Index">Support Chat</a>
+        <a class="nav-link @(IsActive("audit") ? "active" : "")" asp-area="Admin" asp-page="/AuditLogs/Index">Audit Logs</a>
+        <a class="nav-link @(IsActive("contracts") ? "active" : "")" asp-area="Admin" asp-page="/SmartContracts/Index">Smart Contracts</a>
     </nav>
 </div>
