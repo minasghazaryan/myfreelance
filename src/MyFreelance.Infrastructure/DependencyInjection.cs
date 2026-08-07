@@ -38,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<ICmsService, CmsService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddScoped<IWalletService, WalletService>();
+        services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<IFileStorageService, FileStorageService>();
 
         services.AddApplication();

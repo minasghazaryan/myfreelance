@@ -12,6 +12,7 @@
         "bonuses" => currentPage.StartsWith("/Bonuses", StringComparison.OrdinalIgnoreCase),
         "deposits" => currentPage.StartsWith("/Deposits", StringComparison.OrdinalIgnoreCase),
         "withdrawals" => currentPage.StartsWith("/Withdrawals", StringComparison.OrdinalIgnoreCase),
+        "transactions" => currentPage.StartsWith("/Transactions", StringComparison.OrdinalIgnoreCase),
         "faq" => currentPage.StartsWith("/Faq", StringComparison.OrdinalIgnoreCase),
         "cms" => currentPage.StartsWith("/Cms", StringComparison.OrdinalIgnoreCase),
         "support" => currentPage.StartsWith("/SupportChat", StringComparison.OrdinalIgnoreCase),
@@ -42,6 +43,7 @@
             <span>Withdrawals</span>
             @await Component.InvokeAsync("AdminPendingBadge", new { section = "withdrawals" })
         </a>
+        <a class="nav-link @(IsActive("transactions") ? "active" : "")" asp-area="Admin" asp-page="/Transactions/Index">Transactions</a>
         <a class="nav-link @(IsActive("faq") ? "active" : "")" asp-area="Admin" asp-page="/Faq/Index">FAQ</a>
         <a class="nav-link @(IsActive("feedback") ? "active" : "")" asp-area="Admin" asp-page="/Feedback/Index">Client Feedback</a>
         <a class="nav-link @(IsActive("cms") ? "active" : "")" asp-area="Admin" asp-page="/Cms/Index">CMS</a>

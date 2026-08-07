@@ -1,0 +1,79 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.Transactions.IndexModel
+@using MyFreelance.Domain.Enums
+@{ ViewData["Title"] = "Transactions"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">All Transactions</h2>
+                <p class="text-muted-light mb-4">Platform-wide ledger across all investor accounts.</p>
+
+                <form method="get" class="mb-4">
+                    <input name="search" value="@Model.Search" class="form-control form-control-aurum d-inline-block w-auto" placeholder="Search by user, type, description..." />
+                    <button class="btn btn-aurum ms-2">Search</button>
+                </form>
+
+                <div class="aurum-card">
+                    @if (Model.Transactions.Count == 0)
+                    {
+                        <p class="text-muted-light mb-0">No transactions found.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-aurum mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>User</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Balance After</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var tx in Model.Transactions)
+                                {
+                                    var isCredit = tx.Type is nameof(TransactionType.Deposit)
+                                        or nameof(TransactionType.YieldCredit)
+                                        or nameof(TransactionType.ReferralReward)
+                                        or nameof(TransactionType.Bonus);
+                                    <tr>
+                                        <td>@tx.CreatedAt.ToString("g")</td>
+                                        <td>
+                                            @tx.UserName<br />
+                                            <span class="small text-muted-light">@tx.UserEmail</span>
+                                        </td>
+                                        <td>@FormatType(tx.Type)</td>
+                                        <td>@tx.Description</td>
+                                        <td class="@(isCredit ? "text-success" : "text-danger")">
+                                            @(isCredit ? "+" : "-")$@Math.Abs(tx.Amount).ToString("N2")
+                                        </td>
+                                        <td>$@tx.BalanceAfter.ToString("N2")</td>
+                                        <td>@tx.Status</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    static string FormatType(string type) => type switch
+    {
+        nameof(TransactionType.YieldCredit) => "Yield Credit",
+        nameof(TransactionType.ReferralReward) => "Referral Reward",
+        nameof(TransactionType.TierUpgrade) => "Tier Upgrade",
+        _ => type
+    };
+}
