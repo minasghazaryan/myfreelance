@@ -31,6 +31,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<WithdrawalPenaltyConfig> WithdrawalPenaltyConfigs => Set<WithdrawalPenaltyConfig>();
     public DbSet<PhoneVerification> PhoneVerifications => Set<PhoneVerification>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
+    public DbSet<ClientFeedback> ClientFeedbacks => Set<ClientFeedback>();
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
     public DbSet<ApplicationLog> ApplicationLogs => Set<ApplicationLog>();
 
@@ -145,6 +146,19 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         builder.Entity<CmsPage>(entity =>
         {
             entity.HasIndex(p => p.Slug).IsUnique();
+        });
+
+        builder.Entity<ClientFeedback>(entity =>
+        {
+            entity.Property(f => f.Content).HasMaxLength(2000);
+            entity.Property(f => f.DisplayName).HasMaxLength(120);
+            entity.Property(f => f.AuthorSubtitle).HasMaxLength(120);
+            entity.Property(f => f.Location).HasMaxLength(120);
+
+            entity.HasOne(f => f.User)
+                .WithMany()
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<SiteSettings>(entity =>

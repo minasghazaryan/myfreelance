@@ -36,6 +36,8 @@ public static class DependencyInjection
         services.AddScoped<IPhoneVerificationService, PhoneVerificationService>();
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<ICmsService, CmsService>();
+        services.AddScoped<IFeedbackService, FeedbackService>();
+        services.AddScoped<IWalletService, WalletService>();
         services.AddScoped<IFileStorageService, FileStorageService>();
 
         services.AddApplication();

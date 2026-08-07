@@ -9,5 +9,6 @@ public enum NotificationEventType
     ReferralReward = 5,
     TierUpgrade = 6,
     KycStatusChange = 7,
-    SecurityAlert = 8
+    SecurityAlert = 8,
+    BonusAward = 9
 }

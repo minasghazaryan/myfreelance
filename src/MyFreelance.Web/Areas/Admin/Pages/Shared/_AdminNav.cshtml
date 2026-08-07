@@ -8,6 +8,8 @@
         "kyc" => currentPage.StartsWith("/Kyc", StringComparison.OrdinalIgnoreCase),
         "tiers" => currentPage.StartsWith("/Tiers", StringComparison.OrdinalIgnoreCase),
         "referrals" => currentPage.StartsWith("/Referrals", StringComparison.OrdinalIgnoreCase),
+        "feedback" => currentPage.StartsWith("/Feedback", StringComparison.OrdinalIgnoreCase),
+        "bonuses" => currentPage.StartsWith("/Bonuses", StringComparison.OrdinalIgnoreCase),
         "deposits" => currentPage.StartsWith("/Deposits", StringComparison.OrdinalIgnoreCase),
         "withdrawals" => currentPage.StartsWith("/Withdrawals", StringComparison.OrdinalIgnoreCase),
         "faq" => currentPage.StartsWith("/Faq", StringComparison.OrdinalIgnoreCase),
@@ -31,6 +33,7 @@
         </a>
         <a class="nav-link @(IsActive("tiers") ? "active" : "")" asp-area="Admin" asp-page="/Tiers/Index">Investment Tiers</a>
         <a class="nav-link @(IsActive("referrals") ? "active" : "")" asp-area="Admin" asp-page="/Referrals/Index">Referral Config</a>
+        <a class="nav-link @(IsActive("bonuses") ? "active" : "")" asp-area="Admin" asp-page="/Bonuses/Index">Award Bonus</a>
         <a class="nav-link d-flex align-items-center justify-content-between @(IsActive("deposits") ? "active" : "")" asp-area="Admin" asp-page="/Deposits/Index">
             <span>Deposits</span>
             @await Component.InvokeAsync("AdminPendingBadge", new { section = "deposits" })
@@ -40,6 +43,7 @@
             @await Component.InvokeAsync("AdminPendingBadge", new { section = "withdrawals" })
         </a>
         <a class="nav-link @(IsActive("faq") ? "active" : "")" asp-area="Admin" asp-page="/Faq/Index">FAQ</a>
+        <a class="nav-link @(IsActive("feedback") ? "active" : "")" asp-area="Admin" asp-page="/Feedback/Index">Client Feedback</a>
         <a class="nav-link @(IsActive("cms") ? "active" : "")" asp-area="Admin" asp-page="/Cms/Index">CMS</a>
         <a class="nav-link @(IsActive("support") ? "active" : "")" asp-area="Admin" asp-page="/SupportChat/Index">Support Chat</a>
         <a class="nav-link @(IsActive("audit") ? "active" : "")" asp-area="Admin" asp-page="/AuditLogs/Index">Audit Logs</a>

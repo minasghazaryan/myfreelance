@@ -1,0 +1,97 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.Feedback.IndexModel
+@{ ViewData["Title"] = "Client Feedback"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">Client Feedback</h2>
+                <p class="text-muted-light mb-4">Review investor submissions and publish them to the homepage testimonials section.</p>
+
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>@Model.SuccessMessage</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger"><i class="bi bi-exclamation-circle me-2"></i>@Model.ErrorMessage</div>
+                }
+
+                @if (Model.Items.Count == 0)
+                {
+                    <div class="aurum-card">No feedback submissions yet.</div>
+                }
+                else
+                {
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="aurum-card mb-3">
+                            <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+                                <div>
+                                    <strong>@item.AuthorName</strong>
+                                    <span class="text-muted-light small ms-2">@item.AuthorEmail</span>
+                                </div>
+                                <div>
+                                    @if (item.IsPublished)
+                                    {
+                                        <span class="badge bg-success">Published</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    }
+                                </div>
+                            </div>
+                            <p class="mb-3">"@item.Content"</p>
+                            <p class="small text-muted-light mb-3">Submitted @item.CreatedAt.ToString("g")</p>
+
+                            @if (User.IsInRole(AppRoles.Admin))
+                            {
+                                @if (!item.IsPublished)
+                                {
+                                    <form method="post" asp-page-handler="Publish" class="row g-2 align-items-end">
+                                        <input type="hidden" asp-for="PublishInput.FeedbackId" value="@item.Id" />
+                                        <div class="col-md-3">
+                                            <label class="form-label small text-muted-light">Display Name</label>
+                                            <input asp-for="PublishInput.DisplayName" class="form-control form-control-aurum" placeholder="@item.AuthorName" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small text-muted-light">Subtitle</label>
+                                            <input asp-for="PublishInput.AuthorSubtitle" class="form-control form-control-aurum" placeholder="Verified Investor" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small text-muted-light">Location</label>
+                                            <input asp-for="PublishInput.Location" class="form-control form-control-aurum" placeholder="Accra, Ghana" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button type="submit" class="btn btn-success w-100">Publish</button>
+                                        </div>
+                                    </form>
+                                    <form method="post" asp-page-handler="Delete" class="mt-2" onsubmit="return confirm('Delete this feedback?');">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <div class="d-flex gap-2">
+                                        <form method="post" asp-page-handler="Unpublish">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-sm btn-aurum-outline">Unpublish</button>
+                                        </form>
+                                        <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Delete this feedback?');">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

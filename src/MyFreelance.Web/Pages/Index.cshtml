@@ -208,23 +208,19 @@
             <p class="section-subtitle mb-0">Real feedback from verified platform members</p>
         </div>
         <div class="row g-4 mt-2">
-            @foreach (var (quote, name, role, location) in new[] {
-                ("The dashboard gave me clarity I never had with informal crypto deals. I know my tier, my balance, and my withdrawal rules.", "Kwame A.", "Silver Tier Investor", "Accra, Ghana"),
-                ("Verification felt thorough — that actually increased my confidence. Support responded the same day when I had deposit questions.", "Adwoa M.", "Bronze Tier Investor", "Kumasi, Ghana"),
-                ("I appreciate that projected yields are labeled as projections. The platform feels professional, not like a get-rich-quick scheme.", "Emmanuel O.", "Gold Tier Investor", "Lagos, Nigeria")
-            })
+            @foreach (var testimonial in Model.Testimonials)
             {
                 <div class="col-lg-4">
                     <div class="aurum-card testimonial-card h-100">
                         <div class="testimonial-stars">
                             @for (var s = 0; s < 5; s++) { <i class="bi bi-star-fill"></i> }
                         </div>
-                        <p class="testimonial-quote">"@quote"</p>
+                        <p class="testimonial-quote">"@testimonial.Content"</p>
                         <div class="testimonial-author">
-                            <div class="testimonial-avatar">@name[0]</div>
+                            <div class="testimonial-avatar">@testimonial.AuthorName[0]</div>
                             <div>
-                                <strong>@name</strong>
-                                <span>@role · @location</span>
+                                <strong>@testimonial.AuthorName</strong>
+                                <span>@testimonial.AuthorSubtitle@(testimonial.Location is not null ? $" · {testimonial.Location}" : "")</span>
                             </div>
                         </div>
                     </div>

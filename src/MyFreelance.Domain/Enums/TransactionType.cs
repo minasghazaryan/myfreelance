@@ -8,5 +8,6 @@ public enum TransactionType
     ReferralReward = 4,
     TierUpgrade = 5,
     Penalty = 6,
-    YieldCredit = 7
+    YieldCredit = 7,
+    Bonus = 8
 }

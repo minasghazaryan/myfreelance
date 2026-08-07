@@ -144,6 +144,53 @@ public static class DatabaseSeeder
             );
         }
 
+        if (!await db.NotificationTemplates.AnyAsync(t => t.EventType == NotificationEventType.BonusAward))
+        {
+            db.NotificationTemplates.Add(new NotificationTemplate
+            {
+                EventType = NotificationEventType.BonusAward,
+                Channel = NotificationChannel.InApp,
+                Subject = "Bonus Credited",
+                BodyTemplate = "You received a bonus of {Amount}. {Description}"
+            });
+        }
+
+        if (!await db.ClientFeedbacks.AnyAsync())
+        {
+            var seedUser = await userManager.FindByEmailAsync("admin@aurumwealth.gh");
+            if (seedUser is not null)
+            {
+                db.ClientFeedbacks.AddRange(
+                    new ClientFeedback
+                    {
+                        UserId = seedUser.Id,
+                        Content = "The dashboard gave me clarity I never had with informal crypto deals. I know my tier, my balance, and my withdrawal rules.",
+                        IsPublished = true,
+                        DisplayName = "Kwame A.",
+                        AuthorSubtitle = "Silver Tier Investor",
+                        Location = "Accra, Ghana"
+                    },
+                    new ClientFeedback
+                    {
+                        UserId = seedUser.Id,
+                        Content = "Verification felt thorough — that actually increased my confidence. Support responded the same day when I had deposit questions.",
+                        IsPublished = true,
+                        DisplayName = "Adwoa M.",
+                        AuthorSubtitle = "Bronze Tier Investor",
+                        Location = "Kumasi, Ghana"
+                    },
+                    new ClientFeedback
+                    {
+                        UserId = seedUser.Id,
+                        Content = "I appreciate that projected yields are labeled as projections. The platform feels professional, not like a get-rich-quick scheme.",
+                        IsPublished = true,
+                        DisplayName = "Emmanuel O.",
+                        AuthorSubtitle = "Gold Tier Investor",
+                        Location = "Lagos, Nigeria"
+                    });
+            }
+        }
+
         if (!await db.SiteSettings.AnyAsync())
         {
             db.SiteSettings.AddRange(
