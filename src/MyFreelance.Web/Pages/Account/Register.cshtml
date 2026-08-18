@@ -1,5 +1,6 @@
 @page
 @model MyFreelance.Web.Pages.Account.RegisterModel
+@using MyFreelance.Web
 @{
     ViewData["Title"] = "Register";
     ViewData["HideNav"] = true;
@@ -10,8 +11,8 @@
 <div class="auth-wrapper">
     <div class="auth-card aurum-card">
         <div class="text-center mb-4">
-            <h2 class="text-gold aurum-brand">Join AurumWealth</h2>
-            <p class="text-muted-light small">Create your premium investment account</p>
+            <h2 class="text-gold aurum-brand">Join @AppBrand.NamePrimary <span class="text-gold">@AppBrand.NameAccent</span></h2>
+            <p class="text-muted-light small">Create your investor account in minutes</p>
         </div>
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>

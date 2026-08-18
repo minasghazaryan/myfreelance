@@ -96,7 +96,7 @@ public class RegisterModel(
             new Dictionary<string, string>
             {
                 ["Status"] = "Completed",
-                ["Description"] = "Welcome to AurumWealth. Complete KYC and phone verification to start investing."
+                ["Description"] = $"Welcome to {BrandConstants.Name}. Complete KYC and phone verification to start investing."
             });
         await signInManager.SignInAsync(user, isPersistent: false);
 

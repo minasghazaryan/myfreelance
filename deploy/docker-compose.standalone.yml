@@ -1,0 +1,62 @@
+# Fresh VPS — MyFreelance + SQL Server (no KinoHub dependency).
+# From repo root:
+#   cp deploy/.env.standalone.example deploy/.env
+#   nano deploy/.env   # set MSSQL_SA_PASSWORD and Jwt__Key
+#   docker compose -f deploy/docker-compose.standalone.yml --env-file deploy/.env up -d --build
+#
+# App URL: http://<VPS_IP>:8082
+
+name: myfreelance
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: myfreelance-sql
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+    volumes:
+      - myfreelance_sql_data:/var/opt/mssql
+    networks:
+      - myfreelance_internal
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: myfreelance-web:latest
+    container_name: myfreelance-web
+    restart: unless-stopped
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__DefaultConnection: Server=sqlserver,1433;Database=MyFreelance;User Id=sa;Password=${MSSQL_SA_PASSWORD};Encrypt=True;TrustServerCertificate=True;MultipleActiveResultSets=true
+    ports:
+      - "${MYFREELANCE_HOST_PORT:-8082}:8080"
+    volumes:
+      - myfreelance_uploads:/app/uploads
+    networks:
+      - myfreelance_internal
+
+networks:
+  myfreelance_internal:
+    name: myfreelance_internal
+    driver: bridge
+
+volumes:
+  myfreelance_sql_data:
+    name: myfreelance_sql_data
+  myfreelance_uploads:
+    name: myfreelance_uploads

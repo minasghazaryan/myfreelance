@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MyFreelance.Application.Interfaces;
+using MyFreelance.Domain.Constants;
 using MyFreelance.Domain.Entities;
 using MyFreelance.Domain.Enums;
 using MyFreelance.Infrastructure.Persistence;
@@ -22,7 +23,7 @@ public class PhoneVerificationService(
 
         var otp = Random.Shared.Next(100000, 999999).ToString();
         var provider = configuration["Sms:Provider"] ?? "Twilio";
-        var message = $"Your AurumWealth verification code is {otp}. It expires in 10 minutes.";
+        var message = $"Your {BrandConstants.Name} verification code is {otp}. It expires in 10 minutes.";
 
         await smsService.SendAsync(phoneNumber, message, cancellationToken);
 

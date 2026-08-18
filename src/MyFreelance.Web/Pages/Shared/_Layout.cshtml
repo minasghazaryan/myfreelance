@@ -1,9 +1,10 @@
+@using MyFreelance.Web
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AurumWealth</title>
+    <title>@ViewData["Title"] - @AppBrand.Name</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -18,7 +19,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark aurum-nav fixed-top">
             <div class="container">
                 <a class="navbar-brand aurum-brand" asp-page="/Index">
-                    <i class="bi bi-gem me-2"></i>Aurum<span class="text-gold">Wealth</span>
+                    <i class="bi bi-globe-africa me-2"></i>@AppBrand.NamePrimary <span class="text-gold">@AppBrand.NameAccent</span>
                 </a>
                 <button class="navbar-toggler border-gold" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
                     <span class="navbar-toggler-icon"></span>
@@ -65,8 +66,8 @@
             <div class="container py-5">
                 <div class="row g-4">
                     <div class="col-lg-4">
-                        <h5 class="text-gold aurum-brand">AurumWealth</h5>
-                        <p class="text-muted-light small">Premium blockchain investment platform. Projected yields — not guaranteed returns.</p>
+                        <h5 class="text-gold aurum-brand">@AppBrand.NamePrimary <span class="text-gold">@AppBrand.NameAccent</span></h5>
+                        <p class="text-muted-light small">@AppBrand.Tagline Projected yields — not guaranteed returns.</p>
                     </div>
                     <div class="col-lg-4">
                         <h6 class="text-gold">Legal</h6>
@@ -82,7 +83,7 @@
                     </div>
                 </div>
                 <hr class="border-gold-subtle my-4" />
-                <p class="text-center small text-muted-light mb-0">&copy; @DateTime.UtcNow.Year AurumWealth. All investments carry risk.</p>
+                <p class="text-center small text-muted-light mb-0">&copy; @DateTime.UtcNow.Year @AppBrand.Name. All investments carry risk.</p>
             </div>
         </footer>
     }

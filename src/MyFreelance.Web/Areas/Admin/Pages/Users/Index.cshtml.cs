@@ -202,7 +202,7 @@ public class IndexModel(
                 new Dictionary<string, string>
                 {
                     ["Status"] = "Completed",
-                    ["Description"] = "Your AurumWealth account was created by an administrator."
+                    ["Description"] = $"Your {BrandConstants.Name} account was created by an administrator."
                 });
         }
 

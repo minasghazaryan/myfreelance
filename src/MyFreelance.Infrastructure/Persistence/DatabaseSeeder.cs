@@ -86,7 +86,7 @@ public static class DatabaseSeeder
         if (!await db.FaqItems.AnyAsync())
         {
             db.FaqItems.AddRange(
-                new FaqItem { Question = "Are returns guaranteed?", Answer = "No. AurumWealth displays projected yields based on historical performance and algorithmic models. All investments carry risk and past performance does not guarantee future results.", SortOrder = 1 },
+                new FaqItem { Question = "Are returns guaranteed?", Answer = "No. Investment Fund U.S.Africa displays projected yields based on historical performance and algorithmic models. All investments carry risk and past performance does not guarantee future results.", SortOrder = 1 },
                 new FaqItem { Question = "How does the smart contract engine work?", Answer = "Our capital allocation engine deploys funds across multiple on-chain strategies and automatically rebalances based on risk-adjusted performance metrics.", SortOrder = 2 },
                 new FaqItem { Question = "What is required before I can invest?", Answer = "You must complete identity verification (KYC), verify your phone number, and deposit funds via supported USDT networks.", SortOrder = 3 },
                 new FaqItem { Question = "Which countries are supported?", Answer = "We primarily serve Ghana with expanding support for Nigeria, Kenya, and South Africa.", SortOrder = 4 }
@@ -134,7 +134,7 @@ public static class DatabaseSeeder
         if (!await db.NotificationTemplates.AnyAsync())
         {
             db.NotificationTemplates.AddRange(
-                new NotificationTemplate { EventType = NotificationEventType.Registration, Channel = NotificationChannel.InApp, Subject = "Welcome to AurumWealth", BodyTemplate = "Your account has been created successfully." },
+                new NotificationTemplate { EventType = NotificationEventType.Registration, Channel = NotificationChannel.InApp, Subject = "Welcome to Investment Fund U.S.Africa", BodyTemplate = "Your account has been created successfully." },
                 new NotificationTemplate { EventType = NotificationEventType.Deposit, Channel = NotificationChannel.InApp, Subject = "Deposit Received", BodyTemplate = "Your deposit of {Amount} is {Status}." },
                 new NotificationTemplate { EventType = NotificationEventType.Withdrawal, Channel = NotificationChannel.InApp, Subject = "Withdrawal Requested", BodyTemplate = "Your withdrawal of {Amount} is {Status}." },
                 new NotificationTemplate { EventType = NotificationEventType.ReferralReward, Channel = NotificationChannel.InApp, Subject = "Referral Reward", BodyTemplate = "You earned {Amount} from {ReferralName} (Level {Level})." },
@@ -197,7 +197,7 @@ public static class DatabaseSeeder
                 new SiteSettings { Key = "Contact.Email", Value = "support@aurumwealth.gh", Category = "Contact" },
                 new SiteSettings { Key = "Contact.WhatsApp", Value = "+233201234567", Category = "Contact" },
                 new SiteSettings { Key = "Contact.Telegram", Value = "@AurumWealthGH", Category = "Contact" },
-                new SiteSettings { Key = "Brand.Name", Value = "AurumWealth", Category = "Brand" },
+                new SiteSettings { Key = "Brand.Name", Value = BrandConstants.Name, Category = "Brand" },
                 new SiteSettings { Key = "Brand.HeroBadge", Value = "Africa's First Investment Fund", Category = "Brand" },
                 new SiteSettings { Key = "Insurance.GlobalBanner", Value = "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.", Category = "Insurance" }
             );
@@ -236,6 +236,15 @@ public static class DatabaseSeeder
             }
 
             db.SiteSettings.Add(new SiteSettings { Key = "Branding.Insurance.AIO.v1", Value = "true", Category = "System" });
+        }
+
+        if (!await db.SiteSettings.AnyAsync(s => s.Key == "Branding.Name.v1"))
+        {
+            var brandSetting = await db.SiteSettings.FirstOrDefaultAsync(s => s.Key == "Brand.Name");
+            if (brandSetting is not null)
+                brandSetting.Value = BrandConstants.Name;
+
+            db.SiteSettings.Add(new SiteSettings { Key = "Branding.Name.v1", Value = "true", Category = "System" });
         }
 
         await db.SaveChangesAsync();

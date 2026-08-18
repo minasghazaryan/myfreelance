@@ -8,7 +8,7 @@
     --aurum-text: #f5f5f5;
     --aurum-muted: #9a9a9a;
     --aurum-border: rgba(212, 175, 55, 0.25);
-    --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
     --font-body: 'Inter', system-ui, sans-serif;
 }
 
@@ -21,8 +21,6 @@ body {
     background: var(--aurum-black);
     color: var(--aurum-text);
     min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 .text-gold { color: var(--aurum-gold) !important; }
@@ -30,10 +28,9 @@ body {
 .border-gold { border-color: var(--aurum-gold) !important; }
 .border-gold-subtle { border-color: var(--aurum-border) !important; }
 
-h1, h2, h3, h4, .aurum-brand {
+h1, h2, h3, .aurum-brand {
     font-family: var(--font-display);
-    font-weight: 700;
-    letter-spacing: -0.025em;
+    font-weight: 600;
 }
 
 /* Navigation */
@@ -51,6 +48,13 @@ h1, h2, h3, h4, .aurum-brand {
 }
 
 .aurum-nav .nav-link:hover { color: var(--aurum-gold); }
+
+.aurum-nav .navbar-brand {
+    font-size: clamp(0.9rem, 3.2vw, 1.15rem);
+    line-height: 1.25;
+    max-width: calc(100% - 3.5rem);
+    white-space: normal;
+}
 
 .nav-balance-pill {
     display: inline-flex;
@@ -196,6 +200,86 @@ h1, h2, h3, h4, .aurum-brand {
 .hero-disclaimer {
     font-size: 0.8rem;
     color: var(--aurum-muted);
+}
+
+.hero-badge {
+    background: rgba(212, 175, 55, 0.12);
+    color: var(--aurum-gold);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    border-radius: 999px;
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.hero-title-usa {
+    letter-spacing: 0.06em;
+}
+
+.hero-trust-banner-wrap {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.08);
+    background: #0a0a0a;
+}
+
+.hero-trust-banner {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+@media (min-width: 992px) {
+    .hero-section-compact {
+        overflow: hidden;
+    }
+
+    .hero-banner-col {
+        padding-right: 0;
+    }
+
+    .hero-trust-banner-wrap {
+        margin-right: -5rem;
+        width: calc(100% + 5rem);
+        border-radius: 16px 0 0 16px;
+    }
+
+    .hero-trust-banner {
+        border-radius: 16px 0 0 16px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .hero-section-compact {
+        overflow: visible;
+        padding-bottom: 2rem;
+    }
+
+    .hero-banner-col {
+        margin-top: 0.25rem;
+    }
+
+    .hero-trust-banner-wrap {
+        border-radius: 12px;
+    }
+
+    .hero-subtitle {
+        max-width: none;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .hero-trust-banner-wrap {
+        margin-left: -0.25rem;
+        margin-right: -0.25rem;
+    }
+
+    .hero-cta-mobile .btn-lg {
+        width: 100%;
+    }
 }
 
 .hero-trust-panel {
@@ -492,6 +576,23 @@ h1, h2, h3, h4, .aurum-brand {
     margin-top: 0.45rem;
 }
 
+.insurance-banner,
+.tier-insurance-badge {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    color: #86efac;
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.tier-insurance-badge {
+    font-size: 0.9rem;
+    padding: 0.65rem 0.85rem;
+    margin-bottom: 0.75rem;
+}
+
 /* Testimonials */
 .testimonial-card {
     padding: 1.75rem;
@@ -553,101 +654,6 @@ h1, h2, h3, h4, .aurum-brand {
     max-height: 160px;
     object-fit: cover;
     border-radius: 10px;
-}
-
-.hero-badge {
-    background: rgba(212, 175, 55, 0.12);
-    color: var(--aurum-gold);
-    border: 1px solid rgba(212, 175, 55, 0.35);
-    border-radius: 999px;
-    padding: 0.45rem 1rem;
-    font-family: var(--font-display);
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-}
-
-.hero-trust-banner-wrap {
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid rgba(212, 175, 55, 0.4);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.08);
-    background: #0a0a0a;
-}
-
-@media (min-width: 1000px) {
-    .hero-banner-col {
-        padding-right: 0;
-    }
-
-    .hero-trust-banner-wrap {
-        margin-right: -5rem;
-        width: calc(100% + 5rem);
-    }
-}
-
-.hero-trust-banner {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 16px;
-    object-fit: cover;
-}
-
-.africa-trust-section {
-    padding: 0 0 2.5rem;
-    background: linear-gradient(180deg, transparent 0%, rgba(212, 175, 55, 0.04) 50%, transparent 100%);
-}
-
-.africa-trust-banner-frame {
-    border-radius: 18px;
-    overflow: hidden;
-    border: 1px solid rgba(212, 175, 55, 0.35);
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
-}
-
-@media (min-width: 992px) {
-    .africa-trust-banner-frame {
-        margin-left: -1.5rem;
-        margin-right: -1.5rem;
-        width: calc(100% + 3rem);
-    }
-}
-
-.africa-trust-banner-full {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-@media (min-width: 992px) {
-    .africa-trust-section {
-        display: none;
-    }
-}
-
-@media (max-width: 991px) {
-    .hero-trust-banner-wrap {
-        display: none;
-    }
-}
-
-.insurance-banner,
-.tier-insurance-badge {
-    background: rgba(34, 197, 94, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.35);
-    color: #86efac;
-    border-radius: 12px;
-    padding: 0.85rem 1rem;
-    font-size: 0.92rem;
-    line-height: 1.5;
-}
-
-.tier-insurance-badge {
-    font-size: 0.9rem;
-    padding: 0.65rem 0.85rem;
-    margin-bottom: 0.75rem;
 }
 
 /* Security */
@@ -814,28 +820,16 @@ h1, h2, h3, h4, .aurum-brand {
 .hero-content { position: relative; z-index: 1; }
 
 .hero-title {
-    font-size: clamp(2.5rem, 6vw, 4.25rem);
-    font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -0.035em;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.1;
     margin-bottom: 1.5rem;
 }
 
-.hero-title-usa {
-    display: block;
-    margin-top: 0.35rem;
-    font-size: clamp(2.5rem, 6vw, 4.25rem);
-    font-weight: 800;
-    letter-spacing: 0.06em;
-}
-
 .hero-subtitle {
-    font-size: 1.0625rem;
-    font-weight: 400;
+    font-size: 1.15rem;
     color: var(--aurum-muted);
     max-width: 540px;
-    line-height: 1.75;
-    letter-spacing: 0.01em;
+    line-height: 1.7;
 }
 
 /* Cards */
@@ -878,9 +872,7 @@ h1, h2, h3, h4, .aurum-brand {
 .section-black { background: var(--aurum-black); }
 
 .section-title {
-    font-size: clamp(1.85rem, 4vw, 2.75rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
+    font-size: clamp(2rem, 4vw, 3rem);
     margin-bottom: 1rem;
 }
 
@@ -888,8 +880,6 @@ h1, h2, h3, h4, .aurum-brand {
     color: var(--aurum-muted);
     max-width: 640px;
     margin: 0.75rem auto 0;
-    font-size: 1.02rem;
-    line-height: 1.65;
 }
 
 /* Steps */
@@ -915,8 +905,6 @@ h1, h2, h3, h4, .aurum-brand {
 .tier-yield {
     font-family: var(--font-display);
     font-size: 2.5rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
     color: var(--aurum-gold);
 }
 
