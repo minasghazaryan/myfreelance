@@ -32,6 +32,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<PhoneVerification> PhoneVerifications => Set<PhoneVerification>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<ClientFeedback> ClientFeedbacks => Set<ClientFeedback>();
+    public DbSet<LegalDocument> LegalDocuments => Set<LegalDocument>();
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
     public DbSet<ApplicationLog> ApplicationLogs => Set<ApplicationLog>();
 
@@ -64,6 +65,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(t => t.ProjectedYieldPercent).HasPrecision(8, 4);
             entity.Property(t => t.MinInvestment).HasPrecision(18, 8);
             entity.Property(t => t.MaxInvestment).HasPrecision(18, 8);
+            entity.Property(t => t.InsuranceNotice).HasMaxLength(500);
+            entity.Property(t => t.PackageDetails).HasMaxLength(2000);
         });
 
         builder.Entity<Investment>(entity =>
@@ -154,11 +157,20 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(f => f.DisplayName).HasMaxLength(120);
             entity.Property(f => f.AuthorSubtitle).HasMaxLength(120);
             entity.Property(f => f.Location).HasMaxLength(120);
+            entity.Property(f => f.MediaPath).HasMaxLength(500);
 
             entity.HasOne(f => f.User)
                 .WithMany()
                 .HasForeignKey(f => f.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<LegalDocument>(entity =>
+        {
+            entity.Property(d => d.Title).HasMaxLength(200);
+            entity.Property(d => d.FileName).HasMaxLength(260);
+            entity.Property(d => d.ContentType).HasMaxLength(120);
+            entity.Property(d => d.StoredPath).HasMaxLength(500);
         });
 
         builder.Entity<SiteSettings>(entity =>

@@ -9,4 +9,5 @@ public interface ICmsService
     Task<IReadOnlyList<LandingStatisticDto>> GetLandingStatisticsAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<LandingContentDto>> GetLandingContentAsync(CancellationToken cancellationToken = default);
     Task<SupportChatSettingsDto?> GetSupportChatSettingsAsync(CancellationToken cancellationToken = default);
+    Task<string?> GetSiteSettingAsync(string key, CancellationToken cancellationToken = default);
 }

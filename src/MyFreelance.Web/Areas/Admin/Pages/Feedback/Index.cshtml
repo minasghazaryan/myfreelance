@@ -1,14 +1,15 @@
 @page
 @model MyFreelance.Web.Areas.Admin.Pages.Feedback.IndexModel
-@{ ViewData["Title"] = "Client Feedback"; }
+@using MyFreelance.Domain.Enums
+@{ ViewData["Title"] = "Client Reviews"; }
 
 <div class="dashboard-layout">
     <div class="container-fluid">
         <div class="row">
             <partial name="Shared/_AdminNav" />
             <div class="col-lg-10 p-4">
-                <h2 class="text-gold mb-4">Client Feedback</h2>
-                <p class="text-muted-light mb-4">Review investor submissions and publish them to the homepage testimonials section.</p>
+                <h2 class="text-gold mb-4">Client Reviews</h2>
+                <p class="text-muted-light mb-4">Publish investor feedback or add featured reviews with photos and videos for the homepage.</p>
 
                 @if (!string.IsNullOrEmpty(Model.SuccessMessage))
                 {
@@ -19,9 +20,42 @@
                     <div class="alert alert-danger"><i class="bi bi-exclamation-circle me-2"></i>@Model.ErrorMessage</div>
                 }
 
+                @if (User.IsInRole(AppRoles.Admin))
+                {
+                    <div class="aurum-card mb-4">
+                        <h5 class="text-gold">Add Featured Review</h5>
+                        <p class="small text-muted-light">Upload a photo or video with a client quote — ideal for celebrity or ambassador testimonials.</p>
+                        <form method="post" asp-page-handler="CreateFeatured" enctype="multipart/form-data" class="row g-3 mt-2">
+                            <div class="col-md-4">
+                                <label asp-for="FeaturedInput.DisplayName" class="form-label small text-muted-light">Display Name</label>
+                                <input asp-for="FeaturedInput.DisplayName" class="form-control form-control-aurum" placeholder="e.g. Kwame A." required />
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="FeaturedInput.AuthorSubtitle" class="form-label small text-muted-light">Subtitle</label>
+                                <input asp-for="FeaturedInput.AuthorSubtitle" class="form-control form-control-aurum" placeholder="Gold Tier Investor" />
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="FeaturedInput.Location" class="form-label small text-muted-light">Location</label>
+                                <input asp-for="FeaturedInput.Location" class="form-control form-control-aurum" placeholder="Accra, Ghana" />
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="FeaturedInput.Content" class="form-label small text-muted-light">Review Text</label>
+                                <textarea asp-for="FeaturedInput.Content" class="form-control form-control-aurum" rows="3" placeholder="I invested and started receiving rewards..." required></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="FeaturedInput.MediaFile" class="form-label small text-muted-light">Photo or Video</label>
+                                <input asp-for="FeaturedInput.MediaFile" type="file" accept="image/*,video/mp4,video/webm" class="form-control form-control-aurum" />
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-aurum">Publish Featured Review</button>
+                            </div>
+                        </form>
+                    </div>
+                }
+
                 @if (Model.Items.Count == 0)
                 {
-                    <div class="aurum-card">No feedback submissions yet.</div>
+                    <div class="aurum-card">No reviews yet.</div>
                 }
                 else
                 {
@@ -44,6 +78,19 @@
                                     }
                                 </div>
                             </div>
+                            @if (item.MediaUrl is not null)
+                            {
+                                <div class="mb-3">
+                                    @if (item.MediaType == TestimonialMediaType.Video)
+                                    {
+                                        <video src="@item.MediaUrl" controls class="testimonial-admin-media"></video>
+                                    }
+                                    else if (item.MediaType == TestimonialMediaType.Image)
+                                    {
+                                        <img src="@item.MediaUrl" alt="@item.AuthorName" class="testimonial-admin-media" />
+                                    }
+                                </div>
+                            }
                             <p class="mb-3">"@item.Content"</p>
                             <p class="small text-muted-light mb-3">Submitted @item.CreatedAt.ToString("g")</p>
 
@@ -51,25 +98,29 @@
                             {
                                 @if (!item.IsPublished)
                                 {
-                                    <form method="post" asp-page-handler="Publish" class="row g-2 align-items-end">
+                                    <form method="post" asp-page-handler="Publish" enctype="multipart/form-data" class="row g-2 align-items-end">
                                         <input type="hidden" asp-for="PublishInput.FeedbackId" value="@item.Id" />
                                         <div class="col-md-3">
                                             <label class="form-label small text-muted-light">Display Name</label>
                                             <input asp-for="PublishInput.DisplayName" class="form-control form-control-aurum" placeholder="@item.AuthorName" />
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <label class="form-label small text-muted-light">Subtitle</label>
                                             <input asp-for="PublishInput.AuthorSubtitle" class="form-control form-control-aurum" placeholder="Verified Investor" />
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <label class="form-label small text-muted-light">Location</label>
                                             <input asp-for="PublishInput.Location" class="form-control form-control-aurum" placeholder="Accra, Ghana" />
                                         </div>
                                         <div class="col-md-3">
+                                            <label class="form-label small text-muted-light">Photo / Video</label>
+                                            <input asp-for="PublishInput.MediaFile" type="file" accept="image/*,video/mp4,video/webm" class="form-control form-control-aurum" />
+                                        </div>
+                                        <div class="col-md-2">
                                             <button type="submit" class="btn btn-success w-100">Publish</button>
                                         </div>
                                     </form>
-                                    <form method="post" asp-page-handler="Delete" class="mt-2" onsubmit="return confirm('Delete this feedback?');">
+                                    <form method="post" asp-page-handler="Delete" class="mt-2" onsubmit="return confirm('Delete this review?');">
                                         <input type="hidden" name="id" value="@item.Id" />
                                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                     </form>
@@ -81,7 +132,7 @@
                                             <input type="hidden" name="id" value="@item.Id" />
                                             <button type="submit" class="btn btn-sm btn-aurum-outline">Unpublish</button>
                                         </form>
-                                        <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Delete this feedback?');">
+                                        <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Delete this review?');">
                                             <input type="hidden" name="id" value="@item.Id" />
                                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                         </form>

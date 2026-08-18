@@ -197,8 +197,45 @@ public static class DatabaseSeeder
                 new SiteSettings { Key = "Contact.Email", Value = "support@aurumwealth.gh", Category = "Contact" },
                 new SiteSettings { Key = "Contact.WhatsApp", Value = "+233201234567", Category = "Contact" },
                 new SiteSettings { Key = "Contact.Telegram", Value = "@AurumWealthGH", Category = "Contact" },
-                new SiteSettings { Key = "Brand.Name", Value = "AurumWealth", Category = "Brand" }
+                new SiteSettings { Key = "Brand.Name", Value = "AurumWealth", Category = "Brand" },
+                new SiteSettings { Key = "Brand.HeroBadge", Value = "Africa's First Investment Fund", Category = "Brand" },
+                new SiteSettings { Key = "Insurance.GlobalBanner", Value = "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.", Category = "Insurance" }
             );
+        }
+        else
+        {
+            await EnsureSiteSettingAsync(db, "Brand.HeroBadge", "Africa's First Investment Fund", "Brand");
+            await EnsureSiteSettingAsync(db, "Insurance.GlobalBanner", "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.", "Insurance");
+        }
+
+        if (!await db.SiteSettings.AnyAsync(s => s.Key == "Branding.Insurance.v1"))
+        {
+            const string insuranceNotice = "Insured by the African Insurance Organisation — AIO — zero risk.";
+            foreach (var tier in await db.InvestmentTiers.ToListAsync())
+            {
+                if (string.IsNullOrWhiteSpace(tier.InsuranceNotice))
+                    tier.InsuranceNotice = insuranceNotice;
+            }
+
+            db.SiteSettings.Add(new SiteSettings { Key = "Branding.Insurance.v1", Value = "true", Category = "System" });
+        }
+
+        if (!await db.SiteSettings.AnyAsync(s => s.Key == "Branding.Insurance.AIO.v1"))
+        {
+            const string insuranceNotice = "Insured by the African Insurance Organisation — AIO — zero risk.";
+            const string globalBanner = "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.";
+            var globalSetting = await db.SiteSettings.FirstOrDefaultAsync(s => s.Key == "Insurance.GlobalBanner");
+            if (globalSetting is not null)
+                globalSetting.Value = globalBanner;
+
+            foreach (var tier in await db.InvestmentTiers.ToListAsync())
+            {
+                if (string.IsNullOrWhiteSpace(tier.InsuranceNotice) ||
+                    tier.InsuranceNotice.Contains("African Association of Insurers", StringComparison.OrdinalIgnoreCase))
+                    tier.InsuranceNotice = insuranceNotice;
+            }
+
+            db.SiteSettings.Add(new SiteSettings { Key = "Branding.Insurance.AIO.v1", Value = "true", Category = "System" });
         }
 
         await db.SaveChangesAsync();
@@ -225,9 +262,45 @@ public static class DatabaseSeeder
 
     private static InvestmentTier[] CreateDefaultInvestmentTiers() =>
     [
-        new InvestmentTier { Name = "Bronze", Description = "Entry level tier with conservative allocation and lower projected yield.", RiskLevel = RiskLevel.Low, ProjectedYieldPercent = 10m, MinInvestment = 100, MaxInvestment = 500, SortOrder = 1, AccentColor = "#CD7F32", IconClass = "bi-award" },
-        new InvestmentTier { Name = "Silver", Description = "Balanced portfolio with moderate projected yield and diversified strategies.", RiskLevel = RiskLevel.Moderate, ProjectedYieldPercent = 15m, MinInvestment = 500, MaxInvestment = 5000, SortOrder = 2, AccentColor = "#C0C0C0", IconClass = "bi-gem" },
-        new InvestmentTier { Name = "Gold", Description = "Advanced allocation with higher projected yield and dynamic rebalancing.", RiskLevel = RiskLevel.High, ProjectedYieldPercent = 25m, MinInvestment = 5000, MaxInvestment = 20000, SortOrder = 3, AccentColor = "#D4AF37", IconClass = "bi-trophy" }
+        new InvestmentTier
+        {
+            Name = "Bronze",
+            Description = "Entry level tier with conservative allocation and lower projected yield.",
+            PackageDetails = "Conservative DeFi and stablecoin allocation mix\n30-day investment cycle with daily yield accrual\nIdeal starting point for new investors\nWithdrawal terms and penalties apply after cycle ends\nFully insured by the African Insurance Organisation — AIO",
+            RiskLevel = RiskLevel.Low,
+            ProjectedYieldPercent = 10m,
+            MinInvestment = 100,
+            MaxInvestment = 500,
+            SortOrder = 1,
+            AccentColor = "#CD7F32",
+            IconClass = "bi-award"
+        },
+        new InvestmentTier
+        {
+            Name = "Silver",
+            Description = "Balanced portfolio with moderate projected yield and diversified strategies.",
+            PackageDetails = "Balanced mix of yield farming, LP, and arbitrage strategies\n30-day cycle with higher projected returns than Bronze\nDiversified on-chain allocation with risk scoring\nPriority support for Silver-tier investors\nFully insured by the African Insurance Organisation — AIO",
+            RiskLevel = RiskLevel.Moderate,
+            ProjectedYieldPercent = 15m,
+            MinInvestment = 500,
+            MaxInvestment = 5000,
+            SortOrder = 2,
+            AccentColor = "#C0C0C0",
+            IconClass = "bi-gem"
+        },
+        new InvestmentTier
+        {
+            Name = "Gold",
+            Description = "Advanced allocation with higher projected yield and dynamic rebalancing.",
+            PackageDetails = "Advanced multi-strategy deployment with dynamic rebalancing\nHighest projected yield tier for experienced investors\nReal-time risk monitoring and automated adjustments\nDedicated account manager for Gold-tier members\nFully insured by the African Insurance Organisation — AIO",
+            RiskLevel = RiskLevel.High,
+            ProjectedYieldPercent = 25m,
+            MinInvestment = 5000,
+            MaxInvestment = 20000,
+            SortOrder = 3,
+            AccentColor = "#D4AF37",
+            IconClass = "bi-trophy"
+        }
     ];
 
     private static async Task SyncInvestmentTiersAsync(ApplicationDbContext db)
@@ -247,11 +320,21 @@ public static class DatabaseSeeder
             tier.RiskLevel = defaults.RiskLevel;
             tier.SortOrder = defaults.SortOrder;
             tier.Description = defaults.Description;
+            tier.PackageDetails = defaults.PackageDetails;
             tier.AccentColor = defaults.AccentColor;
             tier.IconClass = defaults.IconClass;
             tier.IsActive = true;
         }
 
+        await db.SaveChangesAsync();
+    }
+
+    private static async Task EnsureSiteSettingAsync(ApplicationDbContext db, string key, string value, string category)
+    {
+        if (await db.SiteSettings.AnyAsync(s => s.Key == key))
+            return;
+
+        db.SiteSettings.Add(new SiteSettings { Key = key, Value = value, Category = category });
         await db.SaveChangesAsync();
     }
 }

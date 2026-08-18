@@ -7,6 +7,7 @@ public class InvestmentTier : BaseEntity
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+    public string? PackageDetails { get; set; }
     public RiskLevel RiskLevel { get; set; }
     public decimal ProjectedYieldPercent { get; set; }
     public decimal MinInvestment { get; set; }
@@ -15,6 +16,7 @@ public class InvestmentTier : BaseEntity
     public bool IsActive { get; set; } = true;
     public string? IconClass { get; set; }
     public string? AccentColor { get; set; }
+    public string? InsuranceNotice { get; set; }
 
     public ICollection<Investment> Investments { get; set; } = [];
 }

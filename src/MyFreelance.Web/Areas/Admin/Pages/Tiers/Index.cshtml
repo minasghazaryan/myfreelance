@@ -37,6 +37,14 @@
                             <label asp-for="Input.Description" class="form-label small text-muted-light">Description</label>
                             <textarea asp-for="Input.Description" class="form-control form-control-aurum" rows="2" placeholder="Short tier description for investors"></textarea>
                         </div>
+                        <div class="col-12">
+                            <label asp-for="Input.PackageDetails" class="form-label small text-muted-light">Package Details (one line per bullet, shown in Learn more)</label>
+                            <textarea asp-for="Input.PackageDetails" class="form-control form-control-aurum" rows="4" placeholder="Conservative allocation mix&#10;30-day investment cycle&#10;..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.InsuranceNotice" class="form-label small text-muted-light">Insurance Banner (optional)</label>
+                            <input asp-for="Input.InsuranceNotice" class="form-control form-control-aurum" placeholder="Insured by the African Insurance Organisation — AIO — zero risk." />
+                        </div>
                         <div class="col-12"><button type="submit" class="btn btn-aurum">Create Tier</button></div>
                     </form>
                 </div>

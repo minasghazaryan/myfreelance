@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MyFreelance.Application.Interfaces;
@@ -5,12 +6,17 @@ using MyFreelance.Domain.Constants;
 
 namespace MyFreelance.Web.Areas.Admin.Pages.Feedback;
 
-public class IndexModel(IFeedbackService feedbackService) : PageModel
+public class IndexModel(
+    IFeedbackService feedbackService,
+    UserManager<Domain.Entities.ApplicationUser> userManager) : PageModel
 {
     public IList<Application.DTOs.Feedback.ClientFeedbackDto> Items { get; set; } = [];
 
     [BindProperty]
     public PublishFeedbackForm PublishInput { get; set; } = new();
+
+    [BindProperty]
+    public FeaturedReviewForm FeaturedInput { get; set; } = new();
 
     public string? SuccessMessage { get; set; }
     public string? ErrorMessage { get; set; }
@@ -21,6 +27,16 @@ public class IndexModel(IFeedbackService feedbackService) : PageModel
         public string? DisplayName { get; set; }
         public string? AuthorSubtitle { get; set; }
         public string? Location { get; set; }
+        public IFormFile? MediaFile { get; set; }
+    }
+
+    public class FeaturedReviewForm
+    {
+        public string Content { get; set; } = string.Empty;
+        public string DisplayName { get; set; } = string.Empty;
+        public string? AuthorSubtitle { get; set; }
+        public string? Location { get; set; }
+        public IFormFile? MediaFile { get; set; }
     }
 
     public async Task OnGetAsync()
@@ -37,14 +53,53 @@ public class IndexModel(IFeedbackService feedbackService) : PageModel
 
         try
         {
+            Stream? stream = null;
+            if (PublishInput.MediaFile is { Length: > 0 })
+                stream = PublishInput.MediaFile.OpenReadStream();
+
             await feedbackService.PublishFeedbackAsync(
                 PublishInput.FeedbackId,
                 PublishInput.DisplayName,
                 PublishInput.AuthorSubtitle,
-                PublishInput.Location);
+                PublishInput.Location,
+                stream,
+                PublishInput.MediaFile?.FileName,
+                PublishInput.MediaFile?.ContentType);
+
             TempData["SuccessMessage"] = "Feedback published on the homepage.";
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostCreateFeaturedAsync()
+    {
+        if (!User.IsInRole(AppRoles.Admin))
+            return Forbid();
+
+        try
+        {
+            Stream? stream = null;
+            if (FeaturedInput.MediaFile is { Length: > 0 })
+                stream = FeaturedInput.MediaFile.OpenReadStream();
+
+            await feedbackService.CreateFeaturedReviewAsync(
+                userManager.GetUserId(User)!,
+                FeaturedInput.Content,
+                FeaturedInput.DisplayName,
+                FeaturedInput.AuthorSubtitle,
+                FeaturedInput.Location,
+                stream,
+                FeaturedInput.MediaFile?.FileName,
+                FeaturedInput.MediaFile?.ContentType);
+
+            TempData["SuccessMessage"] = "Featured review published on the homepage.";
+        }
+        catch (Exception ex)
         {
             TempData["ErrorMessage"] = ex.Message;
         }

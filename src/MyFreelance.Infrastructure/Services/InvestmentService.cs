@@ -20,7 +20,17 @@ public class InvestmentService(
         return await db.InvestmentTiers
             .Where(t => t.IsActive)
             .OrderBy(t => t.SortOrder)
-            .Select(t => new InvestmentTierDto(t.Id, t.Name, t.Description, t.RiskLevel.ToString(), t.ProjectedYieldPercent, t.MinInvestment, t.MaxInvestment, t.AccentColor))
+            .Select(t => new InvestmentTierDto(
+                t.Id,
+                t.Name,
+                t.Description,
+                t.PackageDetails,
+                t.RiskLevel.ToString(),
+                t.ProjectedYieldPercent,
+                t.MinInvestment,
+                t.MaxInvestment,
+                t.AccentColor,
+                t.InsuranceNotice))
             .ToListAsync(cancellationToken);
     }
 

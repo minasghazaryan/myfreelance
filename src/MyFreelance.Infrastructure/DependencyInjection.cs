@@ -39,6 +39,7 @@ public static class DependencyInjection
         services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddScoped<IWalletService, WalletService>();
         services.AddScoped<ITransactionService, TransactionService>();
+        services.AddScoped<ILegalDocumentService, LegalDocumentService>();
         services.AddScoped<IFileStorageService, FileStorageService>();
 
         services.AddApplication();

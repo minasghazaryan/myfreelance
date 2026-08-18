@@ -1,0 +1,88 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.LegalDocuments.IndexModel
+@using MyFreelance.Domain.Enums
+@{ ViewData["Title"] = "Legal Documents"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-4">Legal Documents</h2>
+                <p class="text-muted-light mb-4">Upload the user agreement and investment contract (PDF). The latest active file of each type is shown on the website.</p>
+
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>@Model.SuccessMessage</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger"><i class="bi bi-exclamation-circle me-2"></i>@Model.ErrorMessage</div>
+                }
+
+                @if (User.IsInRole(AppRoles.Admin))
+                {
+                    <div class="aurum-card mb-4">
+                        <h5 class="text-gold">Upload Document</h5>
+                        <form method="post" asp-page-handler="Upload" enctype="multipart/form-data" class="row g-3 mt-2">
+                            <div class="col-md-4">
+                                <label asp-for="Input.DocumentType" class="form-label small text-muted-light">Document Type</label>
+                                <select asp-for="Input.DocumentType" class="form-control form-control-aurum" asp-items="Html.GetEnumSelectList<LegalDocumentType>()" required></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Input.Title" class="form-label small text-muted-light">Title</label>
+                                <input asp-for="Input.Title" class="form-control form-control-aurum" placeholder="e.g. User Agreement" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Input.File" class="form-label small text-muted-light">PDF File</label>
+                                <input asp-for="Input.File" type="file" accept=".pdf,application/pdf" class="form-control form-control-aurum" required />
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-aurum">Upload PDF</button>
+                            </div>
+                        </form>
+                    </div>
+                }
+
+                <div class="aurum-card">
+                    <h5 class="text-gold mb-3">Uploaded Documents</h5>
+                    @if (Model.Documents.Count == 0)
+                    {
+                        <p class="text-muted-light mb-0">No documents uploaded yet.</p>
+                    }
+                    else
+                    {
+                        <table class="table table-aurum mb-0">
+                            <thead><tr><th>Type</th><th>Title</th><th>File</th><th>Status</th><th>Uploaded</th><th></th></tr></thead>
+                            <tbody>
+                            @foreach (var doc in Model.Documents)
+                            {
+                                <tr>
+                                    <td>@doc.DocumentType</td>
+                                    <td>@doc.Title</td>
+                                    <td>@doc.FileName</td>
+                                    <td>@(doc.IsActive ? "Active" : "Replaced")</td>
+                                    <td>@doc.CreatedAt.ToString("g")</td>
+                                    <td class="text-nowrap">
+                                        @if (doc.IsActive)
+                                        {
+                                            <a asp-page="/Legal/Download" asp-route-id="@doc.Id" class="btn btn-sm btn-aurum-outline" target="_blank">View</a>
+                                        }
+                                        @if (User.IsInRole(AppRoles.Admin))
+                                        {
+                                            <form method="post" asp-page-handler="Delete" class="d-inline" onsubmit="return confirm('Delete this document?');">
+                                                <input type="hidden" name="id" value="@doc.Id" />
+                                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -8,6 +8,9 @@
             <partial name="Shared/_DashboardNav" />
             <div class="col-lg-10 col-md-9 p-4">
                 <h2 class="text-gold mb-4">Investments</h2>
+                <div class="insurance-banner mb-4">
+                    <i class="bi bi-shield-fill-check me-2"></i>All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.
+                </div>
                 @if (Model.ErrorMessage != null) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
                 @if (Model.SuccessMessage != null) { <div class="alert alert-success">@Model.SuccessMessage</div> }
 
@@ -23,6 +26,7 @@
                     {
                         <div class="col-md-4">
                             <div class="aurum-card">
+                                <div class="tier-insurance-badge small mb-2"><i class="bi bi-shield-check me-1"></i>@(string.IsNullOrWhiteSpace(tier.InsuranceNotice) ? "Fully insured — zero risk" : tier.InsuranceNotice)</div>
                                 <h5>@tier.Name</h5>
                                 <p class="tier-yield">@tier.ProjectedYieldPercent.ToString("0.##")% <small class="text-muted-light" style="font-size:0.5em">over 30 days</small></p>
                                 <p class="small text-muted-light mb-0">~@((tier.ProjectedYieldPercent / 30m).ToString("0.##"))% daily to available balance</p>

@@ -157,6 +157,19 @@ if (!app.Environment.IsDevelopment())
 if (useHttpsRedirection)
     app.UseHttpsRedirection();
 
+var uploadsPath = Path.GetFullPath(
+    Path.Combine(app.Environment.ContentRootPath,
+        builder.Configuration["FileStorage:Path"] ?? "uploads"));
+
+if (Directory.Exists(uploadsPath))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
+        RequestPath = "/uploads"
+    });
+}
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseRateLimiter();

@@ -27,4 +27,10 @@ public class CmsService(ApplicationDbContext db) : ICmsService
         => await db.SupportChatSettings.OrderByDescending(s => s.CreatedAt)
             .Select(s => new SupportChatSettingsDto(s.IsEnabled, s.ScriptContent, s.ShowOnLanding, s.ShowOnDashboard))
             .FirstOrDefaultAsync(cancellationToken);
+
+    public async Task<string?> GetSiteSettingAsync(string key, CancellationToken cancellationToken = default)
+        => await db.SiteSettings
+            .Where(s => s.Key == key)
+            .Select(s => s.Value)
+            .FirstOrDefaultAsync(cancellationToken);
 }

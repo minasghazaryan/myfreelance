@@ -9,6 +9,7 @@
         "tiers" => currentPage.StartsWith("/Tiers", StringComparison.OrdinalIgnoreCase),
         "referrals" => currentPage.StartsWith("/Referrals", StringComparison.OrdinalIgnoreCase),
         "feedback" => currentPage.StartsWith("/Feedback", StringComparison.OrdinalIgnoreCase),
+        "legal" => currentPage.StartsWith("/LegalDocuments", StringComparison.OrdinalIgnoreCase),
         "bonuses" => currentPage.StartsWith("/Bonuses", StringComparison.OrdinalIgnoreCase),
         "deposits" => currentPage.StartsWith("/Deposits", StringComparison.OrdinalIgnoreCase),
         "withdrawals" => currentPage.StartsWith("/Withdrawals", StringComparison.OrdinalIgnoreCase),
@@ -45,7 +46,8 @@
         </a>
         <a class="nav-link @(IsActive("transactions") ? "active" : "")" asp-area="Admin" asp-page="/Transactions/Index">Transactions</a>
         <a class="nav-link @(IsActive("faq") ? "active" : "")" asp-area="Admin" asp-page="/Faq/Index">FAQ</a>
-        <a class="nav-link @(IsActive("feedback") ? "active" : "")" asp-area="Admin" asp-page="/Feedback/Index">Client Feedback</a>
+        <a class="nav-link @(IsActive("feedback") ? "active" : "")" asp-area="Admin" asp-page="/Feedback/Index">Client Reviews</a>
+        <a class="nav-link @(IsActive("legal") ? "active" : "")" asp-area="Admin" asp-page="/LegalDocuments/Index">Legal Documents</a>
         <a class="nav-link @(IsActive("cms") ? "active" : "")" asp-area="Admin" asp-page="/Cms/Index">CMS</a>
         <a class="nav-link @(IsActive("support") ? "active" : "")" asp-area="Admin" asp-page="/SupportChat/Index">Support Chat</a>
         <a class="nav-link @(IsActive("audit") ? "active" : "")" asp-area="Admin" asp-page="/AuditLogs/Index">Audit Logs</a>

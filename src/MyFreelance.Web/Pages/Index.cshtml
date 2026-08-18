@@ -1,5 +1,6 @@
 @page
 @model MyFreelance.Web.Pages.IndexModel
+@using MyFreelance.Domain.Enums
 @{
     ViewData["Title"] = "Premium Blockchain Investing";
 }
@@ -19,9 +20,14 @@
     <div class="hero-bg"></div>
     <div class="container hero-content">
         <div class="row align-items-center g-4 g-lg-5">
-            <div class="col-lg-6 animate-in">
-                <h1 class="hero-title">Institutional-Grade <span class="text-gold">Blockchain Investing</span> for Ghana &amp; Beyond</h1>
-                <p class="hero-subtitle">Verified onboarding, transparent tiers, and real-time portfolio visibility.</p>
+            <div class="col-lg-4 animate-in">
+                <span class="hero-badge mb-3 d-inline-block"><i class="bi bi-globe-africa me-2"></i>@Model.HeroBadge</span>
+                <h1 class="hero-title">
+                    Africa's First<br />
+                    <span class="text-gold">Investment Fund</span><br />
+                    <span class="text-gold hero-title-usa">U.S.A</span>
+                </h1>
+                <p class="hero-subtitle">Verified onboarding, insured deposits, and real-time portfolio visibility for investors across the continent.</p>
                 <div class="d-flex flex-wrap gap-3 mt-4">
                     <a asp-page="/Account/Register" class="btn btn-aurum btn-lg">Open Investor Account</a>
                     <a href="#tiers" class="btn btn-aurum-outline btn-lg">View Investment Tiers</a>
@@ -30,28 +36,24 @@
                     <i class="bi bi-info-circle me-1"></i>Projected yields are illustrative. Capital is at risk.
                 </p>
             </div>
-            <div class="col-lg-6 animate-in">
-                <div class="hero-trust-panel aurum-card">
-                    <p class="hero-panel-label mb-1">Built for trust</p>
-                    <h3 class="hero-panel-title mb-3">Why investors stay with us</h3>
-                    <div class="hero-highlight-list">
-                        @foreach (var (icon, title, text) in new[] {
-                            ("bi-person-check", "Verified onboarding", "KYC and phone verification before your first deposit."),
-                            ("bi-speedometer2", "Live dashboard", "Track balances, tiers, and performance in one place."),
-                            ("bi-file-earmark-text", "Clear terms", "Published limits, yields, and withdrawal rules upfront.")
-                        })
-                        {
-                            <div class="hero-highlight-item">
-                                <div class="hero-highlight-icon"><i class="bi @icon"></i></div>
-                                <div>
-                                    <strong>@title</strong>
-                                    <span>@text</span>
-                                </div>
-                            </div>
-                        }
-                    </div>
+            <div class="col-lg-8 hero-banner-col animate-in">
+                <div class="hero-trust-banner-wrap">
+                    <img src="~/images/africa-investment-trust-banner.png"
+                         alt="United States of Africa Investment Fund — One Continent. One Vision. Endless Opportunities."
+                         class="hero-trust-banner" />
                 </div>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- Africa trust banner (full width) -->
+<section class="africa-trust-section">
+    <div class="container">
+        <div class="africa-trust-banner-frame">
+            <img src="~/images/africa-investment-trust-banner.png"
+                 alt="United States of Africa Investment Fund — Unity, Investment, Innovation, Impact, Prosperity"
+                 class="africa-trust-banner-full" />
         </div>
     </div>
 </section>
@@ -82,20 +84,46 @@
             <h2 class="section-title text-gold">Investment Tiers</h2>
             <p class="section-subtitle mb-0">Structured products with defined limits — choose the profile that fits your goals</p>
         </div>
+        <div class="insurance-banner mt-4 mb-2">
+            <i class="bi bi-shield-fill-check me-2"></i>@Model.InsuranceBanner
+        </div>
         <div class="row g-4 mt-2 justify-content-center">
             @foreach (var tier in Model.Tiers)
             {
                 var tierClass = tier.Name.ToLower() switch { "bronze" => "tier-bronze", "silver" => "tier-silver", _ => "tier-gold" };
                 var riskClass = tier.RiskLevel switch { "Low" => "risk-low", "Moderate" => "risk-moderate", _ => "risk-high" };
+                var tierInsurance = !string.IsNullOrWhiteSpace(tier.InsuranceNotice) ? tier.InsuranceNotice : "Insured by the African Insurance Organisation — AIO — zero risk.";
                 <div class="col-md-4">
                     <div class="aurum-card @tierClass tier-card h-100 text-start">
+                        <div class="tier-insurance-badge"><i class="bi bi-shield-check me-1"></i>@tierInsurance</div>
                         <div class="d-flex justify-content-between align-items-start">
                             <h4 class="mb-0">@tier.Name</h4>
                             <span class="risk-badge @riskClass">@tier.RiskLevel</span>
                         </div>
                         <div class="tier-yield my-3">@tier.ProjectedYieldPercent.ToString("0.##")%</div>
                         <p class="small text-muted-light mb-0">Projected yield — not guaranteed</p>
-                        <p class="mt-3 small text-muted-light">@tier.Description</p>
+                        <p class="mt-3 small text-muted-light mb-2">@tier.Description</p>
+                        @if (!string.IsNullOrWhiteSpace(tier.PackageDetails))
+                        {
+                            <button class="btn btn-link tier-learn-more p-0 mb-2"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#tier-details-@tier.Id"
+                                    aria-expanded="false"
+                                    aria-controls="tier-details-@tier.Id">
+                                Learn more <i class="bi bi-chevron-down ms-1"></i>
+                            </button>
+                            <div class="collapse tier-details" id="tier-details-@tier.Id">
+                                <div class="tier-details-body">
+                                    <ul class="tier-details-list mb-0">
+                                        @foreach (var line in tier.PackageDetails.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                                        {
+                                            <li>@line.TrimStart('-', '•', ' ')</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        }
                         <hr class="border-gold-subtle" />
                         <div class="tier-limits">
                             <div><span>Minimum</span><strong>$@tier.MinInvestment.ToString("N0")</strong></div>
@@ -201,23 +229,34 @@
 </section>
 
 <!-- Testimonials -->
-<section class="landing-section section-black">
+<section id="reviews" class="landing-section section-black">
     <div class="container">
         <div class="landing-section-header text-center">
-            <h2 class="section-title text-gold">What Investors Say</h2>
-            <p class="section-subtitle mb-0">Real feedback from verified platform members</p>
+            <h2 class="section-title text-gold">Our Clients' Reviews</h2>
+            <p class="section-subtitle mb-0">Real stories, photos, and videos from verified platform members</p>
         </div>
         <div class="row g-4 mt-2">
             @foreach (var testimonial in Model.Testimonials)
             {
                 <div class="col-lg-4">
                     <div class="aurum-card testimonial-card h-100">
+                        @if (testimonial.MediaUrl is not null && testimonial.MediaType == TestimonialMediaType.Image)
+                        {
+                            <img src="@testimonial.MediaUrl" alt="@testimonial.AuthorName" class="testimonial-media mb-3" />
+                        }
+                        else if (testimonial.MediaUrl is not null && testimonial.MediaType == TestimonialMediaType.Video)
+                        {
+                            <video src="@testimonial.MediaUrl" controls class="testimonial-media mb-3"></video>
+                        }
                         <div class="testimonial-stars">
                             @for (var s = 0; s < 5; s++) { <i class="bi bi-star-fill"></i> }
                         </div>
                         <p class="testimonial-quote">"@testimonial.Content"</p>
                         <div class="testimonial-author">
-                            <div class="testimonial-avatar">@testimonial.AuthorName[0]</div>
+                            @if (testimonial.MediaUrl is null)
+                            {
+                                <div class="testimonial-avatar">@testimonial.AuthorName[0]</div>
+                            }
                             <div>
                                 <strong>@testimonial.AuthorName</strong>
                                 <span>@testimonial.AuthorSubtitle@(testimonial.Location is not null ? $" · {testimonial.Location}" : "")</span>
@@ -229,6 +268,31 @@
         </div>
     </div>
 </section>
+
+@if (Model.LegalDocuments.Count > 0)
+{
+<section id="documents" class="landing-section section-dark">
+    <div class="container">
+        <div class="landing-section-header text-center">
+            <h2 class="section-title text-gold">Legal Documents</h2>
+            <p class="section-subtitle mb-0">Download your user agreement and investment contract</p>
+        </div>
+        <div class="row g-3 mt-2 justify-content-center">
+            @foreach (var doc in Model.LegalDocuments)
+            {
+                <div class="col-md-5 col-lg-4">
+                    <div class="aurum-card text-center h-100">
+                        <i class="bi bi-file-earmark-pdf text-gold display-6 mb-3"></i>
+                        <h5>@doc.Title</h5>
+                        <p class="small text-muted-light mb-3">@doc.FileName</p>
+                        <a href="@doc.DownloadUrl" class="btn btn-aurum-outline" target="_blank">Download PDF</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+}
 
 <!-- Security & Compliance -->
 <section id="security" class="landing-section section-dark">
