@@ -29,6 +29,7 @@ public class IndexModel(
     public string InsuranceBanner { get; set; } = "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.";
     public string ContactEmail { get; set; } = "support@aurumwealth.gh";
     public string ContactTelegram { get; set; } = "@africausainvest";
+    public string ContactTelegramUrl { get; private set; } = "https://t.me/africausainvest";
 
     public async Task OnGetAsync()
     {
@@ -42,6 +43,13 @@ public class IndexModel(
         InsuranceBanner = await cmsService.GetSiteSettingAsync("Insurance.GlobalBanner") ?? InsuranceBanner;
         ContactEmail = await cmsService.GetSiteSettingAsync("Contact.Email") ?? ContactEmail;
         ContactTelegram = await cmsService.GetSiteSettingAsync("Contact.Telegram") ?? ContactTelegram;
+        ContactTelegramUrl = BuildTelegramUrl(ContactTelegram);
+    }
+
+    private static string BuildTelegramUrl(string handle)
+    {
+        var username = handle.Trim().TrimStart('@');
+        return string.IsNullOrWhiteSpace(username) ? "#" : $"https://t.me/{username}";
     }
 
     public async Task<IActionResult> OnPostContactAsync(string name, string email, string subject, string message)

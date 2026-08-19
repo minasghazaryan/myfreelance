@@ -727,6 +727,21 @@ h1, h2, h3, .aurum-brand {
     color: var(--aurum-muted);
 }
 
+.contact-channel-link {
+    text-decoration: none;
+    color: inherit;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.contact-channel-link:hover {
+    background: rgba(212, 175, 55, 0.08);
+}
+
+.contact-channel-link:hover span {
+    color: var(--aurum-gold);
+}
+
 /* Admin KYC details */
 .kyc-detail-list {
     display: grid;
