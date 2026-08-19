@@ -23,7 +23,10 @@
                     <div class="aurum-card mb-3">
                         <strong class="text-gold">@n.Name</strong> — Send @n.Currency to:
                         <code class="d-block mt-2 p-2 bg-dark rounded">@n.WalletAddress</code>
-                        <p class="small text-muted-light mb-0 mt-2">Minimum deposit: @n.MinDeposit.ToString("N0") @n.Currency</p>
+                        @if (n.Currency == "USDT")
+                        {
+                            <p class="small text-muted-light mb-0 mt-2">Minimum deposit: @n.MinDeposit.ToString("N0") @n.Currency</p>
+                        }
                     </div>
                 }
 
@@ -39,7 +42,14 @@
                                 <option value="">Select network</option>
                                 @foreach (var n in Model.Networks)
                                 {
-                                    <option value="@n.Id">@n.Name (Min: @n.MinDeposit.ToString("N0") @n.Currency)</option>
+                                    if (n.Currency == "USDT")
+                                    {
+                                        <option value="@n.Id">@n.Name (Min: @n.MinDeposit.ToString("N0") @n.Currency)</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@n.Id">@n.Name</option>
+                                    }
                                 }
                             </select>
                         </div>
