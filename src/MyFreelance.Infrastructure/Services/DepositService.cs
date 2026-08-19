@@ -66,11 +66,11 @@ public class DepositService(
 
     public async Task<Deposit> CreateDepositFromReceiptAsync(string userId, CreateDepositReceiptDto dto, CancellationToken cancellationToken = default)
     {
-        var network = await db.DepositNetworks
-            .Where(n => n.IsActive)
-            .OrderBy(n => n.SortOrder)
-            .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new InvalidOperationException("No deposit network is configured.");
+        var network = await db.DepositNetworks.FindAsync([dto.DepositNetworkId], cancellationToken)
+            ?? throw new InvalidOperationException("Deposit network not found.");
+
+        if (dto.Amount < network.MinDeposit)
+            throw new InvalidOperationException($"Minimum deposit is {network.MinDeposit} {network.Currency}.");
 
         var contentType = dto.ContentType?.ToLowerInvariant() ?? "application/octet-stream";
         if (!AllowedReceiptTypes.Contains(contentType))
@@ -81,8 +81,9 @@ public class DepositService(
         var deposit = new Deposit
         {
             UserId = userId,
-            DepositNetworkId = network.Id,
-            Amount = 0,
+            DepositNetworkId = dto.DepositNetworkId,
+            Amount = dto.Amount,
+            TransactionHash = dto.TransactionHash,
             ReceiptPath = receiptPath,
             Status = DepositStatus.Pending
         };
@@ -90,16 +91,16 @@ public class DepositService(
         await unitOfWork.Repository<Deposit>().AddAsync(deposit, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await auditService.LogAsync(userId, null, AuditAction.Deposit, nameof(Deposit), deposit.Id.ToString(), "Deposit receipt submitted for admin review.", cancellationToken: cancellationToken);
+        await auditService.LogAsync(userId, null, AuditAction.Deposit, nameof(Deposit), deposit.Id.ToString(), $"Deposit submitted: {dto.Amount} {network.Currency} with receipt.", cancellationToken: cancellationToken);
         await notificationService.SendEventNotificationAsync(
             userId,
             NotificationEventType.Deposit,
             new Dictionary<string, string>
             {
-                ["Amount"] = "Pending review",
+                ["Amount"] = $"${dto.Amount:N2}",
                 ["Status"] = "Pending",
-                ["Description"] = "Your deposit receipt was submitted and is awaiting admin approval.",
-                ["TransactionHash"] = "—"
+                ["Description"] = "Your deposit and receipt were submitted and are awaiting admin approval.",
+                ["TransactionHash"] = dto.TransactionHash ?? "—"
             },
             cancellationToken);
 

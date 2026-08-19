@@ -14,6 +14,7 @@
                             <tr>
                                 <th>User</th>
                                 <th>Amount</th>
+                                <th>Transaction Hash</th>
                                 <th>Receipt</th>
                                 <th>Status</th>
                                 <th>Date</th>
@@ -25,7 +26,17 @@
                             {
                                 <tr>
                                     <td>@d.UserEmail</td>
-                                    <td>@(d.Amount > 0 ? $"${d.Amount:N2}" : "—")</td>
+                                    <td>$@d.Amount.ToString("N2")</td>
+                                    <td>
+                                        @if (string.IsNullOrWhiteSpace(d.TransactionHash))
+                                        {
+                                            <span class="text-muted-light">—</span>
+                                        }
+                                        else
+                                        {
+                                            <code class="small" title="@d.TransactionHash">@d.TransactionHash</code>
+                                        }
+                                    </td>
                                     <td>
                                         @if (string.IsNullOrWhiteSpace(d.ReceiptUrl))
                                         {

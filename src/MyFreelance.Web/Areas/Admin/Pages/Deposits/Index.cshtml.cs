@@ -11,7 +11,7 @@ namespace MyFreelance.Web.Areas.Admin.Pages.Deposits;
 public class IndexModel(ApplicationDbContext db, IDepositService depositService, UserManager<ApplicationUser> userManager) : PageModel
 {
     public IList<DepositItem> Deposits { get; set; } = [];
-    public record DepositItem(Guid Id, string UserEmail, decimal Amount, string? ReceiptUrl, string Status, DateTime CreatedAt);
+    public record DepositItem(Guid Id, string UserEmail, decimal Amount, string? TransactionHash, string? ReceiptUrl, string Status, DateTime CreatedAt);
 
     public async Task OnGetAsync()
     {
@@ -20,6 +20,7 @@ public class IndexModel(ApplicationDbContext db, IDepositService depositService,
                 d.Id,
                 d.User.Email!,
                 d.Amount,
+                d.TransactionHash,
                 d.ReceiptPath == null ? null : "/uploads/" + d.ReceiptPath,
                 d.Status.ToString(),
                 d.CreatedAt))

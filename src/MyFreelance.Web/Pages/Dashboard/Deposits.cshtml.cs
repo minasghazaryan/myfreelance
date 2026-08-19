@@ -14,6 +14,15 @@ public class DepositsModel(IDepositService depositService) : PageModel
     public IReadOnlyList<DepositDto> Deposits { get; set; } = [];
 
     [BindProperty]
+    public Guid NetworkId { get; set; }
+
+    [BindProperty]
+    public decimal Amount { get; set; }
+
+    [BindProperty]
+    public string? TransactionHash { get; set; }
+
+    [BindProperty]
     public IFormFile? Receipt { get; set; }
 
     public string? SuccessMessage { get; set; }
@@ -31,6 +40,12 @@ public class DepositsModel(IDepositService depositService) : PageModel
     {
         ViewData["ActiveNav"] = "deposits";
 
+        if (NetworkId == Guid.Empty)
+            return RedirectWithError("Please select a deposit network.");
+
+        if (Amount <= 0)
+            return RedirectWithError("Deposit amount must be greater than zero.");
+
         if (Receipt is null || Receipt.Length == 0)
             return RedirectWithError("Please upload your transaction receipt.");
 
@@ -42,9 +57,9 @@ public class DepositsModel(IDepositService depositService) : PageModel
             await using var stream = Receipt.OpenReadStream();
             await depositService.CreateDepositFromReceiptAsync(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!,
-                new CreateDepositReceiptDto(stream, Receipt.FileName, Receipt.ContentType));
+                new CreateDepositReceiptDto(NetworkId, Amount, TransactionHash, stream, Receipt.FileName, Receipt.ContentType));
 
-            TempData["SuccessMessage"] = "Receipt submitted successfully. Your deposit will appear in your balance after admin approval.";
+            TempData["SuccessMessage"] = "Deposit submitted successfully. It will appear in your balance after admin confirmation.";
             return RedirectToPage();
         }
         catch (Exception ex)

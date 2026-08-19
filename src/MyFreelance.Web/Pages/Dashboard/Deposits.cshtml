@@ -28,35 +28,56 @@
                 }
 
                 <div class="aurum-card mb-4">
-                    <h5 class="text-gold">Submit Deposit Receipt</h5>
+                    <h5 class="text-gold">New Deposit</h5>
                     <p class="small text-muted-light mb-3">
-                        After sending USDT to one of the wallet addresses above, upload your payment receipt or screenshot. An admin will review and credit your balance.
+                        Send USDT to a wallet above, then submit your deposit details and upload the payment receipt for admin approval.
                     </p>
-                    <form method="post" enctype="multipart/form-data" class="mt-2">
-                        <div class="mb-3">
+                    <form method="post" enctype="multipart/form-data" class="row g-3 mt-2">
+                        <div class="col-md-4">
+                            <label asp-for="NetworkId" class="form-label">Network</label>
+                            <select asp-for="NetworkId" class="form-control form-control-aurum" required>
+                                <option value="">Select network</option>
+                                @foreach (var n in Model.Networks)
+                                {
+                                    <option value="@n.Id">@n.Name (Min: $@n.MinDeposit.ToString("N0"))</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="Amount" class="form-label">Amount (USDT)</label>
+                            <input asp-for="Amount" type="number" step="0.01" min="0.01" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-5">
+                            <label asp-for="TransactionHash" class="form-label">Transaction Hash</label>
+                            <input asp-for="TransactionHash" class="form-control form-control-aurum" placeholder="Optional — paste after transfer" />
+                        </div>
+                        <div class="col-12">
                             <label asp-for="Receipt" class="form-label">Transaction Receipt</label>
                             <input asp-for="Receipt" type="file" accept="image/*,application/pdf" class="form-control form-control-aurum" required />
                             <div class="form-text text-muted-light">JPG, PNG, WEBP, GIF, or PDF — max 10 MB</div>
                         </div>
-                        <button type="submit" class="btn btn-aurum">Submit for Approval</button>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-aurum">Submit Deposit</button>
+                        </div>
                     </form>
                 </div>
 
                 <div class="aurum-card">
                     <h5 class="text-gold">Deposit History</h5>
                     <table class="table table-aurum mt-3">
-                        <thead><tr><th>Network</th><th>Amount</th><th>Status</th><th>Receipt</th><th>Date</th></tr></thead>
+                        <thead><tr><th>Network</th><th>Amount</th><th>Status</th><th>Hash</th><th>Receipt</th><th>Date</th></tr></thead>
                         <tbody>
                         @foreach (var d in Model.Deposits)
                         {
                             <tr>
                                 <td>@d.NetworkName</td>
-                                <td>@(d.Amount > 0 ? $"${d.Amount:N2}" : "Pending review")</td>
+                                <td>$@d.Amount.ToString("N2")</td>
                                 <td>@d.Status</td>
+                                <td class="small">@(d.TransactionHash ?? "—")</td>
                                 <td>
                                     @if (!string.IsNullOrWhiteSpace(d.ReceiptUrl))
                                     {
-                                        <a href="@d.ReceiptUrl" target="_blank" rel="noopener" class="small">View receipt</a>
+                                        <a href="@d.ReceiptUrl" target="_blank" rel="noopener" class="small">View</a>
                                     }
                                     else
                                     {
