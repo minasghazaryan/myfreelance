@@ -66,11 +66,13 @@ public static class DatabaseSeeder
 
         if (!await db.DepositNetworks.AnyAsync())
         {
-            db.DepositNetworks.AddRange(
-                new DepositNetwork { Name = "USDT TRC20", Code = "TRC20", WalletAddress = "TPlaceholderTRC20WalletAddress123456789", MinDeposit = 50, RequiredConfirmations = 20, SortOrder = 1 },
-                new DepositNetwork { Name = "USDT ERC20", Code = "ERC20", WalletAddress = "0xPlaceholderERC20WalletAddress1234567890", MinDeposit = 100, RequiredConfirmations = 12, SortOrder = 2 },
-                new DepositNetwork { Name = "USDT BEP20", Code = "BEP20", WalletAddress = "0xPlaceholderBEP20WalletAddress1234567890", MinDeposit = 50, RequiredConfirmations = 15, SortOrder = 3 }
-            );
+            db.DepositNetworks.AddRange(CreateDefaultDepositNetworks());
+        }
+
+        if (!await db.SiteSettings.AnyAsync(s => s.Key == "DepositNetworks.Wallets.v2"))
+        {
+            await SyncDepositNetworksAsync(db);
+            db.SiteSettings.Add(new SiteSettings { Key = "DepositNetworks.Wallets.v2", Value = "true", Category = "System" });
         }
 
         if (!await db.LandingStatistics.AnyAsync())
@@ -346,4 +348,58 @@ public static class DatabaseSeeder
         db.SiteSettings.Add(new SiteSettings { Key = key, Value = value, Category = category });
         await db.SaveChangesAsync();
     }
+
+    private static DepositNetwork[] CreateDefaultDepositNetworks() =>
+        GetDepositNetworkDefinitions()
+            .Select(n => new DepositNetwork
+            {
+                Name = n.Name,
+                Code = n.Code,
+                Currency = n.Currency,
+                WalletAddress = n.WalletAddress,
+                MinDeposit = n.MinDeposit,
+                RequiredConfirmations = n.RequiredConfirmations,
+                SortOrder = n.SortOrder
+            })
+            .ToArray();
+
+    private static async Task SyncDepositNetworksAsync(ApplicationDbContext db)
+    {
+        foreach (var definition in GetDepositNetworkDefinitions())
+        {
+            var network = await db.DepositNetworks.FirstOrDefaultAsync(n => n.Code == definition.Code);
+            if (network is null)
+            {
+                db.DepositNetworks.Add(new DepositNetwork
+                {
+                    Name = definition.Name,
+                    Code = definition.Code,
+                    Currency = definition.Currency,
+                    WalletAddress = definition.WalletAddress,
+                    MinDeposit = definition.MinDeposit,
+                    RequiredConfirmations = definition.RequiredConfirmations,
+                    SortOrder = definition.SortOrder
+                });
+                continue;
+            }
+
+            network.Name = definition.Name;
+            network.Currency = definition.Currency;
+            network.WalletAddress = definition.WalletAddress;
+            network.MinDeposit = definition.MinDeposit;
+            network.RequiredConfirmations = definition.RequiredConfirmations;
+            network.SortOrder = definition.SortOrder;
+            network.IsActive = true;
+        }
+    }
+
+    private static IReadOnlyList<(string Name, string Code, string Currency, string WalletAddress, decimal MinDeposit, int RequiredConfirmations, int SortOrder)> GetDepositNetworkDefinitions() =>
+    [
+        ("Bitcoin", "BTC", "BTC", "bc1q2v8c2amhxr4v7x7d6ys5xatdvd7vn7ra0y8frm", 50m, 3, 1),
+        ("Ethereum", "ETH", "ETH", "0x616D1cc3b2d4F9745F90915E9bB0DAd95031C577", 50m, 12, 2),
+        ("Solana", "SOL", "SOL", "DN5inRSx2wvDEWwr127P417ch4r2eyVC66n1vNSAn8bA", 50m, 32, 3),
+        ("USDT TRC20", "TRC20", "USDT", "TD2rSZ735G9jsoA718t7E9mrvg9okxC2Sb", 50m, 20, 4),
+        ("USDT ERC20", "ERC20", "USDT", "0x616D1cc3b2d4F9745F90915E9bB0DAd95031C577", 100m, 12, 5),
+        ("USDT BEP20", "BEP20", "USDT", "0x616D1cc3b2d4F9745F90915E9bB0DAd95031C577", 50m, 15, 6)
+    ];
 }

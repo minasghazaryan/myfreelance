@@ -21,16 +21,16 @@
                 @foreach (var n in Model.Networks)
                 {
                     <div class="aurum-card mb-3">
-                        <strong class="text-gold">@n.Name</strong> — Send USDT to:
+                        <strong class="text-gold">@n.Name</strong> — Send @n.Currency to:
                         <code class="d-block mt-2 p-2 bg-dark rounded">@n.WalletAddress</code>
-                        <p class="small text-muted-light mb-0 mt-2">Minimum deposit: $@n.MinDeposit.ToString("N0")</p>
+                        <p class="small text-muted-light mb-0 mt-2">Minimum deposit: @n.MinDeposit.ToString("N0") @n.Currency</p>
                     </div>
                 }
 
                 <div class="aurum-card mb-4">
                     <h5 class="text-gold">New Deposit</h5>
                     <p class="small text-muted-light mb-3">
-                        Send USDT to a wallet above, then submit your deposit details and upload the payment receipt for admin approval.
+                        Send crypto to a wallet above, then submit your deposit details and upload the payment receipt for admin approval.
                     </p>
                     <form method="post" enctype="multipart/form-data" class="row g-3 mt-2">
                         <div class="col-md-4">
@@ -39,12 +39,12 @@
                                 <option value="">Select network</option>
                                 @foreach (var n in Model.Networks)
                                 {
-                                    <option value="@n.Id">@n.Name (Min: $@n.MinDeposit.ToString("N0"))</option>
+                                    <option value="@n.Id">@n.Name (Min: @n.MinDeposit.ToString("N0") @n.Currency)</option>
                                 }
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label asp-for="Amount" class="form-label">Amount (USDT)</label>
+                            <label asp-for="Amount" class="form-label">Amount</label>
                             <input asp-for="Amount" type="number" step="0.01" min="0.01" class="form-control form-control-aurum" required />
                         </div>
                         <div class="col-md-5">
