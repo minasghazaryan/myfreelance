@@ -13,8 +13,12 @@ public class DepositService(
     IUnitOfWork unitOfWork,
     INotificationService notificationService,
     IReferralService referralService,
-    IAuditService auditService) : IDepositService
+    IAuditService auditService,
+    IFileStorageService fileStorage) : IDepositService
 {
+    private static readonly HashSet<string> AllowedReceiptTypes =
+        ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"];
+
     public async Task<IReadOnlyList<DepositNetworkDto>> GetActiveNetworksAsync(CancellationToken cancellationToken = default)
     {
         return await db.DepositNetworks
@@ -60,7 +64,49 @@ public class DepositService(
         return deposit;
     }
 
-    public async Task ConfirmDepositAsync(Guid depositId, string adminId, CancellationToken cancellationToken = default)
+    public async Task<Deposit> CreateDepositFromReceiptAsync(string userId, CreateDepositReceiptDto dto, CancellationToken cancellationToken = default)
+    {
+        var network = await db.DepositNetworks
+            .Where(n => n.IsActive)
+            .OrderBy(n => n.SortOrder)
+            .FirstOrDefaultAsync(cancellationToken)
+            ?? throw new InvalidOperationException("No deposit network is configured.");
+
+        var contentType = dto.ContentType?.ToLowerInvariant() ?? "application/octet-stream";
+        if (!AllowedReceiptTypes.Contains(contentType))
+            throw new InvalidOperationException("Only JPG, PNG, WEBP, GIF, or PDF receipts are allowed.");
+
+        var receiptPath = await fileStorage.SaveFileAsync(dto.ReceiptStream, dto.FileName, "deposits", cancellationToken);
+
+        var deposit = new Deposit
+        {
+            UserId = userId,
+            DepositNetworkId = network.Id,
+            Amount = 0,
+            ReceiptPath = receiptPath,
+            Status = DepositStatus.Pending
+        };
+
+        await unitOfWork.Repository<Deposit>().AddAsync(deposit, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await auditService.LogAsync(userId, null, AuditAction.Deposit, nameof(Deposit), deposit.Id.ToString(), "Deposit receipt submitted for admin review.", cancellationToken: cancellationToken);
+        await notificationService.SendEventNotificationAsync(
+            userId,
+            NotificationEventType.Deposit,
+            new Dictionary<string, string>
+            {
+                ["Amount"] = "Pending review",
+                ["Status"] = "Pending",
+                ["Description"] = "Your deposit receipt was submitted and is awaiting admin approval.",
+                ["TransactionHash"] = "—"
+            },
+            cancellationToken);
+
+        return deposit;
+    }
+
+    public async Task ConfirmDepositAsync(Guid depositId, string adminId, decimal? confirmedAmount = null, CancellationToken cancellationToken = default)
     {
         var deposit = await db.Deposits.Include(d => d.User).FirstOrDefaultAsync(d => d.Id == depositId, cancellationToken)
             ?? throw new InvalidOperationException("Deposit not found.");
@@ -68,6 +114,11 @@ public class DepositService(
         if (deposit.Status == DepositStatus.Confirmed)
             return;
 
+        var amount = deposit.Amount > 0 ? deposit.Amount : confirmedAmount ?? 0;
+        if (amount <= 0)
+            throw new InvalidOperationException("Enter the approved deposit amount before confirming.");
+
+        deposit.Amount = amount;
         deposit.Status = DepositStatus.Confirmed;
         deposit.ConfirmedAt = DateTime.UtcNow;
         deposit.ApprovedByAdminId = adminId;
@@ -116,7 +167,15 @@ public class DepositService(
             .Include(d => d.Network)
             .Where(d => d.UserId == userId)
             .OrderByDescending(d => d.CreatedAt)
-            .Select(d => new DepositDto(d.Id, d.Network.Name, d.Amount, d.Status.ToString(), d.TransactionHash, d.CreatedAt, d.ConfirmedAt))
+            .Select(d => new DepositDto(
+                d.Id,
+                d.Network.Name,
+                d.Amount,
+                d.Status.ToString(),
+                d.TransactionHash,
+                d.ReceiptPath == null ? null : "/uploads/" + d.ReceiptPath,
+                d.CreatedAt,
+                d.ConfirmedAt))
             .ToListAsync(cancellationToken);
     }
 }

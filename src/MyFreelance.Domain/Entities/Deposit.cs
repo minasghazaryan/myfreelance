@@ -9,6 +9,7 @@ public class Deposit : BaseEntity
     public Guid DepositNetworkId { get; set; }
     public decimal Amount { get; set; }
     public string? TransactionHash { get; set; }
+    public string? ReceiptPath { get; set; }
     public DepositStatus Status { get; set; } = DepositStatus.Pending;
     public int Confirmations { get; set; }
     public string? AdminNotes { get; set; }

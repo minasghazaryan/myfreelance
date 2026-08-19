@@ -8,6 +8,7 @@ public interface IDepositService
 {
     Task<IReadOnlyList<DepositNetworkDto>> GetActiveNetworksAsync(CancellationToken cancellationToken = default);
     Task<Deposit> CreateDepositAsync(string userId, CreateDepositDto dto, CancellationToken cancellationToken = default);
-    Task ConfirmDepositAsync(Guid depositId, string adminId, CancellationToken cancellationToken = default);
+    Task<Deposit> CreateDepositFromReceiptAsync(string userId, CreateDepositReceiptDto dto, CancellationToken cancellationToken = default);
+    Task ConfirmDepositAsync(Guid depositId, string adminId, decimal? confirmedAmount = null, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<DepositDto>> GetUserDepositsAsync(string userId, CancellationToken cancellationToken = default);
 }

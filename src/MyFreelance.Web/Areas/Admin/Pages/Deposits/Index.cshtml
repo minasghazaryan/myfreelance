@@ -14,7 +14,7 @@
                             <tr>
                                 <th>User</th>
                                 <th>Amount</th>
-                                <th>Transaction Hash</th>
+                                <th>Receipt</th>
                                 <th>Status</th>
                                 <th>Date</th>
                                 <th></th>
@@ -25,15 +25,21 @@
                             {
                                 <tr>
                                     <td>@d.UserEmail</td>
-                                    <td>$@d.Amount.ToString("N2")</td>
+                                    <td>@(d.Amount > 0 ? $"${d.Amount:N2}" : "—")</td>
                                     <td>
-                                        @if (string.IsNullOrWhiteSpace(d.TransactionHash))
+                                        @if (string.IsNullOrWhiteSpace(d.ReceiptUrl))
                                         {
                                             <span class="text-muted-light">—</span>
                                         }
+                                        else if (d.ReceiptUrl.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <a href="@d.ReceiptUrl" target="_blank" rel="noopener" class="btn btn-sm btn-aurum-outline">View PDF</a>
+                                        }
                                         else
                                         {
-                                            <code class="small" title="@d.TransactionHash">@d.TransactionHash</code>
+                                            <a href="@d.ReceiptUrl" target="_blank" rel="noopener">
+                                                <img src="@d.ReceiptUrl" alt="Deposit receipt" class="deposit-receipt-thumb" />
+                                            </a>
                                         }
                                     </td>
                                     <td>@d.Status</td>
@@ -41,8 +47,17 @@
                                     <td>
                                         @if (d.Status == "Pending" && User.IsInRole(AppRoles.Admin))
                                         {
-                                            <form method="post" asp-page-handler="Approve">
+                                            <form method="post" asp-page-handler="Approve" class="d-flex flex-wrap gap-2 align-items-center">
                                                 <input type="hidden" name="id" value="@d.Id" />
+                                                <input type="number"
+                                                       name="amount"
+                                                       step="0.01"
+                                                       min="0.01"
+                                                       class="form-control form-control-aurum form-control-sm"
+                                                       style="width: 7rem;"
+                                                       placeholder="Amount"
+                                                       value="@(d.Amount > 0 ? d.Amount.ToString("0.##") : "")"
+                                                       required />
                                                 <button class="btn btn-sm btn-success">Confirm</button>
                                             </form>
                                         }

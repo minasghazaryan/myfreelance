@@ -18,47 +18,53 @@
                     <div class="alert alert-danger"><i class="bi bi-exclamation-circle me-2"></i>@Model.ErrorMessage</div>
                 }
 
-                <div class="aurum-card mb-4">
-                    <h5 class="text-gold">New Deposit</h5>
-                    <form method="post" class="row g-3 mt-2">
-                        <div class="col-md-4">
-                            <label asp-for="NetworkId" class="form-label">Network</label>
-                            <select asp-for="NetworkId" class="form-control form-control-aurum" required>
-                                <option value="">Select network</option>
-                                @foreach (var n in Model.Networks)
-                                {
-                                    <option value="@n.Id">@n.Name (Min: $@n.MinDeposit.ToString("N0"))</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label asp-for="Amount" class="form-label">Amount (USDT)</label>
-                            <input asp-for="Amount" type="number" step="0.01" min="0.01" class="form-control form-control-aurum" required />
-                        </div>
-                        <div class="col-md-5">
-                            <label asp-for="TransactionHash" class="form-label">Transaction Hash</label>
-                            <input asp-for="TransactionHash" class="form-control form-control-aurum" placeholder="Optional — submit after transfer" />
-                        </div>
-                        <div class="col-12"><button type="submit" class="btn btn-aurum">Submit Deposit</button></div>
-                    </form>
-                </div>
-
                 @foreach (var n in Model.Networks)
                 {
                     <div class="aurum-card mb-3">
                         <strong class="text-gold">@n.Name</strong> — Send USDT to:
                         <code class="d-block mt-2 p-2 bg-dark rounded">@n.WalletAddress</code>
+                        <p class="small text-muted-light mb-0 mt-2">Minimum deposit: $@n.MinDeposit.ToString("N0")</p>
                     </div>
                 }
+
+                <div class="aurum-card mb-4">
+                    <h5 class="text-gold">Submit Deposit Receipt</h5>
+                    <p class="small text-muted-light mb-3">
+                        After sending USDT to one of the wallet addresses above, upload your payment receipt or screenshot. An admin will review and credit your balance.
+                    </p>
+                    <form method="post" enctype="multipart/form-data" class="mt-2">
+                        <div class="mb-3">
+                            <label asp-for="Receipt" class="form-label">Transaction Receipt</label>
+                            <input asp-for="Receipt" type="file" accept="image/*,application/pdf" class="form-control form-control-aurum" required />
+                            <div class="form-text text-muted-light">JPG, PNG, WEBP, GIF, or PDF — max 10 MB</div>
+                        </div>
+                        <button type="submit" class="btn btn-aurum">Submit for Approval</button>
+                    </form>
+                </div>
 
                 <div class="aurum-card">
                     <h5 class="text-gold">Deposit History</h5>
                     <table class="table table-aurum mt-3">
-                        <thead><tr><th>Network</th><th>Amount</th><th>Status</th><th>Hash</th><th>Date</th></tr></thead>
+                        <thead><tr><th>Network</th><th>Amount</th><th>Status</th><th>Receipt</th><th>Date</th></tr></thead>
                         <tbody>
                         @foreach (var d in Model.Deposits)
                         {
-                            <tr><td>@d.NetworkName</td><td>$@d.Amount.ToString("N2")</td><td>@d.Status</td><td class="small">@(d.TransactionHash ?? "-")</td><td>@d.CreatedAt.ToString("g")</td></tr>
+                            <tr>
+                                <td>@d.NetworkName</td>
+                                <td>@(d.Amount > 0 ? $"${d.Amount:N2}" : "Pending review")</td>
+                                <td>@d.Status</td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(d.ReceiptUrl))
+                                    {
+                                        <a href="@d.ReceiptUrl" target="_blank" rel="noopener" class="small">View receipt</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted-light">—</span>
+                                    }
+                                </td>
+                                <td>@d.CreatedAt.ToString("g")</td>
+                            </tr>
                         }
                         </tbody>
                     </table>

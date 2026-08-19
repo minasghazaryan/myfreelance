@@ -8,12 +8,13 @@ namespace MyFreelance.Web.Pages.Dashboard;
 
 public class DepositsModel(IDepositService depositService) : PageModel
 {
+    private const long MaxReceiptBytes = 10 * 1024 * 1024;
+
     public IReadOnlyList<DepositNetworkDto> Networks { get; set; } = [];
     public IReadOnlyList<DepositDto> Deposits { get; set; } = [];
 
-    [BindProperty] public Guid NetworkId { get; set; }
-    [BindProperty] public decimal Amount { get; set; }
-    [BindProperty] public string? TransactionHash { get; set; }
+    [BindProperty]
+    public IFormFile? Receipt { get; set; }
 
     public string? SuccessMessage { get; set; }
     public string? ErrorMessage { get; set; }
@@ -30,19 +31,20 @@ public class DepositsModel(IDepositService depositService) : PageModel
     {
         ViewData["ActiveNav"] = "deposits";
 
-        if (NetworkId == Guid.Empty)
-            return RedirectWithError("Please select a deposit network.");
+        if (Receipt is null || Receipt.Length == 0)
+            return RedirectWithError("Please upload your transaction receipt.");
 
-        if (Amount <= 0)
-            return RedirectWithError("Deposit amount must be greater than zero.");
+        if (Receipt.Length > MaxReceiptBytes)
+            return RedirectWithError("Receipt file must be 10 MB or smaller.");
 
         try
         {
-            await depositService.CreateDepositAsync(
+            await using var stream = Receipt.OpenReadStream();
+            await depositService.CreateDepositFromReceiptAsync(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!,
-                new CreateDepositDto(NetworkId, Amount, TransactionHash));
+                new CreateDepositReceiptDto(stream, Receipt.FileName, Receipt.ContentType));
 
-            TempData["SuccessMessage"] = "Deposit submitted successfully. It will appear in your balance after admin confirmation.";
+            TempData["SuccessMessage"] = "Receipt submitted successfully. Your deposit will appear in your balance after admin approval.";
             return RedirectToPage();
         }
         catch (Exception ex)
