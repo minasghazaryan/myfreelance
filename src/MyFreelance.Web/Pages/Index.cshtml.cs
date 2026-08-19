@@ -27,6 +27,8 @@ public class IndexModel(
     public IReadOnlyList<LegalDocumentDto> LegalDocuments { get; set; } = [];
     public string HeroBadge { get; set; } = "Africa's First Investment Fund";
     public string InsuranceBanner { get; set; } = "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.";
+    public string ContactEmail { get; set; } = "support@aurumwealth.gh";
+    public string ContactTelegram { get; set; } = "@africausainvest";
 
     public async Task OnGetAsync()
     {
@@ -38,6 +40,8 @@ public class IndexModel(
         LegalDocuments = await legalDocumentService.GetActiveDocumentsAsync();
         HeroBadge = await cmsService.GetSiteSettingAsync("Brand.HeroBadge") ?? HeroBadge;
         InsuranceBanner = await cmsService.GetSiteSettingAsync("Insurance.GlobalBanner") ?? InsuranceBanner;
+        ContactEmail = await cmsService.GetSiteSettingAsync("Contact.Email") ?? ContactEmail;
+        ContactTelegram = await cmsService.GetSiteSettingAsync("Contact.Telegram") ?? ContactTelegram;
     }
 
     public async Task<IActionResult> OnPostContactAsync(string name, string email, string subject, string message)
