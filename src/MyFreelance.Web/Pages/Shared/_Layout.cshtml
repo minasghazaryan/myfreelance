@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - @AppBrand.Name</title>
-    <link rel="icon" href="~/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="~/favicon.svg" />
+    <link rel="icon" href="~/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="~/images/usafrica-logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -20,8 +20,9 @@
     {
         <nav class="navbar navbar-expand-lg navbar-dark aurum-nav fixed-top">
             <div class="container">
-                <a class="navbar-brand aurum-brand" asp-page="/Index">
-                    <i class="bi bi-globe-africa me-2"></i>@AppBrand.NamePrimary <span class="text-gold">@AppBrand.NameAccent</span>
+                <a class="navbar-brand aurum-brand d-inline-flex align-items-center gap-2" asp-page="/Index">
+                    <img src="~/images/usafrica-logo.png" alt="@AppBrand.Name" class="brand-logo" width="42" height="42" />
+                    <span class="brand-text">@AppBrand.NamePrimary <span class="text-gold">@AppBrand.NameAccent</span></span>
                 </a>
                 <button class="navbar-toggler border-gold" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
                     <span class="navbar-toggler-icon"></span>
@@ -68,7 +69,10 @@
             <div class="container py-5">
                 <div class="row g-4">
                     <div class="col-lg-4">
-                        <h5 class="text-gold aurum-brand">@AppBrand.NamePrimary <span class="text-gold">@AppBrand.NameAccent</span></h5>
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <img src="~/images/usafrica-logo.png" alt="@AppBrand.Name" class="brand-logo brand-logo-footer" width="48" height="48" />
+                            <h5 class="text-gold aurum-brand mb-0">@AppBrand.NamePrimary <span class="text-gold">@AppBrand.NameAccent</span></h5>
+                        </div>
                         <p class="text-muted-light small">@AppBrand.Tagline Projected yields — not guaranteed returns.</p>
                     </div>
                     <div class="col-lg-4">

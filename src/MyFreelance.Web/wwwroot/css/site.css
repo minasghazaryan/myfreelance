@@ -57,6 +57,35 @@ h1, h2, h3, .aurum-brand {
     white-space: normal;
 }
 
+.brand-logo {
+    display: block;
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.brand-logo-auth {
+    width: 80px;
+    height: 80px;
+    margin-inline: auto;
+}
+
+.brand-logo-footer {
+    width: 48px;
+    height: 48px;
+}
+
+.aurum-nav .navbar-brand .brand-text {
+    min-width: 0;
+}
+
+@media (max-width: 575.98px) {
+    .aurum-nav .navbar-brand .brand-text {
+        display: none;
+    }
+}
+
 .nav-balance-pill {
     display: inline-flex;
     align-items: center;
