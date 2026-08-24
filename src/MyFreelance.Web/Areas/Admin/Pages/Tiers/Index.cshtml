@@ -50,18 +50,55 @@
                 </div>
                 }
                 <table class="table table-aurum">
-                    <thead><tr><th>Name</th><th>Yield</th><th>Min</th><th>Max</th><th>Risk</th>@if (User.IsInRole(AppRoles.Admin)) { <th></th> }</tr></thead>
-                    <tbody>
-                    @foreach (var t in Model.Tiers)
-                    {
+                    <thead>
                         <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Yield</th>
+                            <th>Min</th>
+                            <th>Max</th>
+                            <th>Risk</th>
+                            <th>Promo</th>
+                            @if (User.IsInRole(AppRoles.Admin)) { <th>Order</th><th></th> }
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for (var i = 0; i < Model.Tiers.Count; i++)
+                    {
+                        var t = Model.Tiers[i];
+                        <tr>
+                            <td>@t.SortOrder</td>
                             <td>@t.Name</td>
                             <td>@t.ProjectedYieldPercent.ToString("0.##")%</td>
                             <td>$@t.MinInvestment.ToString("N0")</td>
                             <td>$@t.MaxInvestment.ToString("N0")</td>
                             <td>@(Enum.IsDefined(typeof(RiskLevel), t.RiskLevel) ? t.RiskLevel.ToString() : "Low")</td>
+                            <td class="small text-muted-light">
+                                @if (!string.IsNullOrWhiteSpace(t.PromoBannerText))
+                                {
+                                    <span>@t.PromoBannerText</span>
+                                }
+                                else
+                                {
+                                    <span>—</span>
+                                }
+                            </td>
                             @if (User.IsInRole(AppRoles.Admin))
                             {
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <form method="post" asp-page-handler="Move">
+                                        <input type="hidden" name="id" value="@t.Id" />
+                                        <input type="hidden" name="direction" value="up" />
+                                        <button type="submit" class="btn btn-sm btn-aurum-outline" @(i == 0 ? "disabled" : null) title="Move up"><i class="bi bi-arrow-up"></i></button>
+                                    </form>
+                                    <form method="post" asp-page-handler="Move">
+                                        <input type="hidden" name="id" value="@t.Id" />
+                                        <input type="hidden" name="direction" value="down" />
+                                        <button type="submit" class="btn btn-sm btn-aurum-outline" @(i == Model.Tiers.Count - 1 ? "disabled" : null) title="Move down"><i class="bi bi-arrow-down"></i></button>
+                                    </form>
+                                </div>
+                            </td>
                             <td>
                                 <form method="post" asp-page-handler="Delete">
                                     <input type="hidden" name="id" value="@t.Id" />

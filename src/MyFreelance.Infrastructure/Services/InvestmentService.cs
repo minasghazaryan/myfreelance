@@ -17,8 +17,10 @@ public class InvestmentService(
 {
     public async Task<IReadOnlyList<InvestmentTierDto>> GetActiveTiersAsync(CancellationToken cancellationToken = default)
     {
+        var now = DateTime.UtcNow;
         return await db.InvestmentTiers
             .Where(t => t.IsActive)
+            .Where(t => t.PromoEndUtc == null || t.PromoEndUtc >= now)
             .OrderBy(t => t.SortOrder)
             .Select(t => new InvestmentTierDto(
                 t.Id,
@@ -30,7 +32,10 @@ public class InvestmentService(
                 t.MinInvestment,
                 t.MaxInvestment,
                 t.AccentColor,
-                t.InsuranceNotice))
+                t.InsuranceNotice,
+                t.ImagePath,
+                t.PromoBannerText,
+                t.PromoEndUtc))
             .ToListAsync(cancellationToken);
     }
 

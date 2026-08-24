@@ -267,6 +267,12 @@ public static class DatabaseSeeder
             db.SiteSettings.Add(new SiteSettings { Key = "Contact.WhatsApp.v1", Value = "true", Category = "System" });
         }
 
+        if (!await db.SiteSettings.AnyAsync(s => s.Key == "Tiers.ShattaWale.v1"))
+        {
+            await SyncShattaWaleTierAsync(db);
+            db.SiteSettings.Add(new SiteSettings { Key = "Tiers.ShattaWale.v1", Value = "true", Category = "System" });
+        }
+
         await db.SaveChangesAsync();
         logger.LogInformation("Database seed completed.");
     }
@@ -352,6 +358,53 @@ public static class DatabaseSeeder
             tier.PackageDetails = defaults.PackageDetails;
             tier.AccentColor = defaults.AccentColor;
             tier.IconClass = defaults.IconClass;
+            tier.IsActive = true;
+        }
+
+        await db.SaveChangesAsync();
+    }
+
+    private static async Task SyncShattaWaleTierAsync(ApplicationDbContext db)
+    {
+        const string tierName = "Chairman and Bossu";
+        const string promoBanner = "Special offer from Shatta Wale: 'Chairman and Bossu Package' is valid until November 1st";
+        var promoEnd = new DateTime(2026, 11, 1, 23, 59, 59, DateTimeKind.Utc);
+
+        var tier = await db.InvestmentTiers.FirstOrDefaultAsync(t => t.Name == tierName);
+        if (tier is null)
+        {
+            var maxSort = await db.InvestmentTiers.MaxAsync(t => (int?)t.SortOrder) ?? 0;
+            db.InvestmentTiers.Add(new InvestmentTier
+            {
+                Name = tierName,
+                Description = "Limited-time package endorsed by Shatta Wale with exclusive entry terms.",
+                PackageDetails = "Chairman and Bossu special allocation package\n9% projected yield over 30 days\nDaily accrual credited to available balance\nOffer valid until November 1st\nFully insured by the African Insurance Organisation — AIO",
+                RiskLevel = RiskLevel.Low,
+                ProjectedYieldPercent = 9m,
+                MinInvestment = 100,
+                MaxInvestment = 5000,
+                SortOrder = maxSort + 1,
+                AccentColor = "#B8860B",
+                IconClass = "bi-star-fill",
+                ImagePath = "images/tiers/shatta-wale.png",
+                PromoBannerText = promoBanner,
+                PromoEndUtc = promoEnd,
+                IsActive = true
+            });
+        }
+        else
+        {
+            tier.Description = "Limited-time package endorsed by Shatta Wale with exclusive entry terms.";
+            tier.PackageDetails = "Chairman and Bossu special allocation package\n9% projected yield over 30 days\nDaily accrual credited to available balance\nOffer valid until November 1st\nFully insured by the African Insurance Organisation — AIO";
+            tier.ProjectedYieldPercent = 9m;
+            tier.MinInvestment = 100;
+            tier.MaxInvestment = 5000;
+            tier.RiskLevel = RiskLevel.Low;
+            tier.AccentColor = "#B8860B";
+            tier.IconClass = "bi-star-fill";
+            tier.ImagePath = "images/tiers/shatta-wale.png";
+            tier.PromoBannerText = promoBanner;
+            tier.PromoEndUtc = promoEnd;
             tier.IsActive = true;
         }
 

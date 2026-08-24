@@ -17,6 +17,9 @@ public class InvestmentTier : BaseEntity
     public string? IconClass { get; set; }
     public string? AccentColor { get; set; }
     public string? InsuranceNotice { get; set; }
+    public string? ImagePath { get; set; }
+    public string? PromoBannerText { get; set; }
+    public DateTime? PromoEndUtc { get; set; }
 
     public ICollection<Investment> Investments { get; set; } = [];
 }

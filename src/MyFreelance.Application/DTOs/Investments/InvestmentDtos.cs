@@ -10,7 +10,10 @@ public record InvestmentTierDto(
     decimal MinInvestment,
     decimal MaxInvestment,
     string? AccentColor,
-    string? InsuranceNotice);
+    string? InsuranceNotice,
+    string? ImagePath,
+    string? PromoBannerText,
+    DateTime? PromoEndUtc);
 public record CreateInvestmentDto(Guid InvestmentTierId, decimal Amount);
 public record InvestmentDto(
     Guid Id,

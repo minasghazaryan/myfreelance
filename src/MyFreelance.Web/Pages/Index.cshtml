@@ -91,11 +91,22 @@
         <div class="row g-4 mt-2 justify-content-center">
             @foreach (var tier in Model.Tiers)
             {
-                var tierClass = tier.Name.ToLower() switch { "bronze" => "tier-bronze", "silver" => "tier-silver", _ => "tier-gold" };
+                var tierClass = tier.Name.ToLower() switch { "bronze" => "tier-bronze", "silver" => "tier-silver", "gold" => "tier-gold", _ => "tier-promo" };
                 var riskClass = tier.RiskLevel switch { "Low" => "risk-low", "Moderate" => "risk-moderate", _ => "risk-high" };
                 var tierInsurance = !string.IsNullOrWhiteSpace(tier.InsuranceNotice) ? tier.InsuranceNotice : "Insured by the African Insurance Organisation — AIO — zero risk.";
-                <div class="col-md-4">
-                    <div class="aurum-card @tierClass tier-card h-100 text-start">
+                var accentStyle = !string.IsNullOrWhiteSpace(tier.AccentColor) ? $"border-top-color: {tier.AccentColor};" : null;
+                <div class="col-md-6 col-lg-4">
+                    <div class="aurum-card @tierClass tier-card h-100 text-start" style="@accentStyle">
+                        @if (!string.IsNullOrWhiteSpace(tier.PromoBannerText))
+                        {
+                            <div class="tier-promo-banner"><i class="bi bi-stars me-1"></i>@tier.PromoBannerText</div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(tier.ImagePath))
+                        {
+                            <div class="tier-photo-wrap mb-3">
+                                <img src="~/@tier.ImagePath" alt="@tier.Name" class="tier-photo" />
+                            </div>
+                        }
                         <div class="tier-insurance-badge"><i class="bi bi-shield-check me-1"></i>@tierInsurance</div>
                         <div class="d-flex justify-content-between align-items-start">
                             <h4 class="mb-0">@tier.Name</h4>
