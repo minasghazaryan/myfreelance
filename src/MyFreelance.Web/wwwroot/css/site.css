@@ -982,19 +982,20 @@ h1, h2, h3, .aurum-brand {
     overflow: hidden;
     border: 1px solid var(--aurum-border);
     background: rgba(0, 0, 0, 0.35);
-    aspect-ratio: 3 / 4;
+    width: min(100%, 255px);
     max-height: 340px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin-inline: auto;
+    line-height: 0;
 }
 
 .tier-photo {
     display: block;
     width: 100%;
-    height: 100%;
+    height: auto;
+    max-height: 340px;
     object-fit: contain;
     object-position: center;
+    margin-inline: auto;
 }
 
 .tier-yield {
