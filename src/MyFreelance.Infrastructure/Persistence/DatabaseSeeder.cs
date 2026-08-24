@@ -273,6 +273,18 @@ public static class DatabaseSeeder
             db.SiteSettings.Add(new SiteSettings { Key = "Tiers.ShattaWale.v1", Value = "true", Category = "System" });
         }
 
+        if (!await db.SiteSettings.AnyAsync(s => s.Key == "Tiers.ShattaWale.v2"))
+        {
+            var chairmanTier = await db.InvestmentTiers.FirstOrDefaultAsync(t => t.Name == "Chairman and Bossu");
+            if (chairmanTier is not null)
+            {
+                chairmanTier.MinInvestment = 10;
+                chairmanTier.MaxInvestment = 50;
+            }
+
+            db.SiteSettings.Add(new SiteSettings { Key = "Tiers.ShattaWale.v2", Value = "true", Category = "System" });
+        }
+
         await db.SaveChangesAsync();
         logger.LogInformation("Database seed completed.");
     }
@@ -381,8 +393,8 @@ public static class DatabaseSeeder
                 PackageDetails = "Chairman and Bossu special allocation package\n9% projected yield over 30 days\nDaily accrual credited to available balance\nOffer valid until November 1st\nFully insured by the African Insurance Organisation — AIO",
                 RiskLevel = RiskLevel.Low,
                 ProjectedYieldPercent = 9m,
-                MinInvestment = 100,
-                MaxInvestment = 5000,
+                MinInvestment = 10,
+                MaxInvestment = 50,
                 SortOrder = maxSort + 1,
                 AccentColor = "#B8860B",
                 IconClass = "bi-star-fill",
@@ -397,8 +409,8 @@ public static class DatabaseSeeder
             tier.Description = "Limited-time package endorsed by Shatta Wale with exclusive entry terms.";
             tier.PackageDetails = "Chairman and Bossu special allocation package\n9% projected yield over 30 days\nDaily accrual credited to available balance\nOffer valid until November 1st\nFully insured by the African Insurance Organisation — AIO";
             tier.ProjectedYieldPercent = 9m;
-            tier.MinInvestment = 100;
-            tier.MaxInvestment = 5000;
+            tier.MinInvestment = 10;
+            tier.MaxInvestment = 50;
             tier.RiskLevel = RiskLevel.Low;
             tier.AccentColor = "#B8860B";
             tier.IconClass = "bi-star-fill";

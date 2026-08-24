@@ -790,6 +790,14 @@ h1, h2, h3, .aurum-brand {
     color: var(--aurum-gold);
 }
 
+.admin-tier-thumb {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--aurum-border);
+}
+
 /* Admin KYC details */
 .kyc-detail-list {
     display: grid;

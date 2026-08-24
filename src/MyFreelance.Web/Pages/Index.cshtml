@@ -103,8 +103,9 @@
                         }
                         @if (!string.IsNullOrWhiteSpace(tier.ImagePath))
                         {
+                            var tierImageSrc = TierImageUrls.Resolve(tier.ImagePath);
                             <div class="tier-photo-wrap mb-3">
-                                <img src="~/@tier.ImagePath" alt="@tier.Name" class="tier-photo" />
+                                <img src="@tierImageSrc" alt="@tier.Name" class="tier-photo" />
                             </div>
                         }
                         <div class="tier-insurance-badge"><i class="bi bi-shield-check me-1"></i>@tierInsurance</div>

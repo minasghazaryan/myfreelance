@@ -1,0 +1,102 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.Tiers.EditModel
+@using MyFreelance.Web
+@{ ViewData["Title"] = "Edit Investment Tier"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-gold mb-0">Edit Tier — @Model.Tier.Name</h2>
+                    <a asp-page="./Index" class="btn btn-aurum-outline btn-sm">Back to Tiers</a>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger">@Model.ErrorMessage</div>
+                }
+
+                <div class="aurum-card">
+                    <form method="post" enctype="multipart/form-data" class="row g-3">
+                        <input type="hidden" asp-for="Input.Id" />
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="Input.Name" class="form-label small text-muted-light">Name</label>
+                            <input asp-for="Input.Name" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-6 col-lg-2">
+                            <label asp-for="Input.ProjectedYieldPercent" class="form-label small text-muted-light">Yield %</label>
+                            <input asp-for="Input.ProjectedYieldPercent" type="number" step="0.1" min="0" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-6 col-lg-2">
+                            <label asp-for="Input.MinInvestment" class="form-label small text-muted-light">Min ($)</label>
+                            <input asp-for="Input.MinInvestment" type="number" step="0.01" min="0" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-6 col-lg-2">
+                            <label asp-for="Input.MaxInvestment" class="form-label small text-muted-light">Max ($)</label>
+                            <input asp-for="Input.MaxInvestment" type="number" step="0.01" min="0" class="form-control form-control-aurum" required />
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="Input.RiskLevel" class="form-label small text-muted-light">Risk</label>
+                            <select asp-for="Input.RiskLevel" class="form-control form-control-aurum" asp-items="Html.GetEnumSelectList<RiskLevel>()" required></select>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="Input.AccentColor" class="form-label small text-muted-light">Accent Color</label>
+                            <input asp-for="Input.AccentColor" class="form-control form-control-aurum" placeholder="#D4AF37" />
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="Input.IconClass" class="form-label small text-muted-light">Icon Class</label>
+                            <input asp-for="Input.IconClass" class="form-control form-control-aurum" placeholder="bi-star-fill" />
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <label asp-for="Input.PromoEndUtc" class="form-label small text-muted-light">Promo End (UTC)</label>
+                            <input asp-for="Input.PromoEndUtc" type="datetime-local" class="form-control form-control-aurum" />
+                        </div>
+                        <div class="col-md-6 col-lg-3 d-flex align-items-end">
+                            <div class="form-check mb-2">
+                                <input asp-for="Input.IsActive" class="form-check-input" />
+                                <label asp-for="Input.IsActive" class="form-check-label">Active</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.Description" class="form-label small text-muted-light">Description</label>
+                            <textarea asp-for="Input.Description" class="form-control form-control-aurum" rows="2"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.PackageDetails" class="form-label small text-muted-light">Package Details</label>
+                            <textarea asp-for="Input.PackageDetails" class="form-control form-control-aurum" rows="4"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.InsuranceNotice" class="form-label small text-muted-light">Insurance Banner</label>
+                            <input asp-for="Input.InsuranceNotice" class="form-control form-control-aurum" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.PromoBannerText" class="form-label small text-muted-light">Promo Banner Text</label>
+                            <input asp-for="Input.PromoBannerText" class="form-control form-control-aurum" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-muted-light">Tier Photo</label>
+                            @if (!string.IsNullOrWhiteSpace(Model.Tier.ImagePath))
+                            {
+                                var imageSrc = TierImageUrls.Resolve(Model.Tier.ImagePath);
+                                <div class="tier-photo-wrap mb-2" style="max-width: 180px;">
+                                    <img src="@imageSrc" alt="@Model.Tier.Name" class="tier-photo" />
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input asp-for="RemovePhoto" class="form-check-input" />
+                                    <label asp-for="RemovePhoto" class="form-check-label small">Remove current photo</label>
+                                </div>
+                            }
+                            <input asp-for="Photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="form-control form-control-aurum" />
+                            <p class="small text-muted-light mt-1 mb-0">JPG, PNG, WEBP, or GIF — max 10 MB.</p>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-aurum">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

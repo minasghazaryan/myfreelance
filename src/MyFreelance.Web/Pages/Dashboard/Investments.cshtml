@@ -1,5 +1,6 @@
 @page
 @model MyFreelance.Web.Pages.Dashboard.InvestmentsModel
+@using MyFreelance.Web
 @{ ViewData["Title"] = "Investments"; }
 
 <div class="dashboard-layout">
@@ -26,8 +27,9 @@
                                 }
                                 @if (!string.IsNullOrWhiteSpace(tier.ImagePath))
                                 {
+                                    var tierImageSrc = TierImageUrls.Resolve(tier.ImagePath);
                                     <div class="tier-photo-wrap mb-3">
-                                        <img src="~/@tier.ImagePath" alt="@tier.Name" class="tier-photo" />
+                                        <img src="@tierImageSrc" alt="@tier.Name" class="tier-photo" />
                                     </div>
                                 }
                                 <div class="tier-insurance-badge small mb-2"><i class="bi bi-shield-check me-1"></i>@(string.IsNullOrWhiteSpace(tier.InsuranceNotice) ? "Fully insured — zero risk" : tier.InsuranceNotice)</div>
