@@ -141,7 +141,9 @@
                             <div><span>Minimum</span><strong>$@tier.MinInvestment.ToString("N0")</strong></div>
                             <div><span>Maximum</span><strong>$@tier.MaxInvestment.ToString("N0")</strong></div>
                         </div>
-                        <a asp-page="/Account/Register" class="btn btn-aurum-outline w-100 mt-3">Start with @tier.Name</a>
+                        <a asp-page="@(User.Identity?.IsAuthenticated == true ? "/Dashboard/Investments" : "/Account/Register")"
+                           asp-route-tierId="@(User.Identity?.IsAuthenticated == true ? tier.Id : (Guid?)null)"
+                           class="btn btn-aurum-outline w-100 mt-3">Start with @tier.Name</a>
                     </div>
                 </div>
             }

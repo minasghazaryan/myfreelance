@@ -548,6 +548,15 @@ h1, h2, h3, .aurum-brand {
     padding: 1.75rem;
 }
 
+.tier-card {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tier-card-selected {
+    border-color: var(--aurum-gold) !important;
+    box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.35), 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
 .tier-limits {
     display: grid;
     grid-template-columns: 1fr 1fr;

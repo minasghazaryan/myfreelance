@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MyFreelance.Application.DTOs.Investments;
 using MyFreelance.Application.Interfaces;
-using MyFreelance.Domain.Enums;
 
 namespace MyFreelance.Web.Pages.Dashboard;
 
@@ -21,7 +20,8 @@ public class InvestmentsModel(IInvestmentService investmentService) : PageModel
     public string? ErrorMessage { get; set; }
     public string? SuccessMessage { get; set; }
 
-    public bool HasActiveInvestment => Investments.Any(i => i.Status == InvestmentStatus.Active.ToString());
+    [FromQuery(Name = "tierId")]
+    public Guid? SelectedTierId { get; set; }
 
     public async Task OnGetAsync()
     {
