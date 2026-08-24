@@ -197,7 +197,7 @@ public static class DatabaseSeeder
         {
             db.SiteSettings.AddRange(
                 new SiteSettings { Key = "Contact.Email", Value = "support@aurumwealth.gh", Category = "Contact" },
-                new SiteSettings { Key = "Contact.WhatsApp", Value = "+233201234567", Category = "Contact" },
+                new SiteSettings { Key = "Contact.WhatsApp", Value = "+19592469994", Category = "Contact" },
                 new SiteSettings { Key = "Contact.Telegram", Value = "@africausainvest", Category = "Contact" },
                 new SiteSettings { Key = "Brand.Name", Value = BrandConstants.Name, Category = "Brand" },
                 new SiteSettings { Key = "Brand.HeroBadge", Value = "Africa's First Investment Fund", Category = "Brand" },
@@ -256,6 +256,15 @@ public static class DatabaseSeeder
                 telegram.Value = "@africausainvest";
 
             db.SiteSettings.Add(new SiteSettings { Key = "Contact.Telegram.v1", Value = "true", Category = "System" });
+        }
+
+        if (!await db.SiteSettings.AnyAsync(s => s.Key == "Contact.WhatsApp.v1"))
+        {
+            var whatsApp = await db.SiteSettings.FirstOrDefaultAsync(s => s.Key == "Contact.WhatsApp");
+            if (whatsApp is not null)
+                whatsApp.Value = "+19592469994";
+
+            db.SiteSettings.Add(new SiteSettings { Key = "Contact.WhatsApp.v1", Value = "true", Category = "System" });
         }
 
         await db.SaveChangesAsync();

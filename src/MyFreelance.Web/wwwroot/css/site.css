@@ -771,6 +771,16 @@ h1, h2, h3, .aurum-brand {
     color: var(--aurum-gold);
 }
 
+.contact-footer-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.contact-footer-link:hover {
+    color: var(--aurum-gold);
+}
+
 /* Admin KYC details */
 .kyc-detail-list {
     display: grid;

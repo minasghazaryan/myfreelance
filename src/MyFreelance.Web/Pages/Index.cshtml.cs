@@ -28,6 +28,8 @@ public class IndexModel(
     public string HeroBadge { get; set; } = "Africa's First Investment Fund";
     public string InsuranceBanner { get; set; } = "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.";
     public string ContactEmail { get; set; } = "support@aurumwealth.gh";
+    public string ContactWhatsApp { get; set; } = "+19592469994";
+    public string ContactWhatsAppUrl { get; private set; } = "https://wa.me/19592469994";
     public string ContactTelegram { get; set; } = "@africausainvest";
     public string ContactTelegramUrl { get; private set; } = "https://t.me/africausainvest";
 
@@ -42,8 +44,16 @@ public class IndexModel(
         HeroBadge = await cmsService.GetSiteSettingAsync("Brand.HeroBadge") ?? HeroBadge;
         InsuranceBanner = await cmsService.GetSiteSettingAsync("Insurance.GlobalBanner") ?? InsuranceBanner;
         ContactEmail = await cmsService.GetSiteSettingAsync("Contact.Email") ?? ContactEmail;
+        ContactWhatsApp = await cmsService.GetSiteSettingAsync("Contact.WhatsApp") ?? ContactWhatsApp;
+        ContactWhatsAppUrl = BuildWhatsAppUrl(ContactWhatsApp);
         ContactTelegram = await cmsService.GetSiteSettingAsync("Contact.Telegram") ?? ContactTelegram;
         ContactTelegramUrl = BuildTelegramUrl(ContactTelegram);
+    }
+
+    private static string BuildWhatsAppUrl(string phoneNumber)
+    {
+        var digits = new string(phoneNumber.Where(char.IsDigit).ToArray());
+        return string.IsNullOrWhiteSpace(digits) ? "#" : $"https://wa.me/{digits}";
     }
 
     private static string BuildTelegramUrl(string handle)
