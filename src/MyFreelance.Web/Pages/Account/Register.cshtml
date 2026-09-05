@@ -32,7 +32,8 @@
                 </div>
                 <div class="col-12">
                     <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                    <input asp-for="Input.PhoneNumber" class="form-control form-control-aurum" placeholder="+233..." />
+                    <input asp-for="Input.PhoneNumber" class="form-control form-control-aurum" placeholder="+19592469994" required />
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
                 </div>
                 <div class="col-12">
                     <label asp-for="Input.ReferralCode" class="form-label">Referral Code (Optional)</label>

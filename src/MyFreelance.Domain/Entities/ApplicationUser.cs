@@ -16,6 +16,10 @@ public class ApplicationUser : IdentityUser
     public DateTime? LastLoginAt { get; set; }
     public string? ProfileImageUrl { get; set; }
     public string CountryCode { get; set; } = "GH";
+    public string? RegistrationIp { get; set; }
+    public string? RegistrationCountry { get; set; }
+    public string? LastLoginIp { get; set; }
+    public string? LastLoginCountry { get; set; }
 
     public ApplicationUser? ReferredBy { get; set; }
     public ICollection<ApplicationUser> Referrals { get; set; } = [];

@@ -12,6 +12,7 @@ using MyFreelance.Infrastructure.Logging;
 using MyFreelance.Infrastructure.Persistence;
 using MyFreelance.Web.Filters;
 using MyFreelance.Web.Hubs;
+using MyFreelance.Web.Services;
 using Serilog;
 using Serilog.Events;
 
@@ -101,6 +102,12 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddScoped<AdminWriteAuthorizationFilter>();
+builder.Services.AddScoped<SuspendedAccountFilter>();
+builder.Services.AddScoped<IClientLocationService, ClientLocationService>();
+builder.Services.AddHttpClient("IpLookup", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(2);
+});
 builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizeAreaFolder("Admin", "/", "AdminArea");
@@ -109,6 +116,10 @@ builder.Services.AddRazorPages(options =>
         model.Filters.Add(new ServiceFilterAttribute(typeof(AdminWriteAuthorizationFilter)));
     });
     options.Conventions.AuthorizeFolder("/Dashboard", "InvestorOnly");
+    options.Conventions.AddFolderApplicationModelConvention("/Dashboard", model =>
+    {
+        model.Filters.Add(new ServiceFilterAttribute(typeof(SuspendedAccountFilter)));
+    });
 });
 
 builder.Services.AddSignalR();

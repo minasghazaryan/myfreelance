@@ -1,0 +1,101 @@
+@page "{id}"
+@model MyFreelance.Web.Areas.Admin.Pages.Users.DetailsModel
+@{ ViewData["Title"] = "User Details"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                    <div>
+                        <a asp-page="./Index" class="small text-muted-light text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to users</a>
+                        <h2 class="text-gold mb-0 mt-2">@Model.Account.FullName</h2>
+                        <p class="text-muted-light small mb-0">@Model.Role · Joined @Model.Account.CreatedAt.ToString("f")</p>
+                    </div>
+                    @if (Model.IsInvestor && Model.CanManageUsers)
+                    {
+                        <div>
+                            @if (Model.Account.IsSuspended)
+                            {
+                                <form method="post" asp-page="./Index" asp-page-handler="Activate">
+                                    <input type="hidden" name="id" value="@Model.Account.Id" />
+                                    <button type="submit" class="btn btn-aurum">Activate</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form method="post" asp-page="./Index" asp-page-handler="Block">
+                                    <input type="hidden" name="id" value="@Model.Account.Id" />
+                                    <button type="submit" class="btn btn-danger">Block</button>
+                                </form>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="aurum-card h-100">
+                            <h5 class="text-gold mb-4">Account</h5>
+                            <dl class="kyc-detail-list">
+                                <div><dt>Name</dt><dd>@Model.Account.FullName</dd></div>
+                                <div><dt>Email</dt><dd>@Model.Account.Email</dd></div>
+                                <div><dt>Phone</dt><dd>@(string.IsNullOrWhiteSpace(Model.Account.PhoneNumber) ? "—" : Model.Account.PhoneNumber)</dd></div>
+                                <div><dt>Role</dt><dd>@Model.Role</dd></div>
+                                <div><dt>Status</dt><dd>@(Model.Account.IsSuspended ? "Blocked" : "Active")</dd></div>
+                                <div><dt>KYC</dt><dd>@(Model.Account.IsKycApproved ? "Approved" : "Pending")</dd></div>
+                                <div><dt>Phone Verified</dt><dd>@(Model.Account.IsPhoneVerified ? "Yes" : "No")</dd></div>
+                                <div><dt>Referral Code</dt><dd>@(string.IsNullOrWhiteSpace(Model.Account.ReferralCode) ? "—" : Model.Account.ReferralCode)</dd></div>
+                                <div><dt>Referred By</dt><dd>@(Model.ReferredBy ?? "—")</dd></div>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="aurum-card h-100">
+                            <h5 class="text-gold mb-4">Location & Login</h5>
+                            <dl class="kyc-detail-list">
+                                <div><dt>Registration IP</dt><dd>@(Model.Account.RegistrationIp ?? "—")</dd></div>
+                                <div><dt>Registration Country</dt><dd>@(Model.Account.RegistrationCountry ?? "—")</dd></div>
+                                <div><dt>Last Login IP</dt><dd>@(Model.Account.LastLoginIp ?? "—")</dd></div>
+                                <div><dt>Last Login Country</dt><dd>@(Model.Account.LastLoginCountry ?? "—")</dd></div>
+                                <div><dt>Last Login</dt><dd>@(Model.Account.LastLoginAt?.ToString("f") ?? "—")</dd></div>
+                                <div><dt>Country Code</dt><dd>@Model.Account.CountryCode</dd></div>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="aurum-card h-100">
+                            <h5 class="text-gold mb-4">Wallet</h5>
+                            @if (Model.Wallet is null)
+                            {
+                                <p class="text-muted-light mb-0">No wallet on this account.</p>
+                            }
+                            else
+                            {
+                                <dl class="kyc-detail-list">
+                                    <div><dt>Available</dt><dd>$@Model.Wallet.AvailableBalance.ToString("N2")</dd></div>
+                                    <div><dt>Invested</dt><dd>$@Model.Wallet.InvestedCapital.ToString("N2")</dd></div>
+                                    <div><dt>Yield Earned</dt><dd>$@Model.Wallet.ProjectedEarnings.ToString("N2")</dd></div>
+                                    <div><dt>Referral Earnings</dt><dd>$@Model.Wallet.ReferralEarnings.ToString("N2")</dd></div>
+                                    <div><dt>Total Deposited</dt><dd>$@Model.Wallet.TotalDeposited.ToString("N2")</dd></div>
+                                    <div><dt>Total Withdrawn</dt><dd>$@Model.Wallet.TotalWithdrawn.ToString("N2")</dd></div>
+                                </dl>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="aurum-card h-100">
+                            <h5 class="text-gold mb-4">Activity</h5>
+                            <dl class="kyc-detail-list">
+                                <div><dt>Investments</dt><dd>@Model.InvestmentCount</dd></div>
+                                <div><dt>Deposits</dt><dd>@Model.DepositCount</dd></div>
+                                <div><dt>Withdrawals</dt><dd>@Model.WithdrawalCount</dd></div>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

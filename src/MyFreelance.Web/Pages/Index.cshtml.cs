@@ -27,7 +27,7 @@ public class IndexModel(
     public IReadOnlyList<LegalDocumentDto> LegalDocuments { get; set; } = [];
     public string HeroBadge { get; set; } = "Africa's First Investment Fund";
     public string InsuranceBanner { get; set; } = "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.";
-    public string ContactEmail { get; set; } = "support@aurumwealth.gh";
+    public string ContactEmail { get; set; } = "support@africa-usainvest.com";
     public string ContactWhatsApp { get; set; } = "+19592469994";
     public string ContactWhatsAppUrl { get; private set; } = "https://wa.me/19592469994";
     public string ContactTelegram { get; set; } = "@africausainvest";

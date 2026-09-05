@@ -117,17 +117,51 @@
 
                 <div class="aurum-card">
                     <table class="table table-aurum mb-0">
-                        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>KYC</th><th>Status</th><th>Joined</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Role</th>
+                                <th>KYC</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th></th>
+                            </tr>
+                        </thead>
                         <tbody>
                         @foreach (var u in Model.Users)
                         {
                             <tr>
                                 <td>@u.Name</td>
                                 <td>@u.Email</td>
+                                <td>@(string.IsNullOrWhiteSpace(u.PhoneNumber) ? "—" : u.PhoneNumber)</td>
                                 <td>@u.Role</td>
                                 <td>@(u.IsKycApproved ? "Approved" : "Pending")</td>
-                                <td>@(u.IsSuspended ? "Suspended" : "Active")</td>
+                                <td>@(u.IsSuspended ? "Blocked" : "Active")</td>
                                 <td>@u.CreatedAt.ToString("d")</td>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <a asp-page="./Details" asp-route-id="@u.Id" class="btn btn-sm btn-aurum-outline">Details</a>
+                                        @if (Model.CanManageUsers && u.IsInvestor)
+                                        {
+                                            @if (u.IsSuspended)
+                                            {
+                                                <form method="post" asp-page-handler="Activate" class="d-inline">
+                                                    <input type="hidden" name="id" value="@u.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-aurum">Activate</button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form method="post" asp-page-handler="Block" class="d-inline">
+                                                    <input type="hidden" name="id" value="@u.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-danger">Block</button>
+                                                </form>
+                                            }
+                                        }
+                                    </div>
+                                </td>
                             </tr>
                         }
                         </tbody>

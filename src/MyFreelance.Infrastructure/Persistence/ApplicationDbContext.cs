@@ -43,6 +43,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         builder.Entity<ApplicationUser>(entity =>
         {
             entity.HasIndex(u => u.ReferralCode).IsUnique().HasFilter("[ReferralCode] IS NOT NULL");
+            entity.Property(u => u.RegistrationIp).HasMaxLength(45);
+            entity.Property(u => u.RegistrationCountry).HasMaxLength(100);
+            entity.Property(u => u.LastLoginIp).HasMaxLength(45);
+            entity.Property(u => u.LastLoginCountry).HasMaxLength(100);
             entity.HasOne(u => u.ReferredBy)
                 .WithMany(u => u.Referrals)
                 .HasForeignKey(u => u.ReferredByUserId)

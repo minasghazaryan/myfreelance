@@ -6,18 +6,21 @@ using MyFreelance.Application.Interfaces;
 using MyFreelance.Domain.Constants;
 using MyFreelance.Domain.Entities;
 using MyFreelance.Domain.Enums;
+using MyFreelance.Web.Services;
 
 namespace MyFreelance.Web.Pages.Account;
 
 public class LoginModel(
     SignInManager<ApplicationUser> signInManager,
     UserManager<ApplicationUser> userManager,
-    IAuditService auditService) : PageModel
+    IAuditService auditService,
+    IClientLocationService clientLocationService) : PageModel
 {
     [BindProperty]
     public InputModel Input { get; set; } = new();
 
     public string? ReturnUrl { get; set; }
+    public bool AccountBlocked { get; set; }
 
     public class InputModel
     {
@@ -30,7 +33,11 @@ public class LoginModel(
         public bool RememberMe { get; set; }
     }
 
-    public void OnGet(string? returnUrl = null) => ReturnUrl = returnUrl;
+    public void OnGet(string? returnUrl = null, bool blocked = false)
+    {
+        ReturnUrl = returnUrl;
+        AccountBlocked = blocked;
+    }
 
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
@@ -49,7 +56,12 @@ public class LoginModel(
         {
             if (user is not null)
             {
+                var location = await clientLocationService.GetAsync(HttpContext);
                 user.LastLoginAt = DateTime.UtcNow;
+                user.LastLoginIp = location.IpAddress;
+                user.LastLoginCountry = location.CountryName ?? location.CountryCode;
+                if (!string.IsNullOrWhiteSpace(location.CountryCode))
+                    user.CountryCode = location.CountryCode;
                 await userManager.UpdateAsync(user);
                 await auditService.LogAsync(user.Id, null, AuditAction.Login, nameof(ApplicationUser), user.Id, "User logged in");
             }

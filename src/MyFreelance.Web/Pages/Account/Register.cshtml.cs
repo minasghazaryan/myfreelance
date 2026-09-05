@@ -8,6 +8,7 @@ using MyFreelance.Domain.Constants;
 using MyFreelance.Domain.Entities;
 using MyFreelance.Domain.Enums;
 using MyFreelance.Domain.Interfaces;
+using MyFreelance.Web.Services;
 
 namespace MyFreelance.Web.Pages.Account;
 
@@ -16,7 +17,8 @@ public class RegisterModel(
     SignInManager<ApplicationUser> signInManager,
     IReferralService referralService,
     INotificationService notificationService,
-    IUnitOfWork unitOfWork) : PageModel
+    IUnitOfWork unitOfWork,
+    IClientLocationService clientLocationService) : PageModel
 {
     [BindProperty]
     public InputModel Input { get; set; } = new();
@@ -34,7 +36,7 @@ public class RegisterModel(
         [Required, EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        [Required, Phone]
+        [Required, Phone, Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; } = string.Empty;
 
         [Required, StringLength(100, MinimumLength = 8), DataType(DataType.Password)]
@@ -59,6 +61,8 @@ public class RegisterModel(
     {
         if (!ModelState.IsValid) return Page();
 
+        var location = await clientLocationService.GetAsync(HttpContext);
+
         ApplicationUser? referrer = null;
         if (!string.IsNullOrEmpty(Input.ReferralCode))
             referrer = await userManager.Users.FirstOrDefaultAsync(u => u.ReferralCode == Input.ReferralCode);
@@ -69,9 +73,14 @@ public class RegisterModel(
             Email = Input.Email,
             FirstName = Input.FirstName,
             LastName = Input.LastName,
-            PhoneNumber = Input.PhoneNumber,
+            PhoneNumber = Input.PhoneNumber.Trim(),
             ReferredByUserId = referrer?.Id,
-            CountryCode = "GH"
+            CountryCode = location.CountryCode ?? "GH",
+            RegistrationIp = location.IpAddress,
+            RegistrationCountry = location.CountryName ?? location.CountryCode,
+            LastLoginIp = location.IpAddress,
+            LastLoginCountry = location.CountryName ?? location.CountryCode,
+            LastLoginAt = DateTime.UtcNow
         };
 
         var result = await userManager.CreateAsync(user, Input.Password);

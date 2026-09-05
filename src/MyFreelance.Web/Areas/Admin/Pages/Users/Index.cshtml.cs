@@ -15,7 +15,8 @@ public class IndexModel(
     UserManager<ApplicationUser> userManager,
     IReferralService referralService,
     IUnitOfWork unitOfWork,
-    INotificationService notificationService) : PageModel
+    INotificationService notificationService,
+    IAuditService auditService) : PageModel
 {
     public IList<UserItem> Users { get; set; } = [];
 
@@ -31,7 +32,7 @@ public class IndexModel(
 
     public bool CanManageUsers => User.IsInRole(AppRoles.Admin);
 
-    public record UserItem(string Id, string Name, string Email, string Role, bool IsSuspended, bool IsKycApproved, DateTime CreatedAt);
+    public record UserItem(string Id, string Name, string Email, string? PhoneNumber, string Role, bool IsInvestor, bool IsSuspended, bool IsKycApproved, DateTime CreatedAt);
 
     public class CreateUserInput
     {
@@ -210,6 +211,59 @@ public class IndexModel(
         return RedirectToPage();
     }
 
+    public async Task<IActionResult> OnPostBlockAsync(string id) =>
+        await SetInvestorSuspendedAsync(id, suspend: true, "blocked");
+
+    public async Task<IActionResult> OnPostActivateAsync(string id) =>
+        await SetInvestorSuspendedAsync(id, suspend: false, "activated");
+
+    private async Task<IActionResult> SetInvestorSuspendedAsync(string id, bool suspend, string actionLabel)
+    {
+        if (!User.IsInRole(AppRoles.Admin))
+        {
+            TempData["ErrorMessage"] = "Only full admins can block or activate investors.";
+            return RedirectToPage();
+        }
+
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            TempData["ErrorMessage"] = "User not found.";
+            return RedirectToPage();
+        }
+
+        if (!await userManager.IsInRoleAsync(user, AppRoles.Investor)
+            || await userManager.IsInRoleAsync(user, AppRoles.Admin)
+            || await userManager.IsInRoleAsync(user, AppRoles.AdminReadOnly))
+        {
+            TempData["ErrorMessage"] = "Only investor accounts can be blocked or activated from this list.";
+            return RedirectToPage();
+        }
+
+        user.IsSuspended = suspend;
+        var result = await userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            TempData["ErrorMessage"] = string.Join(" ", result.Errors.Select(e => e.Description));
+            return RedirectToPage();
+        }
+
+        if (suspend)
+            await userManager.UpdateSecurityStampAsync(user);
+
+        var adminId = userManager.GetUserId(User);
+        await auditService.LogAsync(
+            user.Id,
+            adminId,
+            suspend ? AuditAction.Suspend : AuditAction.Update,
+            nameof(ApplicationUser),
+            user.Id,
+            $"Investor {user.FullName} {actionLabel}.");
+
+        TempData["SuccessMessage"] = $"Investor {user.FullName} has been {actionLabel}.";
+        return RedirectToPage();
+    }
+
     private async Task LoadUsersAsync(string? search)
     {
         var query = userManager.Users.AsQueryable();
@@ -218,7 +272,8 @@ public class IndexModel(
             query = query.Where(u =>
                 u.Email!.Contains(search)
                 || u.FirstName.Contains(search)
-                || u.LastName.Contains(search));
+                || u.LastName.Contains(search)
+                || (u.PhoneNumber != null && u.PhoneNumber.Contains(search)));
         }
 
         var users = await query.OrderByDescending(u => u.CreatedAt).Take(100).ToListAsync();
@@ -227,16 +282,21 @@ public class IndexModel(
         foreach (var user in users)
         {
             var roles = await userManager.GetRolesAsync(user);
+            var isInvestor = roles.Contains(AppRoles.Investor)
+                && !roles.Contains(AppRoles.Admin)
+                && !roles.Contains(AppRoles.AdminReadOnly);
             var role = roles.Contains(AppRoles.Admin) ? "Full Admin"
                 : roles.Contains(AppRoles.AdminReadOnly) ? "Read-Only Admin"
-                : roles.Contains(AppRoles.Investor) ? "Investor"
+                : isInvestor ? "Investor"
                 : roles.FirstOrDefault() ?? "—";
 
             Users.Add(new UserItem(
                 user.Id,
                 user.FullName,
                 user.Email!,
+                user.PhoneNumber,
                 role,
+                isInvestor,
                 user.IsSuspended,
                 user.IsKycApproved,
                 user.CreatedAt));
