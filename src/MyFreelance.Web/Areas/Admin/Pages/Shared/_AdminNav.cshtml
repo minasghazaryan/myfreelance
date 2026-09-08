@@ -17,6 +17,7 @@
         "faq" => currentPage.StartsWith("/Faq", StringComparison.OrdinalIgnoreCase),
         "cms" => currentPage.StartsWith("/Cms", StringComparison.OrdinalIgnoreCase),
         "support" => currentPage.StartsWith("/SupportChat", StringComparison.OrdinalIgnoreCase),
+        "analytics" => currentPage.StartsWith("/Analytics", StringComparison.OrdinalIgnoreCase),
         "audit" => currentPage.StartsWith("/AuditLogs", StringComparison.OrdinalIgnoreCase),
         "contracts" => currentPage.StartsWith("/SmartContracts", StringComparison.OrdinalIgnoreCase),
         _ => false
@@ -50,6 +51,7 @@
         <a class="nav-link @(IsActive("legal") ? "active" : "")" asp-area="Admin" asp-page="/LegalDocuments/Index">Legal Documents</a>
         <a class="nav-link @(IsActive("cms") ? "active" : "")" asp-area="Admin" asp-page="/Cms/Index">CMS</a>
         <a class="nav-link @(IsActive("support") ? "active" : "")" asp-area="Admin" asp-page="/SupportChat/Index">Support Chat</a>
+        <a class="nav-link @(IsActive("analytics") ? "active" : "")" asp-area="Admin" asp-page="/Analytics/Index">Google Analytics</a>
         <a class="nav-link @(IsActive("audit") ? "active" : "")" asp-area="Admin" asp-page="/AuditLogs/Index">Audit Logs</a>
         <a class="nav-link @(IsActive("contracts") ? "active" : "")" asp-area="Admin" asp-page="/SmartContracts/Index">Smart Contracts</a>
     </nav>

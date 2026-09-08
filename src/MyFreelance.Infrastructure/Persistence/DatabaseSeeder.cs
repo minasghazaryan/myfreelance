@@ -201,13 +201,15 @@ public static class DatabaseSeeder
                 new SiteSettings { Key = "Contact.Telegram", Value = "@africausainvest", Category = "Contact" },
                 new SiteSettings { Key = "Brand.Name", Value = BrandConstants.Name, Category = "Brand" },
                 new SiteSettings { Key = "Brand.HeroBadge", Value = "Africa's First Investment Fund", Category = "Brand" },
-                new SiteSettings { Key = "Insurance.GlobalBanner", Value = "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.", Category = "Insurance" }
+                new SiteSettings { Key = "Insurance.GlobalBanner", Value = "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.", Category = "Insurance" },
+                new SiteSettings { Key = "Analytics.GoogleMeasurementId", Value = "", Category = "Analytics", Description = "Google Analytics 4 measurement ID" }
             );
         }
         else
         {
             await EnsureSiteSettingAsync(db, "Brand.HeroBadge", "Africa's First Investment Fund", "Brand");
             await EnsureSiteSettingAsync(db, "Insurance.GlobalBanner", "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.", "Insurance");
+            await EnsureSiteSettingAsync(db, "Analytics.GoogleMeasurementId", "", "Analytics");
         }
 
         if (!await db.SiteSettings.AnyAsync(s => s.Key == "Branding.Insurance.v1"))

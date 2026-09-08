@@ -1,0 +1,10 @@
+@model MyFreelance.Web.ViewComponents.GoogleAnalyticsViewModel
+@using System.Text.Json
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=@Model.MeasurementId"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', @Html.Raw(JsonSerializer.Serialize(Model.MeasurementId)));
+</script>

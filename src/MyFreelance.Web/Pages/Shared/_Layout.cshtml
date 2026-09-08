@@ -14,6 +14,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
+    @await Component.InvokeAsync("GoogleAnalytics")
 </head>
 <body class="@(ViewData["BodyClass"] ?? "")">
     @if (ViewData["HideNav"] as bool? != true)
