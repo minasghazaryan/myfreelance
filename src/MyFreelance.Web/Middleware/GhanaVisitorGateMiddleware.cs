@@ -4,6 +4,8 @@ namespace MyFreelance.Web.Middleware;
 
 public class GhanaVisitorGateMiddleware(RequestDelegate next, IWebHostEnvironment environment)
 {
+    private const string PromoHost = "promo.africa-usainvest.com";
+
     private static readonly string[] AllowedPaths =
     [
         "/account/login",
@@ -15,6 +17,12 @@ public class GhanaVisitorGateMiddleware(RequestDelegate next, IWebHostEnvironmen
 
     public async Task InvokeAsync(HttpContext context)
     {
+        if (!IsPromoHost(context))
+        {
+            await next(context);
+            return;
+        }
+
         if (ShouldShowSite(context))
         {
             context.Response.OnStarting(() =>
@@ -33,6 +41,9 @@ public class GhanaVisitorGateMiddleware(RequestDelegate next, IWebHostEnvironmen
         await context.Response.WriteAsync(
             """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="robots" content="noindex"><title></title></head><body></body></html>""");
     }
+
+    private static bool IsPromoHost(HttpContext context) =>
+        context.Request.Host.Host.Equals(PromoHost, StringComparison.OrdinalIgnoreCase);
 
     private bool ShouldShowSite(HttpContext context)
     {
