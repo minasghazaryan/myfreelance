@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
     @await Component.InvokeAsync("GoogleAnalytics")
+    @await Component.InvokeAsync("PostHog")
 </head>
 <body class="@(ViewData["BodyClass"] ?? "")">
     @if (ViewData["HideNav"] as bool? != true)

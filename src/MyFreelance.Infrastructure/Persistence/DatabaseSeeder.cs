@@ -202,7 +202,9 @@ public static class DatabaseSeeder
                 new SiteSettings { Key = "Brand.Name", Value = BrandConstants.Name, Category = "Brand" },
                 new SiteSettings { Key = "Brand.HeroBadge", Value = "Africa's First Investment Fund", Category = "Brand" },
                 new SiteSettings { Key = "Insurance.GlobalBanner", Value = "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.", Category = "Insurance" },
-                new SiteSettings { Key = "Analytics.GoogleMeasurementId", Value = "", Category = "Analytics", Description = "Google Analytics 4 measurement ID" }
+                new SiteSettings { Key = "Analytics.GoogleMeasurementId", Value = "", Category = "Analytics", Description = "Google Analytics 4 measurement ID" },
+                new SiteSettings { Key = "Analytics.PostHogApiKey", Value = "", Category = "Analytics", Description = "PostHog project API key" },
+                new SiteSettings { Key = "Analytics.PostHogApiHost", Value = "https://us.i.posthog.com", Category = "Analytics", Description = "PostHog API host" }
             );
         }
         else
@@ -210,6 +212,8 @@ public static class DatabaseSeeder
             await EnsureSiteSettingAsync(db, "Brand.HeroBadge", "Africa's First Investment Fund", "Brand");
             await EnsureSiteSettingAsync(db, "Insurance.GlobalBanner", "All deposits are insured by the African Insurance Organisation — AIO. Your capital is fully protected — zero risk to investors.", "Insurance");
             await EnsureSiteSettingAsync(db, "Analytics.GoogleMeasurementId", "", "Analytics");
+            await EnsureSiteSettingAsync(db, "Analytics.PostHogApiKey", "", "Analytics");
+            await EnsureSiteSettingAsync(db, "Analytics.PostHogApiHost", "https://us.i.posthog.com", "Analytics");
         }
 
         if (!await db.SiteSettings.AnyAsync(s => s.Key == "Branding.Insurance.v1"))

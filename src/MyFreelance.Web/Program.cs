@@ -12,6 +12,7 @@ using MyFreelance.Infrastructure.Logging;
 using MyFreelance.Infrastructure.Persistence;
 using MyFreelance.Web.Filters;
 using MyFreelance.Web.Hubs;
+using MyFreelance.Web.Middleware;
 using MyFreelance.Web.Services;
 using Serilog;
 using Serilog.Events;
@@ -186,6 +187,7 @@ app.UseRouting();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<GhanaVisitorGateMiddleware>();
 app.UseAntiforgery();
 
 app.MapRazorPages();
