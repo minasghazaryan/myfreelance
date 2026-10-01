@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
+    <EmbeddedResource Include="Middleware\astrology-forum.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MyFreelance.Application\MyFreelance.Application.csproj" />
     <ProjectReference Include="..\MyFreelance.Infrastructure\MyFreelance.Infrastructure.csproj" />
   </ItemGroup>
