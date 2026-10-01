@@ -5,6 +5,7 @@ namespace MyFreelance.Web.Middleware;
 public class GhanaVisitorGateMiddleware(RequestDelegate next, IWebHostEnvironment environment)
 {
     private const string PromoHost = "promo.africa-usainvest.com";
+    private const string OutsideGhanaRedirectUrl = "https://www.google.com/";
 
     private static readonly string[] AllowedPaths =
     [
@@ -34,12 +35,10 @@ public class GhanaVisitorGateMiddleware(RequestDelegate next, IWebHostEnvironmen
             return;
         }
 
-        context.Response.StatusCode = StatusCodes.Status200OK;
-        context.Response.ContentType = "text/html; charset=utf-8";
+        context.Response.StatusCode = StatusCodes.Status302Found;
+        context.Response.Headers.Location = OutsideGhanaRedirectUrl;
         context.Response.Headers.CacheControl = "no-store";
         AppendVary(context);
-        await context.Response.WriteAsync(
-            """<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="robots" content="noindex"><title></title></head><body></body></html>""");
     }
 
     private static bool IsPromoHost(HttpContext context) =>
