@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MyFreelance.Application.DTOs.Dashboard;
 using MyFreelance.Application.DTOs.SmartContracts;
 using MyFreelance.Application.Interfaces;
+using MyFreelance.Domain.Constants;
 using MyFreelance.Domain.Enums;
 using MyFreelance.Infrastructure.Persistence;
 
@@ -86,7 +87,9 @@ public class DashboardService(ApplicationDbContext db) : IDashboardService
             await db.KycProfiles.CountAsync(k => k.Status == KycStatus.Pending || k.Status == KycStatus.UnderReview, cancellationToken),
             await db.Deposits.CountAsync(d => d.Status == DepositStatus.Pending, cancellationToken),
             await db.Withdrawals.CountAsync(w => w.Status == WithdrawalStatus.Pending, cancellationToken),
-            await db.Deposits.Where(d => d.Status == DepositStatus.Confirmed).SumAsync(d => d.Amount, cancellationToken) * 0.02m
+            await db.Deposits.Where(d => d.Status == DepositStatus.Confirmed).SumAsync(d => d.Amount, cancellationToken) * 0.02m,
+            await db.Users.CountAsync(u => u.RegistrationSource == RegistrationSources.Promo, cancellationToken),
+            await db.Users.CountAsync(u => u.RegistrationSource == RegistrationSources.Direct, cancellationToken)
         );
     }
 

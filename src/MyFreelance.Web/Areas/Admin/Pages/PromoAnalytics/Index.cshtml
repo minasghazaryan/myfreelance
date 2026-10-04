@@ -1,0 +1,79 @@
+@page
+@model MyFreelance.Web.Areas.Admin.Pages.PromoAnalytics.IndexModel
+@{ ViewData["Title"] = "Promo analytics"; }
+
+<div class="dashboard-layout">
+    <div class="container-fluid">
+        <div class="row">
+            <partial name="Shared/_AdminNav" />
+            <div class="col-lg-10 p-4">
+                <h2 class="text-gold mb-2">Promo analytics</h2>
+                <p class="text-muted-light mb-4">Investors who registered on promo.africa-usainvest.com.</p>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4 col-xl-2"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Users</div><div class="portfolio-stat-value">@Model.UserCount</div></div></div>
+                    <div class="col-md-4 col-xl-2"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Confirmed deposits</div><div class="portfolio-stat-value">$@Model.ConfirmedDeposits.ToString("N2")</div></div></div>
+                    <div class="col-md-4 col-xl-2"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Pending deposits</div><div class="portfolio-stat-value">$@Model.PendingDeposits.ToString("N2")</div></div></div>
+                    <div class="col-md-4 col-xl-2"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Available</div><div class="portfolio-stat-value">$@Model.AvailableBalance.ToString("N2")</div></div></div>
+                    <div class="col-md-4 col-xl-2"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Invested</div><div class="portfolio-stat-value">$@Model.Invested.ToString("N2")</div></div></div>
+                    <div class="col-md-4 col-xl-2"><div class="aurum-card portfolio-stat"><div class="portfolio-stat-label">Withdrawn</div><div class="portfolio-stat-value">$@Model.Withdrawn.ToString("N2")</div></div></div>
+                </div>
+
+                <div class="aurum-card">
+                    @if (Model.Users.Count == 0)
+                    {
+                        <p class="text-muted-light mb-0">No promo registrations yet.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-aurum mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Country</th>
+                                        <th>Joined</th>
+                                        <th>Confirmed deposits</th>
+                                        <th>Pending deposits</th>
+                                        <th>Available</th>
+                                        <th>Invested</th>
+                                        <th>Current balance</th>
+                                        <th>Withdrawn</th>
+                                        <th>Plans</th>
+                                        <th>KYC</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var user in Model.Users)
+                                {
+                                    <tr>
+                                        <td>@user.Name</td>
+                                        <td>@user.Email</td>
+                                        <td>@(string.IsNullOrWhiteSpace(user.PhoneNumber) ? "—" : user.PhoneNumber)</td>
+                                        <td>@(string.IsNullOrWhiteSpace(user.Country) ? "—" : user.Country)</td>
+                                        <td>@user.CreatedAt.ToString("d")</td>
+                                        <td>$@user.ConfirmedDeposits.ToString("N2")</td>
+                                        <td>$@user.PendingDeposits.ToString("N2")</td>
+                                        <td>$@user.AvailableBalance.ToString("N2")</td>
+                                        <td>$@user.Invested.ToString("N2")</td>
+                                        <td>$@user.CurrentBalance.ToString("N2")</td>
+                                        <td>$@user.Withdrawn.ToString("N2")</td>
+                                        <td>@user.ActiveInvestments</td>
+                                        <td>@(user.IsKycApproved ? "Approved" : "Pending")</td>
+                                        <td>@(user.IsSuspended ? "Blocked" : "Active")</td>
+                                        <td><a asp-area="Admin" asp-page="/Users/Details" asp-route-id="@user.Id" class="btn btn-sm btn-aurum-outline">Details</a></td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

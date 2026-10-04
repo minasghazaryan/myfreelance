@@ -78,6 +78,7 @@ public class RegisterModel(
             CountryCode = location.CountryCode ?? "GH",
             RegistrationIp = location.IpAddress,
             RegistrationCountry = location.CountryName ?? location.CountryCode,
+            RegistrationSource = RegistrationSources.FromHost(Request.Host.Host),
             LastLoginIp = location.IpAddress,
             LastLoginCountry = location.CountryName ?? location.CountryCode,
             LastLoginAt = DateTime.UtcNow
@@ -108,6 +109,7 @@ public class RegisterModel(
                 ["Description"] = $"Welcome to {BrandConstants.Name}. Complete KYC and phone verification to start investing."
             });
         await signInManager.SignInAsync(user, isPersistent: false);
+        TempData["SignupSource"] = user.RegistrationSource;
 
         return RedirectToPage("/Dashboard/Index");
     }

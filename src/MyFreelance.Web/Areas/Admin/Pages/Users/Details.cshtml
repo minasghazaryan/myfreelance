@@ -57,6 +57,7 @@
                             <dl class="kyc-detail-list">
                                 <div><dt>Registration IP</dt><dd>@(Model.Account.RegistrationIp ?? "—")</dd></div>
                                 <div><dt>Registration Country</dt><dd>@(Model.Account.RegistrationCountry ?? "—")</dd></div>
+                                <div><dt>Signup source</dt><dd>@(string.IsNullOrWhiteSpace(Model.Account.RegistrationSource) ? "—" : Model.Account.RegistrationSource)</dd></div>
                                 <div><dt>Last Login IP</dt><dd>@(Model.Account.LastLoginIp ?? "—")</dd></div>
                                 <div><dt>Last Login Country</dt><dd>@(Model.Account.LastLoginCountry ?? "—")</dd></div>
                                 <div><dt>Last Login</dt><dd>@(Model.Account.LastLoginAt?.ToString("f") ?? "—")</dd></div>

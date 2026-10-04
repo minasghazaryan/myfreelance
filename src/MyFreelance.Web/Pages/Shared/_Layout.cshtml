@@ -108,5 +108,15 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
     @await Component.InvokeAsync("TawkChat")
+    @if (TempData["SignupSource"] is string signupSource)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var source = @Json.Serialize(signupSource);
+                if (window.posthog) posthog.capture('signup', { source: source });
+                if (window.gtag) gtag('event', 'sign_up', { method: source });
+            });
+        </script>
+    }
 </body>
 </html>

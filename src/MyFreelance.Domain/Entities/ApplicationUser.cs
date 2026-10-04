@@ -18,6 +18,7 @@ public class ApplicationUser : IdentityUser
     public string CountryCode { get; set; } = "GH";
     public string? RegistrationIp { get; set; }
     public string? RegistrationCountry { get; set; }
+    public string? RegistrationSource { get; set; }
     public string? LastLoginIp { get; set; }
     public string? LastLoginCountry { get; set; }
 

@@ -5,6 +5,7 @@
     {
         "dashboard" => currentPage is "/Index",
         "users" => currentPage.StartsWith("/Users", StringComparison.OrdinalIgnoreCase),
+        "promo" => currentPage.StartsWith("/PromoAnalytics", StringComparison.OrdinalIgnoreCase),
         "kyc" => currentPage.StartsWith("/Kyc", StringComparison.OrdinalIgnoreCase),
         "tiers" => currentPage.StartsWith("/Tiers", StringComparison.OrdinalIgnoreCase),
         "referrals" => currentPage.StartsWith("/Referrals", StringComparison.OrdinalIgnoreCase),
@@ -31,6 +32,7 @@
     <nav class="nav flex-column">
         <a class="nav-link @(IsActive("dashboard") ? "active" : "")" asp-area="Admin" asp-page="/Index">Dashboard</a>
         <a class="nav-link @(IsActive("users") ? "active" : "")" asp-area="Admin" asp-page="/Users/Index">Users</a>
+        <a class="nav-link @(IsActive("promo") ? "active" : "")" asp-area="Admin" asp-page="/PromoAnalytics/Index">Promo Analytics</a>
         <a class="nav-link d-flex align-items-center justify-content-between @(IsActive("kyc") ? "active" : "")" asp-area="Admin" asp-page="/Kyc/Index">
             <span>KYC Review</span>
             @await Component.InvokeAsync("AdminPendingBadge", new { section = "kyc" })

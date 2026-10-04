@@ -45,6 +45,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.HasIndex(u => u.ReferralCode).IsUnique().HasFilter("[ReferralCode] IS NOT NULL");
             entity.Property(u => u.RegistrationIp).HasMaxLength(45);
             entity.Property(u => u.RegistrationCountry).HasMaxLength(100);
+            entity.Property(u => u.RegistrationSource).HasMaxLength(20);
             entity.Property(u => u.LastLoginIp).HasMaxLength(45);
             entity.Property(u => u.LastLoginCountry).HasMaxLength(100);
             entity.HasOne(u => u.ReferredBy)

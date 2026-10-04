@@ -29,10 +29,14 @@ public class IndexModel(
     public string? SuccessMessage { get; set; }
     public string? ErrorMessage { get; set; }
     public string? Search { get; set; }
+    public string? Source { get; set; }
 
     public bool CanManageUsers => User.IsInRole(AppRoles.Admin);
 
-    public record UserItem(string Id, string Name, string Email, string? PhoneNumber, string Role, bool IsInvestor, bool IsSuspended, bool IsKycApproved, DateTime CreatedAt);
+    public record UserItem(string Id, string Name, string Email, string? PhoneNumber, string Role, bool IsInvestor, bool IsSuspended, bool IsKycApproved, DateTime CreatedAt, string? RegistrationSource);
+
+    public int PromoSignups { get; set; }
+    public int DirectSignups { get; set; }
 
     public class CreateUserInput
     {
@@ -82,12 +86,13 @@ public class IndexModel(
         public string AdminRole { get; set; } = AppRoles.AdminReadOnly;
     }
 
-    public async Task OnGetAsync(string? search)
+    public async Task OnGetAsync(string? search, string? source)
     {
         SuccessMessage = TempData["SuccessMessage"] as string;
         ErrorMessage = TempData["ErrorMessage"] as string;
         Search = search;
-        await LoadUsersAsync(search);
+        Source = source;
+        await LoadUsersAsync(search, source);
     }
 
     public Task<IActionResult> OnPostCreateAsync() => CreateAccountAsync(
@@ -178,6 +183,7 @@ public class IndexModel(
             PhoneNumber = string.IsNullOrWhiteSpace(phoneNumber) ? null : phoneNumber.Trim(),
             ReferredByUserId = referrer?.Id,
             CountryCode = "GH",
+            RegistrationSource = RegistrationSources.Admin,
             IsKycApproved = isKycApproved,
             IsPhoneVerified = isPhoneVerified
         };
@@ -264,8 +270,11 @@ public class IndexModel(
         return RedirectToPage();
     }
 
-    private async Task LoadUsersAsync(string? search)
+    private async Task LoadUsersAsync(string? search, string? source)
     {
+        PromoSignups = await userManager.Users.CountAsync(u => u.RegistrationSource == RegistrationSources.Promo);
+        DirectSignups = await userManager.Users.CountAsync(u => u.RegistrationSource == RegistrationSources.Direct);
+
         var query = userManager.Users.AsQueryable();
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -275,6 +284,9 @@ public class IndexModel(
                 || u.LastName.Contains(search)
                 || (u.PhoneNumber != null && u.PhoneNumber.Contains(search)));
         }
+
+        if (source is RegistrationSources.Promo or RegistrationSources.Direct or RegistrationSources.Admin)
+            query = query.Where(u => u.RegistrationSource == source);
 
         var users = await query.OrderByDescending(u => u.CreatedAt).Take(100).ToListAsync();
         Users = [];
@@ -299,7 +311,8 @@ public class IndexModel(
                 isInvestor,
                 user.IsSuspended,
                 user.IsKycApproved,
-                user.CreatedAt));
+                user.CreatedAt,
+                user.RegistrationSource));
         }
     }
 

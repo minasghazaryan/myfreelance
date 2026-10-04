@@ -110,9 +110,13 @@
                     </div>
                 }
 
-                <form method="get" class="mb-4">
+                <form method="get" class="mb-4 d-flex flex-wrap gap-2 align-items-center">
                     <input name="search" value="@Model.Search" class="form-control form-control-aurum d-inline-block w-auto" placeholder="Search users..." />
-                    <button class="btn btn-aurum ms-2">Search</button>
+                    <input type="hidden" name="source" value="@Model.Source" />
+                    <button class="btn btn-aurum">Search</button>
+                    <a asp-page="./Index" class="btn btn-sm @(string.IsNullOrEmpty(Model.Source) ? "btn-aurum" : "btn-aurum-outline")">All</a>
+                    <a asp-page="./Index" asp-route-source="Promo" asp-route-search="@Model.Search" class="btn btn-sm @(Model.Source == "Promo" ? "btn-aurum" : "btn-aurum-outline")">Promo @Model.PromoSignups</a>
+                    <a asp-page="./Index" asp-route-source="Direct" asp-route-search="@Model.Search" class="btn btn-sm @(Model.Source == "Direct" ? "btn-aurum" : "btn-aurum-outline")">Direct @Model.DirectSignups</a>
                 </form>
 
                 <div class="aurum-card">
@@ -122,6 +126,7 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
+                                <th>Source</th>
                                 <th>Role</th>
                                 <th>KYC</th>
                                 <th>Status</th>
@@ -136,6 +141,7 @@
                                 <td>@u.Name</td>
                                 <td>@u.Email</td>
                                 <td>@(string.IsNullOrWhiteSpace(u.PhoneNumber) ? "—" : u.PhoneNumber)</td>
+                                <td>@(string.IsNullOrWhiteSpace(u.RegistrationSource) ? "—" : u.RegistrationSource)</td>
                                 <td>@u.Role</td>
                                 <td>@(u.IsKycApproved ? "Approved" : "Pending")</td>
                                 <td>@(u.IsSuspended ? "Blocked" : "Active")</td>

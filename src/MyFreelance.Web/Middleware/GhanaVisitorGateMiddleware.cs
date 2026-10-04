@@ -4,7 +4,7 @@ namespace MyFreelance.Web.Middleware;
 
 public class GhanaVisitorGateMiddleware(RequestDelegate next, IWebHostEnvironment environment)
 {
-    private const string PromoHost = "promo.africa-usainvest.com";
+    private const string PromoHost = RegistrationSources.PromoHost;
     private static readonly string FillerPage = ReadFillerPage();
 
     private static string ReadFillerPage()
