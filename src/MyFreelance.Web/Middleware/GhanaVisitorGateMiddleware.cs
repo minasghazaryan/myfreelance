@@ -16,6 +16,13 @@ public class GhanaVisitorGateMiddleware(RequestDelegate next, IWebHostEnvironmen
         return reader.ReadToEnd();
     }
 
+    private static readonly HashSet<string> AllowedCountries = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "GH",
+        "AM",
+        "US"
+    };
+
     private static readonly string[] AllowedPaths =
     [
         "/account/login",
@@ -73,7 +80,7 @@ public class GhanaVisitorGateMiddleware(RequestDelegate next, IWebHostEnvironmen
         if (environment.IsDevelopment() && string.IsNullOrWhiteSpace(country))
             return true;
 
-        return country.Equals("GH", StringComparison.OrdinalIgnoreCase);
+        return AllowedCountries.Contains(country);
     }
 
     private static void AppendVary(HttpContext context)
