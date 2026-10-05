@@ -38,9 +38,11 @@ public class DetailsModel(UserManager<ApplicationUser> userManager, ApplicationD
         var roles = await userManager.GetRolesAsync(account);
         IsInvestor = roles.Contains(AppRoles.Investor)
             && !roles.Contains(AppRoles.Admin)
-            && !roles.Contains(AppRoles.AdminReadOnly);
+            && !roles.Contains(AppRoles.AdminReadOnly)
+            && !roles.Contains(AppRoles.PromoAdmin);
         Role = roles.Contains(AppRoles.Admin) ? "Full Admin"
             : roles.Contains(AppRoles.AdminReadOnly) ? "Read-Only Admin"
+            : roles.Contains(AppRoles.PromoAdmin) ? "Promo Admin"
             : IsInvestor ? "Investor"
             : roles.FirstOrDefault() ?? "—";
 

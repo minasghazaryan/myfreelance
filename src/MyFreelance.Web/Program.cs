@@ -92,7 +92,7 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminArea", policy => policy.RequireRole(AppRoles.Admin, AppRoles.AdminReadOnly));
+    options.AddPolicy("AdminArea", policy => policy.RequireRole(AppRoles.Admin, AppRoles.AdminReadOnly, AppRoles.PromoAdmin));
     options.AddPolicy("AdminWrite", policy => policy.RequireRole(AppRoles.Admin));
     options.AddPolicy("AdminOnly", policy => policy.RequireRole(AppRoles.Admin));
     options.AddPolicy("InvestorOnly", policy => policy.RequireRole(AppRoles.Investor));
@@ -103,6 +103,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddScoped<AdminWriteAuthorizationFilter>();
+builder.Services.AddScoped<PromoAdminScopeFilter>();
 builder.Services.AddScoped<SuspendedAccountFilter>();
 builder.Services.AddScoped<IClientLocationService, ClientLocationService>();
 builder.Services.AddHttpClient("IpLookup", client =>
@@ -115,6 +116,7 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AddAreaFolderApplicationModelConvention("Admin", "/", model =>
     {
         model.Filters.Add(new ServiceFilterAttribute(typeof(AdminWriteAuthorizationFilter)));
+        model.Filters.Add(new ServiceFilterAttribute(typeof(PromoAdminScopeFilter)));
     });
     options.Conventions.AuthorizeFolder("/Dashboard", "InvestorOnly");
     options.Conventions.AddFolderApplicationModelConvention("/Dashboard", model =>

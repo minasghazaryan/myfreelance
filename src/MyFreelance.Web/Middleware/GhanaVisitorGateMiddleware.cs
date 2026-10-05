@@ -63,7 +63,9 @@ public class GhanaVisitorGateMiddleware(RequestDelegate next, IWebHostEnvironmen
 
     private bool ShouldShowSite(HttpContext context)
     {
-        if (context.User.IsInRole(AppRoles.Admin) || context.User.IsInRole(AppRoles.AdminReadOnly))
+        if (context.User.IsInRole(AppRoles.Admin)
+            || context.User.IsInRole(AppRoles.AdminReadOnly)
+            || context.User.IsInRole(AppRoles.PromoAdmin))
             return true;
 
         var path = context.Request.Path.Value ?? string.Empty;

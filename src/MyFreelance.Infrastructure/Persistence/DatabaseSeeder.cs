@@ -21,7 +21,7 @@ public static class DatabaseSeeder
         await db.Database.MigrateAsync();
         await SyncWalletYieldEarnedAsync(db);
 
-        foreach (var role in new[] { AppRoles.Admin, AppRoles.AdminReadOnly, AppRoles.Investor, AppRoles.Compliance, AppRoles.Support })
+        foreach (var role in new[] { AppRoles.Admin, AppRoles.AdminReadOnly, AppRoles.PromoAdmin, AppRoles.Investor, AppRoles.Compliance, AppRoles.Support })
         {
             if (!await roleManager.RoleExistsAsync(role))
                 await roleManager.CreateAsync(new IdentityRole(role));
@@ -43,6 +43,23 @@ public static class DatabaseSeeder
             await userManager.CreateAsync(admin, "Admin@123!");
             await userManager.AddToRoleAsync(admin, AppRoles.Admin);
             await db.UserWallets.AddAsync(new UserWallet { UserId = admin.Id });
+        }
+
+        if (await userManager.FindByEmailAsync("promo@aurumwealth.gh") is null)
+        {
+            var promoAdmin = new ApplicationUser
+            {
+                UserName = "promo@aurumwealth.gh",
+                Email = "promo@aurumwealth.gh",
+                EmailConfirmed = true,
+                FirstName = "Promo",
+                LastName = "Admin",
+                IsKycApproved = true,
+                IsPhoneVerified = true,
+                RegistrationSource = RegistrationSources.Admin
+            };
+            await userManager.CreateAsync(promoAdmin, "Promo@123!");
+            await userManager.AddToRoleAsync(promoAdmin, AppRoles.PromoAdmin);
         }
 
         if (!await db.InvestmentTiers.AnyAsync())

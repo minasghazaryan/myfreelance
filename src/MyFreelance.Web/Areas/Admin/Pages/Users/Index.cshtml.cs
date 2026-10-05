@@ -240,7 +240,8 @@ public class IndexModel(
 
         if (!await userManager.IsInRoleAsync(user, AppRoles.Investor)
             || await userManager.IsInRoleAsync(user, AppRoles.Admin)
-            || await userManager.IsInRoleAsync(user, AppRoles.AdminReadOnly))
+            || await userManager.IsInRoleAsync(user, AppRoles.AdminReadOnly)
+            || await userManager.IsInRoleAsync(user, AppRoles.PromoAdmin))
         {
             TempData["ErrorMessage"] = "Only investor accounts can be blocked or activated from this list.";
             return RedirectToPage();
@@ -296,9 +297,11 @@ public class IndexModel(
             var roles = await userManager.GetRolesAsync(user);
             var isInvestor = roles.Contains(AppRoles.Investor)
                 && !roles.Contains(AppRoles.Admin)
-                && !roles.Contains(AppRoles.AdminReadOnly);
+                && !roles.Contains(AppRoles.AdminReadOnly)
+                && !roles.Contains(AppRoles.PromoAdmin);
             var role = roles.Contains(AppRoles.Admin) ? "Full Admin"
                 : roles.Contains(AppRoles.AdminReadOnly) ? "Read-Only Admin"
+                : roles.Contains(AppRoles.PromoAdmin) ? "Promo Admin"
                 : isInvestor ? "Investor"
                 : roles.FirstOrDefault() ?? "—";
 
@@ -317,5 +320,7 @@ public class IndexModel(
     }
 
     private static string FormatAdminRole(string role) =>
-        role == AppRoles.Admin ? "full admin" : "read-only admin";
+        role == AppRoles.Admin ? "full admin"
+        : role == AppRoles.PromoAdmin ? "promo admin"
+        : "read-only admin";
 }

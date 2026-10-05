@@ -4,14 +4,15 @@ public static class AppRoles
 {
     public const string Admin = "Admin";
     public const string AdminReadOnly = "AdminReadOnly";
+    public const string PromoAdmin = "PromoAdmin";
     public const string Investor = "Investor";
     public const string Compliance = "Compliance";
     public const string Support = "Support";
 
-    public static IReadOnlyList<string> AdminAreaRoles { get; } = [Admin, AdminReadOnly];
+    public static IReadOnlyList<string> AdminAreaRoles { get; } = [Admin, AdminReadOnly, PromoAdmin];
 
-    public static IReadOnlyList<string> CreatableAdminRoles { get; } = [Admin, AdminReadOnly];
+    public static IReadOnlyList<string> CreatableAdminRoles { get; } = [Admin, AdminReadOnly, PromoAdmin];
 
     public static bool IsAdminAreaRole(string role) =>
-        role is Admin or AdminReadOnly;
+        role is Admin or AdminReadOnly or PromoAdmin;
 }

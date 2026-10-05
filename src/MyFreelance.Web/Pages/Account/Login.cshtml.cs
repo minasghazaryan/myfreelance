@@ -66,6 +66,13 @@ public class LoginModel(
                 await auditService.LogAsync(user.Id, null, AuditAction.Login, nameof(ApplicationUser), user.Id, "User logged in");
             }
 
+            if (user is not null && await userManager.IsInRoleAsync(user, AppRoles.PromoAdmin)
+                && !await userManager.IsInRoleAsync(user, AppRoles.Admin)
+                && !await userManager.IsInRoleAsync(user, AppRoles.AdminReadOnly))
+            {
+                return RedirectToPage("/PromoAnalytics/Index", new { area = "Admin" });
+            }
+
             if (user is not null && (await userManager.IsInRoleAsync(user, AppRoles.Admin)
                 || await userManager.IsInRoleAsync(user, AppRoles.AdminReadOnly)))
             {
