@@ -16,6 +16,7 @@
     @await RenderSectionAsync("Styles", required: false)
     @await Component.InvokeAsync("GoogleAnalytics")
     @await Component.InvokeAsync("PostHog")
+    @await Component.InvokeAsync("MetaPixel")
 </head>
 <body class="@(ViewData["BodyClass"] ?? "")">
     @if (ViewData["HideNav"] as bool? != true)
