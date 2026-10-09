@@ -1,4 +1,5 @@
 using MyFreelance.Domain.Constants;
+using MyFreelance.Web.ViewComponents;
 
 namespace MyFreelance.Web.Middleware;
 
@@ -55,7 +56,8 @@ public class GhanaVisitorGateMiddleware(RequestDelegate next, IWebHostEnvironmen
         context.Response.ContentType = "text/html; charset=utf-8";
         context.Response.Headers.CacheControl = "no-store";
         AppendVary(context);
-        await context.Response.WriteAsync(FillerPage);
+        var page = FillerPage.Replace("</head>", MetaPixelViewComponent.Script + "</head>", StringComparison.OrdinalIgnoreCase);
+        await context.Response.WriteAsync(page);
     }
 
     private static bool IsPromoHost(HttpContext context) =>
