@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
 using MyFreelance.Domain.Constants;
 
 namespace MyFreelance.Web.ViewComponents;
@@ -36,6 +38,6 @@ public class MetaPixelViewComponent : ViewComponent
         if (path.StartsWith("/Admin", StringComparison.OrdinalIgnoreCase))
             return Content(string.Empty);
 
-        return Content(Script);
+        return new HtmlContentViewComponentResult(new HtmlString(Script));
     }
 }

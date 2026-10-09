@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    @await Component.InvokeAsync("MetaPixel")
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - @AppBrand.Name</title>
@@ -16,7 +17,6 @@
     @await RenderSectionAsync("Styles", required: false)
     @await Component.InvokeAsync("GoogleAnalytics")
     @await Component.InvokeAsync("PostHog")
-    @await Component.InvokeAsync("MetaPixel")
 </head>
 <body class="@(ViewData["BodyClass"] ?? "")">
     @if (ViewData["HideNav"] as bool? != true)
