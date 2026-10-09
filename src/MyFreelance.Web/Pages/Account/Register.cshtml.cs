@@ -110,6 +110,7 @@ public class RegisterModel(
             });
         await signInManager.SignInAsync(user, isPersistent: false);
         TempData["SignupSource"] = user.RegistrationSource;
+        TempData["SignupUserId"] = user.Id;
 
         return RedirectToPage("/Dashboard/Index");
     }

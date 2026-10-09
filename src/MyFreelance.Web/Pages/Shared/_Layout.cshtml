@@ -123,5 +123,18 @@
             });
         </script>
     }
+    @if (TempData["SignupUserId"] is string signupUserId)
+    {
+        <script>
+            (function () {
+                var eventId = 'lead-' + @Json.Serialize(signupUserId);
+                try {
+                    if (sessionStorage.getItem(eventId)) return;
+                    sessionStorage.setItem(eventId, '1');
+                } catch (e) {}
+                if (window.fbq) fbq('track', 'Lead', {}, { eventID: eventId });
+            })();
+        </script>
+    }
 </body>
 </html>
