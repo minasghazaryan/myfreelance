@@ -136,5 +136,18 @@
             })();
         </script>
     }
+    @if (TempData["FbTestEvent"] is string fbTestEvent)
+    {
+        <script>
+            (function () {
+                var eventId = 'test-' + @Json.Serialize(fbTestEvent);
+                try {
+                    if (sessionStorage.getItem(eventId)) return;
+                    sessionStorage.setItem(eventId, '1');
+                } catch (e) {}
+                if (window.fbq) fbq('trackCustom', 'TestEvent', {}, { eventID: eventId });
+            })();
+        </script>
+    }
 </body>
 </html>

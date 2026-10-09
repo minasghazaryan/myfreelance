@@ -64,6 +64,7 @@ public class LoginModel(
                     user.CountryCode = location.CountryCode;
                 await userManager.UpdateAsync(user);
                 await auditService.LogAsync(user.Id, null, AuditAction.Login, nameof(ApplicationUser), user.Id, "User logged in");
+                TempData["FbTestEvent"] = $"{user.Id}:{DateTime.UtcNow.Ticks}";
             }
 
             if (user is not null && await userManager.IsInRoleAsync(user, AppRoles.PromoAdmin)
