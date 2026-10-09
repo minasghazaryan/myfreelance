@@ -20,8 +20,7 @@ public class GhanaVisitorGateMiddleware(RequestDelegate next, IWebHostEnvironmen
     private static readonly HashSet<string> AllowedCountries = new(StringComparer.OrdinalIgnoreCase)
     {
         "GH",
-        "AM",
-        "US"
+        "AM"
     };
 
     private static readonly string[] AllowedPaths =
