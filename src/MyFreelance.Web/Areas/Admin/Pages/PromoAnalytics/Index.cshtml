@@ -32,15 +32,12 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Email</th>
-                                        <th>Phone</th>
                                         <th>Country</th>
                                         <th>Joined</th>
                                         <th>Confirmed deposits</th>
                                         <th>Pending deposits</th>
-                                        <th>Available</th>
                                         <th>Invested</th>
                                         <th>Current balance</th>
-                                        <th>Withdrawn</th>
                                         <th>Plans</th>
                                         <th>KYC</th>
                                         <th>Status</th>
@@ -53,15 +50,12 @@
                                     <tr>
                                         <td>@user.Name</td>
                                         <td>@user.Email</td>
-                                        <td>@(string.IsNullOrWhiteSpace(user.PhoneNumber) ? "—" : user.PhoneNumber)</td>
                                         <td>@(string.IsNullOrWhiteSpace(user.Country) ? "—" : user.Country)</td>
                                         <td>@user.CreatedAt.ToString("d")</td>
                                         <td>$@user.ConfirmedDeposits.ToString("N2")</td>
                                         <td>$@user.PendingDeposits.ToString("N2")</td>
-                                        <td>$@user.AvailableBalance.ToString("N2")</td>
                                         <td>$@user.Invested.ToString("N2")</td>
                                         <td>$@user.CurrentBalance.ToString("N2")</td>
-                                        <td>$@user.Withdrawn.ToString("N2")</td>
                                         <td>@user.ActiveInvestments</td>
                                         <td>@(user.IsKycApproved ? "Approved" : "Pending")</td>
                                         <td>@(user.IsSuspended ? "Blocked" : "Active")</td>
